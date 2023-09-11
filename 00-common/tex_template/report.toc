@@ -1,0 +1,18 @@
+\babel@toc {english}{}\relax 
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Writing style}{2}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Using LaTeX}{2}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Text}{2}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Figures}{3}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Tables}{5}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Mathematical notations}{5}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Programs and algorithms}{6}{section.2.6}%
+\contentsline {chapter}{\numberline {3}Referencing styles}{9}{chapter.3}%
+\contentsline {section}{\numberline {3.1}In-text citations}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Bibliography}{9}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Header at 3rd level}{10}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Another header at 3rd level}{10}{subsection.3.2.2}%
+\contentsline {chapter}{\numberline {4}Conclusions}{11}{chapter.4}%
+\contentsline {chapter}{References}{12}{chapter.4}%
+\contentsline {chapter}{APPENDIX A. Something extra}{13}{chapter.4}%
+\contentsline {chapter}{APPENDIX B. Something completely different}{14}{chapter.4}%
