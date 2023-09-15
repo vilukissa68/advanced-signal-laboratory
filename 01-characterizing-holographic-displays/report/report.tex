@@ -1,0 +1,165 @@
+% !TEX encoding = UTF-8 Unicode
+\documentclass[12pt,a4paper,english
+% ,twoside,openright
+]{tunithesis}
+
+\special{papersize=210mm,297mm}
+
+\author{Roosa Kuusivaara \& Väinö-Waltteri Granat}
+\title{Characterizing holographic displays via
+numerical simulations - Report} % primary title (for front page)
+\thesistype{Laboratory Report} % or Bachelor of Science, Laboratory Report...
+
+\usepackage{lastpage}
+\usepackage[english]{babel}
+\usepackage[
+backend=biber,
+style=authoryear,
+citestyle=authoryear,
+autocite=inline
+]{biblatex}
+\usepackage{csquotes}
+
+\addbibresource{references.bib} %Imports bibliography file
+
+
+\definecolor{tunipurple}{RGB}{78, 0, 142}
+
+\newcommand\todo[1]{{\color{red}!!!TODO: #1}} % Remark text in braces appears in red
+\newcommand{\angs}{\textsl{\AA}}              % , e.g. slanted symbol for Ångstöm
+% Preparatory content ends here
+
+
+\pagenumbering{roman} % was: {Roman}
+\pagestyle{headings}
+\begin{document}
+
+% Special trick so that internal macros (denoted with @ in their name)
+% can be used outside the cls file (e.g. \@author)
+\makeatletter
+
+% Create the title page.
+% First the logo. Check its language.
+\thispagestyle{empty}
+\vspace*{-.5cm}\noindent
+
+\begin{figure}
+    \vspace{-1.3cm}
+    \advance\leftskip-2.5cm
+    \noindent\includegraphics{img/tunilogo.png}
+\end{figure}
+ 
+\vspace{2.5cm}
+\begin{flushright}
+\noindent\textsf{\LARGE{\@author}}
+
+\noindent\vspace{0.5cm}
+
+\noindent\Huge{\textsf{\textbf{\textcolor{tunipurple}{\@title}}}}
+\end{flushright}
+\vspace{13.7cm} % adjust to 12.7 this if thesis title needs two lines
+
+% Last some additional info to the bottom-right corner
+\begin{flushright}  
+    \begin{spacing}{1.0}
+      \textsf{Faculty of Information Technology and Communication Sciences (ITC)\\
+      \@thesistype\\
+      September 2023}
+    \end{spacing}
+\end{flushright}
+
+% Leave the backside of title page empty in twoside mode
+\if@twoside
+\clearpage
+\fi
+
+% Turn off page numbering for the first pages
+\pagenumbering{gobble}
+
+
+% Some fields in abstract are automated, namely those with \@ (author,
+% title, thesis type).
+\chapter*{Abstract}
+\begin{spacing}{1.0}
+\noindent \@author: \@title\\
+\@thesistype\\
+Tampere University\\
+Master’s Degree Programme in Signal Processing\\
+September 2023
+\end{spacing}
+\noindent\rule{12cm}{0.4pt}
+
+\vspace{0.5cm}
+
+% ---------------------------------------
+% Abstract and keywords
+% ---------------------------------------
+
+\noindent The abstract is a concise 1-page description of the work: what was the
+problem, what was done, and what are the results. Do not include
+charts or tables in the abstract.
+
+These instructions are intended for students of Computer Sciences at the Tampere University. They cover questions of writing a thesis, such as use of the literature, structure of the thesis and style, the external appearance of the thesis and the use of tools.  These instructions do not cover the scientific content of the thesis.
+
+~
+
+\noindent\textbf{Keywords:} M.Sc. thesis, layout, writing style.
+
+~
+
+
+% Add the table of contents
+
+
+\setcounter{tocdepth}{3}              % How many header level are included
+\tableofcontents                      % Create TOC
+
+
+% The actual text begins here and page numbering changes to 1,2...
+% Leave the backside of title empty in twoside mode
+\if@twoside
+%\newpage
+\cleardoublepage
+\fi
+
+
+\renewcommand{\chaptername}{} % This disables the prefix 'Chapter' or
+                              % 'Luku' in page headers (in 'twoside'
+                              % mode)
+
+
+\chapter{Introduction}
+\label{ch:intro}
+\pagenumbering{arabic}
+\setcounter{page}{1} 
+In this report we describe our work with the `Characterizing holographic displays via
+numerical simulations` exercise, for the Advanced Signal Processing Laboratory Course.
+
+In this project we familiarized ourselves with the basics of holographic display, by implementing a part of a holograpics display viewing simulation.
+
+\section{Hologram synthesis}
+\section{Retinal Image Formation}
+
+\chapter{Methodology}
+\section{Implementing Hologram Synthesis}
+Our implementation of the holographic image viewer included 3 different methods of holographic image synthesis, one of which was provided in the code base given to us. The ready made synthesis method was holographic stereograph synthesis, which [TODO: explain hss here]. The first synthesis method we implemented was a Fresnel hologram syntheis which, [TODO: explain Fresnel here]. The second method we implemented was Rayleigh-Sommerfeld synthesis which, [TODO. explain RSS here].
+\section{Field Propagation}
+\label{sec:methodology}
+
+\chapter{Results}
+\label{sec:results}
+
+\chapter{Conclusions}
+\label{ch:conclusions}
+
+
+%
+% The bibliography, i.e the list of references
+%
+\newpage
+
+\printbibliography[title=References]
+\addcontentsline{toc}{chapter}{References}
+
+\end{document}
+
