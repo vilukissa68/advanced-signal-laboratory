@@ -19,6 +19,7 @@ citestyle=authoryear,
 autocite=inline
 ]{biblatex}
 \usepackage{csquotes}
+\usepackage{mathrsfs, amsmath}
 
 \addbibresource{references.bib} %Imports bibliography file
 
@@ -143,16 +144,67 @@ Hologram synthesis describes the method for forming holographic images in 3d spa
 \section{Retinal Image Formation}
 
 \chapter{Methodology}
+\label{sec:methodology}
+
 \section{Implementing Hologram Synthesis}
 Our implementation of the holographic image viewer included three different methods of holographic image synthesis, one of which was provided in the code base given to us. The ready made synthesis method was holographic stereograph synthesis (HSS), [TODO: explain hss here]. The first synthesis method we implemented was a Fresnel hologram synthesis which is based on the Fresnel diffraction kernel. The second method we implemented was Rayleigh-Sommerfeld synthesis (RSS), which uses Rayleigh-Sommerfeld diffraction kernel. This formula is similar to the Fresnel but has some differences in calculating the hologram.
-\section{Field Propagation}
-\label{sec:methodology}
+
+\section{Retinal Image Formation Simulation}
+To be able to view the synthezised holograms, we had to simulate the viewing process of an eye. This was achieved with a simplified wave propagation model, where human eye is represented by a simple lens and a one-dimensional sensor behind the lens in relation to the viewed hologram.
+
+The transmittance of the lens is described by function~\ref{eq:lens}
+
+\begin{align}
+  \label{eq:lens}
+  T(s) = exp(\frac{-i\pi}{\lambda f}s^2)
+\end{align}
+
+where, $f$ is the focal lenght of the lens.
+
+The propagation of light from the hologram is modeled with a following field function~\ref{eq:field}
+
+\begin{align}
+  \label{eq:field}
+  U(x;z) = \int \mathscr{F} \{U (\xi;z_0) \} (f_\xi) exp[-2 \pi i (f_\xi x + f_z z)] d f_\xi
+\end{align}
+
+where,
+
+\begin{align}
+  \label{eq:focus}
+  f_z = \sqrt{\frac{1}{\lambda^2} - f_\xi ^ 2}
+\end{align}
+
+[TODO: Explain these functions]
+
+The simplified eye model differs from a real human eye in multiple cases. Firstly, sensor of the human eye consists, [TODO: Add stuff]
+
+\subsection{Field propagation implementation}
+The implementation of the field progation was provided to us in the code base, in the $propagateField\_PWD.m$ file. The file starts with defining the basic parameters, which are current location of the eye, distance from lens to sensor, the focal length of the eye and the physical size of the hologram plane.
+
+In the next step the file sets up the more complex parts of the simulation, like size of the sensor, properties of the propagating light and the sampling grid.
+
+Finally the file executes the field propagation simulation, where each of the sections of the synthezied hologram are propagated trough the wave field and the results are of the sensor are sampled to produces an image as PSF which is returned from the function.
+
 
 \chapter{Results}
 \label{sec:results}
 In this section we anaylze the images produced by the implemented model.
 
+From the simulation we attained an image consisting of multiple overlayed PSF images depicting the hologram formed on the simulated sensor. From the image~\ref{fig:psf} we can see that from the samples the $z_f$ value of $-0.4$ produces the sharpest image, since most of the points fall in the origin.
+
+\begin{figure}
+  \label{fig:psf}
+  \centering
+  \includegraphics[width=\columnwidth]{img/psf_hs.eps}
+  \caption{PSF results of the simulation with HS synthesis, with multiple $z_f$ values between $-0.5$ and $-0.3$}
+\end{figure}
+
+\section{Analysis}
+With the multiple PSF images, we performed [TODO: Expalin MTF analysis]
+
 \chapter{Conclusions}
+
 \label{ch:conclusions}
 
 
