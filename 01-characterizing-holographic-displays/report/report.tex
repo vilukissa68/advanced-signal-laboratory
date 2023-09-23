@@ -191,13 +191,17 @@ Finally the file executes the field propagation simulation, where each of the se
 \label{sec:results}
 In this section we anaylze the images produced by the implemented model.
 
-From the simulation we attained an image consisting of multiple overlayed PSF images depicting the hologram formed on the simulated sensor. From the image~\ref{fig:psf} we can see that from the samples the $z_f$ value of $-0.4$ produces the sharpest image, since most of the points fall in the origin.
+From the simulation we attained an image consisting of multiple overlayed PSF images depicting the hologram formed on the simulated sensor. From the image~\ref{fig:psf_multiple_fresnel} we can see that from the samples the $z_f$ value of $-0.42$ produces the sharpest image, since most of the points fall in the origin. This is different from what would be expected, since in ideal situation the sharpest images should form with the same values as the distance to point source, which in our simulation is $-0.4$. When the value of $z_f$ moves away from $-0.42$ we expected the graph to widen, since image formed won't be as sharp and this is reflected in the figure, as the values closer to $-0.42$ produce higher graphs.
+
+We also repeated this for Rayleigh-Sommerfield synthesis and Holographic stereogram synthesis, as shown in figures~\ref{fig:psf_multiple_rs} and~\ref{fig:psf_multiple_hs}. The result for the Rayleigh-Sommerfield synthesis we basically identical, as the sharpest image, was obtained with the value of $-0.42$ and further away values produced wider graphs.
+
+As for the holographic stereogram, the results different, in the sense that the sharpest image was produced with a $z_f$ value of $-0.44$. Also all the $z_f$ values produced blurrier images as the graphs were wider. This would indicate that the holographic stereogram produces overall blurrier holograms.
 
 \begin{figure}
   \label{fig:psf_multiple_fresnel}
   \centering
   \includegraphics[width=\columnwidth]{img/psf_multiple_fresnel.eps}
-  \caption{PSF results of the simulation with fresnel synthesis, with multiple $z_f$ values between $-0.5$ and $-0.3$}
+  \caption{PSF results of the simulation with Fresnel synthesis, with multiple $z_f$ values between $-0.5$ and $-0.3$}
 \end{figure}
 
 \begin{figure}
@@ -213,6 +217,10 @@ From the simulation we attained an image consisting of multiple overlayed PSF im
   \includegraphics[width=\columnwidth]{img/psf_multiple_hs.eps}
   \caption{PSF results of the simulation with holograpic stereograph synthesis, with multiple $z_f$ values between $-0.5$ and $-0.3$}
 \end{figure}
+
+
+\section{MTF Analysis}
+With the multiple PSF images we performed MTF analysis to obtain the value of $z_f$ which would provide the sharpest image
 
 \begin{figure}
   \label{fig:mtf_fresnel}
@@ -236,10 +244,6 @@ From the simulation we attained an image consisting of multiple overlayed PSF im
 \end{figure}
 
 
-
-\section{Analysis}
-With the multiple PSF images, we performed [TODO: Expalin MTF analysis]
-
 \chapter{Conclusions}
 
 \label{ch:conclusions}
@@ -252,6 +256,24 @@ With the multiple PSF images, we performed [TODO: Expalin MTF analysis]
 
 \printbibliography[title=References]
 \addcontentsline{toc}{chapter}{References}
+
+\appendix
+\pagestyle{headings}
+
+
+
+%
+% a) Not-so-handy way, but at least it works
+%
+\def\appA{APPENDIX A. Something extra} % Define the name and numbering manually
+\chapter*{\appA}                       % Create chapter heading
+\markboth{\appA}{\appA}                % Set page header
+\addcontentsline{toc}{chapter}{\appA}  % Include this in TOC
+% Note that \label does not work with unnumbered chapter
+
+Appendices are purely optional.  All appendices must be referred to in
+the body text
+
 
 \end{document}
 
