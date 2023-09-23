@@ -194,11 +194,48 @@ In this section we anaylze the images produced by the implemented model.
 From the simulation we attained an image consisting of multiple overlayed PSF images depicting the hologram formed on the simulated sensor. From the image~\ref{fig:psf} we can see that from the samples the $z_f$ value of $-0.4$ produces the sharpest image, since most of the points fall in the origin.
 
 \begin{figure}
-  \label{fig:psf}
+  \label{fig:psf_multiple_fresnel}
   \centering
-  \includegraphics[width=\columnwidth]{img/psf_hs.eps}
-  \caption{PSF results of the simulation with HS synthesis, with multiple $z_f$ values between $-0.5$ and $-0.3$}
+  \includegraphics[width=\columnwidth]{img/psf_multiple_fresnel.eps}
+  \caption{PSF results of the simulation with fresnel synthesis, with multiple $z_f$ values between $-0.5$ and $-0.3$}
 \end{figure}
+
+\begin{figure}
+  \label{fig:psf_multiple_rs}
+  \centering
+  \includegraphics[width=\columnwidth]{img/psf_multiple_rs.eps}
+  \caption{PSF results of the simulation with Rayleigh-Sommerfield synthesis, with multiple $z_f$ values between $-0.5$ and $-0.3$}
+\end{figure}
+
+\begin{figure}
+  \label{fig:psf_multiple_hs}
+  \centering
+  \includegraphics[width=\columnwidth]{img/psf_multiple_hs.eps}
+  \caption{PSF results of the simulation with holograpic stereograph synthesis, with multiple $z_f$ values between $-0.5$ and $-0.3$}
+\end{figure}
+
+\begin{figure}
+  \label{fig:mtf_fresnel}
+  \centering
+  \includegraphics[width=\columnwidth]{img/mtf_fresnel.eps}
+  \caption{MTF analysis results for Fresnel synthesis}
+\end{figure}
+
+\begin{figure}
+  \label{fig:mtf_rs}
+  \centering
+  \includegraphics[width=\columnwidth]{img/mtf_rs.eps}
+  \caption{MTF analysis results for Rayleigh-Sommerfield synthesis}
+\end{figure}
+
+\begin{figure}
+  \label{fig:mtf_hs}
+  \centering
+  \includegraphics[width=\columnwidth]{img/mtf_hs.eps}
+  \caption{MTF analysis results for Holographic stereograph synthesis}
+\end{figure}
+
+
 
 \section{Analysis}
 With the multiple PSF images, we performed [TODO: Expalin MTF analysis]
