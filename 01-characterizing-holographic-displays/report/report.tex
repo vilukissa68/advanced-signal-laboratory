@@ -142,12 +142,31 @@ In this project we familiarized ourselves with the basics of holographic display
 Hologram synthesis describes the method for forming holographic images in 3d space from a given image. In this assignment, instead of using entire 3d space, the analysis can be simplified by considering only a cross section of the 3d space. The hologram is now represented as a 1D array of complex values. This simplification eases the computational load and also makes the process easier to handle.
 
 \section{Retinal Image Formation}
+In our exploration of holographic displays and their numerical characterization, Retinal Image Formation is a key part of the analysis. This simulation replicates how the human eye perceives visual information. Through this model, we obtain images on the retina, which can be used to analyze the perceived sharpness of the displayed content.
+
+In these simulation tools, the human eye is considered as a camera, with the lens (the pupil) and the retina (the sensor). This simulation involves three key planes: the display (hologram), the lens, and the sensor. We model the pupil as a thin lens with a specific width, influencing how light passes through it.
+
+
 
 \chapter{Methodology}
 \label{sec:methodology}
 
 \section{Implementing Hologram Synthesis}
-Our implementation of the holographic image viewer included three different methods of holographic image synthesis, one of which was provided in the code base given to us. The ready made synthesis method was holographic stereograph synthesis (HSS), [TODO: explain hss here]. The first synthesis method we implemented was a Fresnel hologram synthesis which is based on the Fresnel diffraction kernel. The second method we implemented was Rayleigh-Sommerfeld synthesis (RSS), which uses Rayleigh-Sommerfeld diffraction kernel. This formula is similar to the Fresnel but has some differences in calculating the hologram.
+Our implementation of the holographic image viewer included three different methods of holographic image synthesis, one of which was provided in the code base given to us. The ready made synthesis method was holographic stereograph synthesis (HSS), [TODO: explain hss here]. The first synthesis method we implemented was a Fresnel hologram synthesis which is based on the Fresnel diffraction kernel. Using this kernel to define the 1D field $U(x;0)$ for a single point source at  ($x_p$, $z_p$) as
+
+\begin{align}
+  \label{eq:field}
+  U(x;0) = a_p\frac{exp(j k z_p)}{\sqrt{j \lambda z_p}}exp(jk\frac{(x-x_p)^2}{2z_p}+\phi_p),
+\end{align}
+where $a_p$ is the amplitude of the point source, $\phi_p$ is the relative phase, $\lambda$ is the wavelength of the monochromatic light (i.e. the color, if in visible spectrum) and $k = \frac{2\pi}{\lambda}$ is the wave number.
+
+The second method we implemented was Rayleigh-Sommerfeld synthesis (RSS), which uses Rayleigh-Sommerfeld diffraction kernel. 
+
+\begin{align}
+  \label{eq:field}
+  U(x;0) = a_p\frac{z_p}{\sqrt{j \lambda}[(x-x_p)^2+z_p^2)]^\frac{3}{4}}exp[jk\sqrt{(x-x_p)^2+z_p^2}+\phi_p]
+\end{align}
+This formula is similar to the Fresnel but has some differences in calculating the hologram. 
 
 \section{Retinal Image Formation Simulation}
 To be able to view the synthezised holograms, we had to simulate the viewing process of an eye. This was achieved with a simplified wave propagation model, where human eye is represented by a simple lens and a one-dimensional sensor behind the lens in relation to the viewed hologram.
@@ -189,7 +208,7 @@ Finally the file executes the field propagation simulation, where each of the se
 
 \chapter{Results}
 \label{sec:results}
-In this section we anaylze the images produced by the implemented model.
+In this section we analyze the images produced by the implemented model.
 
 From the simulation we attained an image consisting of multiple overlayed PSF images depicting the hologram formed on the simulated sensor. From the image~\ref{fig:psf_multiple_fresnel} we can see that from the samples the $z_f$ value of $-0.42$ produces the sharpest image, since most of the points fall in the origin. This is different from what would be expected, since in ideal situation the sharpest images should form with the same values as the distance to point source, which in our simulation is $-0.4$. When the value of $z_f$ moves away from $-0.42$ we expected the graph to widen, since image formed won't be as sharp and this is reflected in the figure, as the values closer to $-0.42$ produce higher graphs.
 
