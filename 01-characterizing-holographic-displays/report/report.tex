@@ -136,13 +136,13 @@ These instructions are intended for students of Computer Sciences at the Tampere
 In this report we describe our work with the `Characterizing holographic displays via
 numerical simulations` exercise, for the Advanced Signal Processing Laboratory Course.
 
-In this project we familiarized ourselves with the basics of holographic display, by implementing a part of a holograpics display viewing simulation. We implemented two holographic synthesis methods and a retinal image formation model, by contributing code to a MATLAB codebase given by the course faculty.
+In this project we familiarized ourselves with the basics of holographic display, by implementing a part of a holographics display viewing simulation. We implemented two holographic synthesis methods and a retinal image formation model, by contributing code to a MATLAB codebase given by the course faculty.
 
 \section{Hologram synthesis}
 Hologram synthesis describes the method for forming holographic images in 3d space from a given image. In this assignment, instead of using entire 3d space, the analysis can be simplified by considering only a cross section of the 3d space. The hologram is now represented as a 1D array of complex values. This simplification eases the computational load and also makes the process easier to handle.
 
 \section{Retinal Image Formation}
-In our exploration of holographic displays and their numerical characterization, Retinal Image Formation is a key part of the analysis. This simulation replicates how the human eye perceives visual information. Through this model, we obtain images on the retina, which can be used to analyze the perceived sharpness of the displayed content.
+In the study of holographic displays and their numerical characterization, Retinal Image Formation is a key part of the analysis. This simulation mimics how the human eye perceives visual information. Through this model, we obtain images on the retina, which can be used to analyze the perceived sharpness of the displayed content.
 
 In these simulation tools, the human eye is considered as a camera, with the lens (the pupil) and the retina (the sensor). This simulation involves three key planes: the display (hologram), the lens, and the sensor. We model the pupil as a thin lens with a specific width, influencing how light passes through it.
 
@@ -152,7 +152,16 @@ In these simulation tools, the human eye is considered as a camera, with the len
 \label{sec:methodology}
 
 \section{Implementing Hologram Synthesis}
-Our implementation of the holographic image viewer included three different methods of holographic image synthesis, one of which was provided in the code base given to us. The ready made synthesis method was holographic stereograph synthesis (HSS), [TODO: explain hss here]. The first synthesis method we implemented was a Fresnel hologram synthesis which is based on the Fresnel diffraction kernel. Using this kernel to define the 1D field $U(x;0)$ for a single point source at  ($x_p$, $z_p$) as
+Our implementation of the holographic image viewer included three different methods of holographic image synthesis, one of which was provided in the code base given to us. The ready made synthesis method was holographic stereograph synthesis (HSS), [TODO: explain hss here]. The formula for holographic stereogram synthesis is 
+
+\begin{align}
+  \label{eq:field}
+  U(x;0) = \frac{a_p}{r_p}exp(i 2\pi(f_x(x-x_c))+\phi_p).
+\end{align}
+[is the formula of HSS necessary (and correct)? TODO: explain the function]
+
+
+The first synthesis method we implemented was a Fresnel hologram synthesis which is based on the Fresnel diffraction kernel. Using this kernel to define the 1D field $U(x;0)$ for a single point source at  ($x_p$, $z_p$) as
 
 \begin{align}
   \label{eq:field}
@@ -175,19 +184,19 @@ The transmittance of the lens is described by function~\ref{eq:lens}
 
 \begin{align}
   \label{eq:lens}
-  T(s) = exp(\frac{-i\pi}{\lambda f}s^2)
+  T(s) = exp(\frac{-i\pi}{\lambda f}s^2),
 \end{align}
 
-where, $f$ is the focal lenght of the lens.
+where $f$ is the focal length of the lens.
 
 The propagation of light from the hologram is modeled with a following field function~\ref{eq:field}
 
 \begin{align}
   \label{eq:field}
-  U(x;z) = \int \mathscr{F} \{U (\xi;z_0) \} (f_\xi) exp[-2 \pi i (f_\xi x + f_z z)] d f_\xi
+  U(x;z) = \int \mathscr{F} \{U (\xi;z_0) \} (f_\xi) exp[-2 \pi i (f_\xi x + f_z z)] d f_\xi,
 \end{align}
 
-where,
+where
 
 \begin{align}
   \label{eq:focus}
@@ -196,7 +205,7 @@ where,
 
 [TODO: Explain these functions]
 
-The simplified eye model differs from a real human eye in multiple cases. Firstly, sensor of the human eye consists, [TODO: Add stuff]
+The simplified eye model differs from a real human eye in multiple cases. Firstly, sensor of the human eye consists of two types of photosensitive cells, cones and rods, at the retina of the eyes. The simplified eye model does not usually take interaction and specialization of these two cell types into account, which is an important part of human vision function.
 
 \subsection{Field propagation implementation}
 The implementation of the field progation was provided to us in the code base, in the $propagateField\_PWD.m$ file. The file starts with defining the basic parameters, which are current location of the eye, distance from lens to sensor, the focal length of the eye and the physical size of the hologram plane.
@@ -210,7 +219,7 @@ Finally the file executes the field propagation simulation, where each of the se
 \label{sec:results}
 In this section we analyze the images produced by the implemented model.
 
-The wave propagation function produces a PSF images of the given hologram. These images were plotted as a function of the sensor positions. In the most optimal case allthe values would be in a single pile at the zero coordinated of the sensor, i.e. the center of the sensor. This would mean that all the pixels were percieved at the the best focus. The figures~\ref{fig:psf_single_fresnel} and~\ref{fig:psf_single_rs} so the plots for Fresnel synthesizied hologram and Rayleigh-Sommerfield synthesized hologram. The PSF plots of both of these methods were very similar, with tighlty packed values close to 0. This indicated that these methods, with this given focal length, provides fairly sharp images. The holographic stereogram synthesized hologram produced as significantly less packed PSF plot, as shown in figure~\ref{fig:psf_single_hs}.
+The wave propagation function produces a PSF images of the given hologram. These images were plotted as a function of the sensor positions. In the most optimal case all the values would be in a single pile at the zero coordinated of the sensor, i.e. the center of the sensor. This would mean that all the pixels were perceived at the best focus. The figures~\ref{fig:psf_single_fresnel} and~\ref{fig:psf_single_rs} so the plots for Fresnel synthesizied hologram and Rayleigh-Sommerfield synthesized hologram. The PSF plots of both of these methods were very similar, with tightly packed values close to 0. This indicated that these methods, with this given focal length, provides fairly sharp images. The holographic stereogram synthesized hologram produced as significantly less packed PSF plot, as shown in figure~\ref{fig:psf_single_hs}.
 
 \begin{figure}
   \centering
