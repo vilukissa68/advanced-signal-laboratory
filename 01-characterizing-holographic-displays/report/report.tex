@@ -210,9 +210,32 @@ Finally the file executes the field propagation simulation, where each of the se
 \label{sec:results}
 In this section we analyze the images produced by the implemented model.
 
+The wave propagation function produces a PSF images of the given hologram. These images were plotted as a function of the sensor positions. In the most optimal case allthe values would be in a single pile at the zero coordinated of the sensor, i.e. the center of the sensor. This would mean that all the pixels were percieved at the the best focus. The figures~\ref{fig:psf_single_fresnel} and~\ref{fig:psf_single_rs} so the plots for Fresnel synthesizied hologram and Rayleigh-Sommerfield synthesized hologram. The PSF plots of both of these methods were very similar, with tighlty packed values close to 0. This indicated that these methods, with this given focal length, provides fairly sharp images. The holographic stereogram synthesized hologram produced as significantly less packed PSF plot, as shown in figure~\ref{fig:psf_single_hs}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/psf_single_fresnel.eps}
+  \caption{PSF results of the simulation with Fresnel synthesis}
+  \label{fig:psf_single_fresnel}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/psf_single_rs.eps}
+  \caption{PSF results of the simulation with Rayleigh-Sommerfield synthesis}
+  \label{fig:psf_single_rs}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/psf_single_hs.eps}
+  \caption{PSF results of the simulation with Holgraphic Stereopgram synthesis}
+  \label{fig:psf_single_hs}
+\end{figure}
 
 
 
+\section{PSF analysis}
 From the simulation we attained an image consisting of multiple overlayed PSF images depicting the hologram formed on the simulated sensor. From the image~\ref{fig:psf_multiple_fresnel} we can see that from the samples the $z_f$ value of $-0.42$ produces the sharpest image, since most of the points fall in the origin. This is different from what would be expected, since in ideal situation the sharpest images should form with the same values as the distance to point source, which in our simulation is $-0.4$. When the value of $z_f$ moves away from $-0.42$ we expected the graph to widen, since image formed won't be as sharp and this is reflected in the figure, as the values closer to $-0.42$ produce higher graphs.
 
 We also repeated this for Rayleigh-Sommerfield synthesis and Holographic stereogram synthesis, as shown in figures~\ref{fig:psf_multiple_rs} and~\ref{fig:psf_multiple_hs}. The result for the Rayleigh-Sommerfield synthesis we basically identical, as the sharpest image, was obtained with the value of $-0.42$ and further away values produced wider graphs.
@@ -241,7 +264,11 @@ As for the holographic stereogram, the results different, in the sense that the 
 \end{figure}
 
 \section{MTF Analysis}
-With the multiple PSF images we performed MTF analysis to obtain the value of $z_f$ which would provide the sharpest image. By generating multiple PSF images with different $z_f$ values we were able to obtain multiple MTF values in particular spectral frequency. We chose spectral frequency of 15 as suggested in the instructions. We fitted a 7th degree polynomial function to datapoints of MTF values as a function of $z_f$ values. We chose to use 7th degree polynomial function, since after some experimentation, it seemed to visually be the best match for our datapoints. From the fitted function we could more confidentally determine the depth at which value of $z_f$ the image would be the sharpest. For the Fresnel and Rayleigh-Sommerield synthezied holograms the values was $-0.4190$ and for the stereogram synthesis the value was $-0.446$.
+With the multiple PSF images we performed MTF analysis to obtain the value of $z_f$ which would provide the sharpest image. By generating multiple PSF images with different $z_f$ values we were able to obtain multiple MTF values in particular spectral frequency. We chose spectral frequency of 15 as suggested in the instructions.
+
+We fitted a 7th degree polynomial function to datapoints of MTF values as a function of $z_f$ values. We chose to use 7th degree polynomial function, since after some experimentation, it seemed to visually be the best match for our datapoints. From the fitted function we could more confidentally determine the depth at which value of $z_f$ the image would be the sharpest. For the Fresnel and Rayleigh-Sommerield synthezied holograms the values was $-0.4190$ and for the stereogram synthesis the value was $-0.446$, as can be seen from figures~\ref{fig:mtf_fresnel}, \ref{fig:mtf_rs} and~\ref{fig:mtf_hs}.
+
+The results where closely in line with the observations we made from the overlayed PSF images. The value optimal $z_f$ value in our system is slightly offset from the expected optimal value of $-0.4$, which corresponds to the point source of the hologarm. This offset might be caused by bad approximations in the hologram synthesis or bad assumptions during the wave field propagation. Our fitting function might not be optimal for this case.
 
 \begin{figure}
   \centering
