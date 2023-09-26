@@ -277,7 +277,29 @@ With the multiple PSF images we performed MTF analysis to obtain the value of $z
 
 We fitted a 7th degree polynomial function to datapoints of MTF values as a function of $z_f$ values. We chose to use 7th degree polynomial function, since after some experimentation, it seemed to visually be the best match for our datapoints. From the fitted function we could more confidentally determine the depth at which value of $z_f$ the image would be the sharpest. For the Fresnel and Rayleigh-Sommerield synthezied holograms the values was $-0.4190$ and for the stereogram synthesis the value was $-0.446$, as can be seen from figures~\ref{fig:mtf_fresnel}, \ref{fig:mtf_rs} and~\ref{fig:mtf_hs}.
 
-The results where closely in line with the observations we made from the overlayed PSF images. The value optimal $z_f$ value in our system is slightly offset from the expected optimal value of $-0.4$, which corresponds to the point source of the hologarm. This offset might be caused by bad approximations in the hologram synthesis or bad assumptions during the wave field propagation. Our fitting function might not be optimal for this case.
+The results where closely in line with the observations we made from the overlayed PSF images. The value optimal $z_f$ value in our system is slightly offset from the expected optimal value of $-0.4$, which corresponds to the point source of the hologarm. This offset might be caused by bad approximations in the hologram synthesis or bad assumptions during the wave field propagation. Our fitting function might not be optimal for this case. The coefficients of the fitted functions are shown in table~\ref{tab:coeffs}
+
+\begin{table}
+  \centering
+  \label{tab:coeffs}
+  \caption{Coefficients for 7th degree polynomial function used in MTF analysis. $a_0 + a_1*x + a_2*x^2 + a_3*x^3 ... a_7*x^7$}
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  Coefficients & Fresnel & RSS & HSS \\ \hline
+  $a_0$ & $9.853*10^4$ & $9.851*10^4$ & $349.3$ \\\hline
+  $a_1$ & $1.806*10^6$ & $1.805*10^4$ & $-2982$ \\\hline
+  $a_2$ & $1.41*10^7$ & $1.41*10^7$ & $-9.731*10^4$ \\\hline
+  $a_3$ & $6.079*10^7$ & $6.077*10^7$ & $-7.416*10^5$ \\\hline
+  $a_4$ & $1.563*10^8$ & $1.562*10^8$ & $-2.741*10^6$ \\\hline
+  $a_5$ & $2.395*10^8$ & $2.395*10^7$ & $-5.488*10^6$ \\\hline
+  $a_6$ & $2.727*10^7$ & $2.027*10^8$ & $-5.738*10^6$ \\\hline
+  $a_7$ & $7.307*10^7$ & $7.305*10^7$ & $-2.464*10^6$ \\
+  \hline
+\end{tabular}
+\end{table}
+
+
+
 
 \begin{figure}
   \centering
