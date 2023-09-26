@@ -155,7 +155,7 @@ In these simulation tools, the human eye is considered as a camera, with the len
 Our implementation of the holographic image viewer included three different methods of holographic image synthesis, one of which was provided in the code base given to us. The ready made synthesis method was holographic stereograph synthesis (HSS), [TODO: explain hss here]. The formula for holographic stereogram synthesis is 
 
 \begin{align}
-  \label{eq:field}
+  \label{eq:hss}
   U(x;0) = \frac{a_p}{r_p}exp(i 2\pi(f_x(x-x_c))+\phi_p).
 \end{align}
 [is the formula of HSS necessary (and correct)? TODO: explain the function]
@@ -164,7 +164,7 @@ Our implementation of the holographic image viewer included three different meth
 The first synthesis method we implemented was a Fresnel hologram synthesis which is based on the Fresnel diffraction kernel. Using this kernel to define the 1D field $U(x;0)$ for a single point source at  ($x_p$, $z_p$) as
 
 \begin{align}
-  \label{eq:field}
+  \label{eq:fresnel}
   U(x;0) = a_p\frac{exp(j k z_p)}{\sqrt{j \lambda z_p}}exp(jk\frac{(x-x_p)^2}{2z_p}+\phi_p),
 \end{align}
 where $a_p$ is the amplitude of the point source, $\phi_p$ is the relative phase, $\lambda$ is the wavelength of the monochromatic light (i.e. the color, if in visible spectrum) and $k = \frac{2\pi}{\lambda}$ is the wave number.
@@ -172,7 +172,7 @@ where $a_p$ is the amplitude of the point source, $\phi_p$ is the relative phase
 The second method we implemented was Rayleigh-Sommerfeld synthesis (RSS), which uses Rayleigh-Sommerfeld diffraction kernel. 
 
 \begin{align}
-  \label{eq:field}
+  \label{eq:rss}
   U(x;0) = a_p\frac{z_p}{\sqrt{j \lambda}[(x-x_p)^2+z_p^2)]^\frac{3}{4}}exp[jk\sqrt{(x-x_p)^2+z_p^2}+\phi_p]
 \end{align}
 This formula is similar to the Fresnel but has some differences in calculating the hologram. 
@@ -304,6 +304,8 @@ The results where closely in line with the observations we made from the overlay
 \chapter{Conclusions}
 This report described the work done for `Characterizing holographic displays via
 numerical simulations` laboratory assignment. During which we learned about basics of holographics synthesis and wave field propagation, by implementing a Frensel synthesis and Rayleigh-Sommerfield synthesis methods in MATLAB as a part of hologram viewing simulation, as well as examining an existing implementation of holographic stereogram synthesis method. We used PSF image based analysis to demonstrate the differences in image quality between these methods.
+
+Based on the analysis results we could conclude that for this particular simulation the Fresnel synthesis provided, the sharpest images, closely followed by the Rayleigh-Sommerfield synthesis. The holographic stereogram provided the worst results. It should be noted that these results are only applicable for this particular simulation. For example in 3D space the results might be different.
 
 
 \label{ch:conclusions}
