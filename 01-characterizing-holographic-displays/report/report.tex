@@ -187,7 +187,9 @@ The transmittance of the lens is described by function~\ref{eq:lens}
   T(s) = exp(\frac{-i\pi}{\lambda f}s^2),
 \end{align}
 
-where $f$ is the focal length of the lens.
+where $f$ is the focal length of the lens. The role of the focal length in eye model is to determine the distance over which the lens can effectively focus light. More specifically, it is the distance from the lens where parallel rays of light converge to a single point called focal point.
+
+The simplified eye model differs from a real human eye in multiple cases. Firstly, sensor of the human eye consists of two types of photosensitive cells, cones and rods, at the retina of the eyes. The simplified eye model does not usually take interaction and specialization of these two cell types into account, which is an important part of human vision function.
 
 The propagation of light from the hologram is modeled with a following field function~\ref{eq:field}
 
@@ -195,17 +197,13 @@ The propagation of light from the hologram is modeled with a following field fun
   \label{eq:field}
   U(x;z) = \int \mathscr{F} \{U (\xi;z_0) \} (f_\xi) exp[-2 \pi i (f_\xi x + f_z z)] d f_\xi,
 \end{align}
-
 where
 
 \begin{align}
   \label{eq:focus}
-  f_z = \sqrt{\frac{1}{\lambda^2} - f_\xi ^ 2}
+  f_z = \sqrt{\frac{1}{\lambda^2} - f_\xi ^ 2}.
 \end{align}
-
-[TODO: Explain these functions]
-
-The simplified eye model differs from a real human eye in multiple cases. Firstly, sensor of the human eye consists of two types of photosensitive cells, cones and rods, at the retina of the eyes. The simplified eye model does not usually take interaction and specialization of these two cell types into account, which is an important part of human vision function.
+In function~\ref{eq:field} the scalar optical field $U(\xi;z_0)$ is propagated using a technique called plane wave decomposition. This means that for each spatial frequency component $f_\xi$ in the field, a plane wave is propagated with its corresponding complex amplitude and sampled at the desired secondary positions $(x, z)$. The contributions of each plane wave are combined to obtain the total field $U(x;z)$.
 
 \subsection{Field propagation implementation}
 The implementation of the field progation was provided to us in the code base, in the $propagateField\_PWD.m$ file. The file starts with defining the basic parameters, which are current location of the eye, distance from lens to sensor, the focal length of the eye and the physical size of the hologram plane.
