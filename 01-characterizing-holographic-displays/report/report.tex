@@ -152,13 +152,13 @@ In these simulation tools, the human eye is considered as a camera, with the len
 \label{sec:methodology}
 
 \section{Implementing Hologram Synthesis}
-Our implementation of the holographic image viewer included three different methods of holographic image synthesis, one of which was provided in the code base given to us. The ready made synthesis method was holographic stereograph synthesis (HSS), [TODO: explain hss here]. The formula for holographic stereogram synthesis is 
+Our implementation of the holographic image viewer included three different methods of holographic image synthesis, one of which was provided in the code base given to us. The ready made synthesis method was holographic stereograph synthesis (HSS). This method uses holography to create three-dimensional images that can be viewed with a stereo effect, providing a depth perception for the observer. The formula for holographic stereogram synthesis is 
 
 \begin{align}
   \label{eq:hss}
-  U(x;0) = \frac{a_p}{r_p}exp(i 2\pi(f_x(x-x_c))+\phi_p).
+  U(x;0) = \frac{a_p}{r_p}exp(i 2\pi(f_x(x-x_c))+\phi_p),
 \end{align}
-[is the formula of HSS necessary (and correct)? TODO: explain the function]
+where $a_p$ is the amplitude of the point source, $r_p$ is Euclidean distance between the point source and the hogel center, $f_x$ is spatial frequency, $x_c$ is hogel center coordinate and $\phi_p$ is the relative phase.
 
 
 The first synthesis method we implemented was a Fresnel hologram synthesis which is based on the Fresnel diffraction kernel. Using this kernel to define the 1D field $U(x;0)$ for a single point source at  ($x_p$, $z_p$) as
