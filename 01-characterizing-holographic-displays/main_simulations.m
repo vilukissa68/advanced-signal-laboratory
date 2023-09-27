@@ -72,11 +72,33 @@ else
         case 'Fresnel'
             % ADD YOUR CODE HERE
             % obj_in = ...
+            for ii=1:num_seg
+                z = z_c-z_p;
+                k = (2*pi)/lambda;
+                x_c = x_c_ar(ii);
+                seg_ind_x = round(x_c/X_x+N/2)-seg_size_px/2+1:round(x_c/X_x+N/2)+seg_size_px/2;
+                seg_x = x(seg_ind_x); % pixels x coordinates of the hogel
+                obj_in(seg_ind_x) = obj_in(seg_ind_x) + ...
+                    a_p * exp(1j * k * z)/(sqrt(1j * lambda * z)) * ...
+                    exp(1j * k * ((seg_x-x_p).^2)/(2*z)+phi_p);
+            end
             
             obj_in = obj_in.*spherical_illum_comp; % for the spherical illumination, do not remove!
         case 'RS'
             % ADD YOUR CODE HERE
             % obj_in = ...
+            for ii=1:num_seg
+                z = z_c-z_p;
+                k = (2*pi)/lambda;
+                x_c = x_c_ar(ii);
+
+                seg_ind_x = round(x_c/X_x+N/2)-seg_size_px/2+1:round(x_c/X_x+N/2)+seg_size_px/2;
+                seg_x = x(seg_ind_x); % pixels x coordinates of the hogel
+
+                obj_in(seg_ind_x) = obj_in(seg_ind_x) + ...
+                    a_p * ((z)./(sqrt(1j * lambda) .* ((seg_x-x_p).^2 + z.^2)).^(3/4)) ...
+                    .* exp(1j*k * sqrt((seg_x-x_p).^2+z.^2) + phi_p);
+            end
             
             obj_in = obj_in.*spherical_illum_comp; % for the spherical illumination, do not remove!
         case 'HS'
@@ -112,18 +134,54 @@ obj_in = obj_in.*spherical_illum;  % the object field just after the hologram, w
 
 % Plot the PSF samples
 % ADD YOUR CODE HERE
+figure
+plot(sensor, PSF)
+title('PSF samples as a function of sensor sample positions when z_f = -0.400m')
+xlabel('Sensor positions (m)')
+ylabel('PSF values')
 
 %% Analysis of results
+z_f_s = [-0.5:0.02:-0.3]
+MTF_s = []
 
-MTF = abs(fftshift(fft(PSF))) / sum(PSF); % (normalized) MTF as a function spatial frequency
+figure; hold on
+title('PSF samples as a function of sensor sample positions for multiple value of z_f')
+xlabel('Sensor positions (m)')
+ylabel('PSF values')
+legend_labels = cell(length(z_f_s), 1);
+for i = 1:length(z_f_s)
+    zz = z_f_s(i);
+    legend_labels{i} = [num2str(zz)];
 
-% Spatial frequency at which the MTF is to be evaluated
-mtf_freq_c = 15; % cpd
-mtf_freq_range = mtf_freq_c + [-0.5 0.5]*mtf_freq_c/4; % cpd (a small range of frequencies)
+    [PSF, sensor, X_u] = propagateField_PWD(obj_in, lambda, X_x, N, eye_loc, zz, D_eye);
+    plot(sensor, PSF, 'Color', [rand,rand,rand]); hold on
 
-ind = round(length(MTF)/2+ length(MTF)/2 * 2*X_u./(2*tand(0.5)*25e-3./mtf_freq_range)); % indices corresponding to the frequency range
-mtf_at_freq_c = mean(MTF(ind(1):ind(2))); % integrated over a small range around the exact frequency
+    MTF = abs(fftshift(fft(PSF))) / sum(PSF); % (normalized) MTF as a function spatial frequency
+    % Spatial frequency at which the MTF is to be evaluated
+    mtf_freq_c = 15; % cpd
+    mtf_freq_range = mtf_freq_c + [-0.5 0.5]*mtf_freq_c/4; % cpd (a small range of frequencies)
 
+    ind = round(length(MTF)/2+ length(MTF)/2 * 2*X_u./(2*tand(0.5)*25e-3./mtf_freq_range)); % indices corresponding to the frequency range
+    mtf_at_freq_c = mean(MTF(ind(1):ind(2)));
+    MTF_s = [MTF_s, mtf_at_freq_c];
+end
+legend(legend_labels)
+hold off
+
+f = fit(z_f_s.', MTF_s.', 'poly7')
+figure
+plot(f, z_f_s.', MTF_s.'); hold on
+lx = [-0.5:0.001:-0.3];
+A = f(lx'); % Create a column array
+[maxValue, maxIndex] = max(A)
+max_z = lx(maxIndex)
+plot(max_z, f(max_z), 'bo');
+title('MTF values as a funtion of z_f at a spatial frequency of 15')
+xlabel('z_f')
+ylabel('MTF')
+legend({'MTF data points', 'Fitted function', 'Maximum value'})
+text(max_z + abs(max_z*0.01), f(max_z), sprintf('(%g, %g)', max_z, f(max_z)))
+hold off
 % TASK:
 % The variable mtf_at_freq_c contains a single value. Repeat the simulations
 % for different z_f values, fit a function to the data points and plot the
