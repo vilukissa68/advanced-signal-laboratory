@@ -1,0 +1,19 @@
+------------ Options -------------
+batch_size: 16
+batchnorm: True
+dataroot: 
+dataset: cifar10
+device: cpu
+isTrain: True
+isize: 64
+layers16: 2
+layers32: 2
+layers64: 1
+layers8: 1
+model: BaseNetwork
+name: BaseNetwork/cifar10
+nc: 3
+ndf: 32
+outf: ./output
+verbose: False
+-------------- End ----------------
