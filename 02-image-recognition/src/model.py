@@ -24,8 +24,32 @@ class BaseNetwork(nn.Module):
         super(BaseNetwork, self).__init__()
 
         assert opt.isize == 64, "only support 64x64 input images"
-
+        self.opt = opt
+        self.epoch = 0
+        self.total_steps = 0
+        self.loss = 0
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         layers = []
+
+        def __downsampling_block(opt):
+            if opt.batchnorm:
+                return nn.Sequential(
+                    nn.LeakyReLU(0.2, inplace=True),
+                    nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=2, padding=1, bias=False),
+                    nn.BatchNorm2d(opt.ndf))
+            return nn.Sequential(
+                nn.LeakyReLU(0.2, inplace=True),
+                nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=2, padding=1, bias=False))
+
+        def __conv_block(opt):
+            if opt.batchnorm:
+                return nn.Sequential(
+                    nn.LeakyReLU(0.2, inplace=True),
+                    nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=1, padding='same', bias=False),
+                    nn.BatchNorm2d(opt.ndf))
+            return nn.Sequential(
+                nn.LeakyReLU(0.2, inplace=True),
+                nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=1, padding='same', bias=False))
 
         # Input layer
         # 64x64x32
@@ -33,29 +57,29 @@ class BaseNetwork(nn.Module):
 
         # Extra 64x64x32 layers (no downsampling)
         for t in range(opt.layers64 - 1):
-            layers.append(self.__conv_block(opt))
+            layers.append(__conv_block(opt))
 
         # 32x32x32
-        layers.append(self.__downsampling_block(opt))
+        layers.append(__downsampling_block(opt))
 
         # Extra 32x32x32 layers (no downsampling)
         for t in range(opt.layers32 - 1):
-            layers.append(self.__conv_block(opt))
+            layers.append(__conv_block(opt))
 
         # 16x16x32
-        layers.append(self.__downsampling_block(opt))
+        layers.append(__downsampling_block(opt))
 
         # Extra 16x16x32 layers (no downsampling)
         for t in range(opt.layers16 - 1):
-            layers.append(self.__conv_block(opt))
+            layers.append(__conv_block(opt))
 
 
         # 8x8x32
-        layers.append(self.__downsampling_block(opt))
+        layers.append(__downsampling_block(opt))
 
         # Extra 8x8x32 layers (no downsampling)
         for t in range(opt.layers8 - 1):
-            layers.append(self.__conv_block(opt))
+            layers.append(__conv_block(opt))
 
         # Flatten
         layers.append(nn.Flatten())
@@ -71,26 +95,49 @@ class BaseNetwork(nn.Module):
 
         self.layers = nn.Sequential(*layers)
 
+        # Initialize inputs and ground truth
+        self.input_tensor = torch.empty(size=(self.opt.batch_size, self.opt.nc, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
+        self.gt = torch.empty(size=(self.opt.batch_size,), dtype=torch.float32, device=self.device)
+
+        # Optimizer
+        self.optimizer = Adam(self.parameters(), lr=opt.lr, betas=(opt.beta1, opt.beta2))
+
+        # Loss function
+        self.criterion = nn.BCELoss()
+
 
     def forward(self, input):
         return self.layers(input)
 
-    def __downsampling_block(self, opt):
-        if opt.batchnorm:
-            return nn.Sequential(
-                nn.LeakyReLU(0.2, inplace=True),
-                nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=2, padding=1, bias=False),
-                nn.BatchNorm2d(opt.ndf))
-        return nn.Sequential(
-            nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=2, padding=1, bias=False))
+    def set_input(self, data):
+        '''Set input per batch'''
+        with torch.no_grad():
+            self.input_tensor.resize_(data[0].size()).copy_(data[0])
+            self.gt.resize_(data[1].size()).copy_(data[1])
 
-    def __conv_block(self, opt):
-        if opt.batchnorm:
-            return nn.Sequential(
-                nn.LeakyReLU(0.2, inplace=True),
-                nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=1, padding='same', bias=False),
-                nn.BatchNorm2d(opt.ndf))
-        return nn.Sequential(
-            nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=1, padding='same', bias=False))
+    def optimize_parameters(self):
+        '''Optimize parameters per batch'''
+        self.optimizer.zero_grad()
+        prediction = self.forward(self.input_tensor).squeeze(1)
+        loss = self.criterion(prediction, self.gt.float())
+        loss.backward()
+        self.optimizer.step()
+        self.loss += loss.item()
+
+
+    def train_epoch(self, dataloader):
+        '''Train model per epoch'''
+        for i, data in enumerate(dataloader, 0):
+            print(f'Batch {i} total steps {self.total_steps}')
+            self.total_steps += self.opt.batch_size
+            self.set_input(data)
+            self.optimize_parameters()
+
+
+    def train(self, data_loader):
+        '''Train model for opt.epochs'''
+        print(f'Start training at {datetime.datetime.now()}')
+        for self.epoch in range(0, self.opt.epochs):
+            self.train_epoch(data_loader)
+            print(f'Epoch {self.epoch} loss: {self.loss}')
+            self.loss = 0.0

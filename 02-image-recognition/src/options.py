@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import os
-import torch
+import pathlib
 
 # pylint: disable=C0103,C0301,R0903,W0622
 
@@ -25,7 +25,15 @@ class Options():
         self.parser.add_argument('--name', type=str, default='experiment_name', help='name of the experiment')
         self.parser.add_argument('--model', type=str, default='BaseNetwork', help='chooses which model to use')
         self.parser.add_argument('--dataset', default='cifar10', help='folder | cifar10 | mnist ')
-        self.parser.add_argument('--dataroot', default='', help='path to dataset')
+        self.parser.add_argument('--dataroot', default='data/GENKI-R2009a/Subsets/GENKI-4K/', help='relative from project root path to dataset')
+        self.parser.add_argument('--images_file', default='GENKI-4K_Images.txt', help='Name of image file')
+        self.parser.add_argument('--labels_file', default='GENKI-4K_Labels.txt', help='Name of the labels file')
+        self.parser.add_argument('--serialization_target_dir', default='serialized', help='where to put serialized data')
+        self.parser.add_argument('--serialization_source_dir', default='files', help='source images for serialization')
+        self.parser.add_argument('--key_classes', default='label', help='key for class')
+        self.parser.add_argument('--key_features', default='features', help='key for features')
+        self.parser.add_argument('--load_into_memory', type=bool, default=True, help='load inputs in to memory')
+        self.parser.add_argument('--num_workers', type=int, default=1, help='number of of dataloading workers')
 
         # Model
         self.parser.add_argument('--isize', type=int, default=64, help='input image size.')
@@ -36,11 +44,14 @@ class Options():
         self.parser.add_argument('--layers16', type=int, default=2, help='16x16 layer count')
         self.parser.add_argument('--layers8', type=int, default=1, help='8x8 layer count')
         self.parser.add_argument('--batchnorm', type=bool, default=True, help='use batch normalization')
+        self.parser.add_argument('--beta1', type=int, default=0.5, help='beta1')
+        self.parser.add_argument('--beta2', type=int, default=0.999, help='beta2')
+        self.parser.add_argument('--lr', type=int, default=0.002, help='learning rate')
 
-
-        ##
         # Train
         self.parser.add_argument('--batch_size', type=int, default=16, help='batch size')
+        self.parser.add_argument('--train_split', type=int, default=0.8, help='train-to-test split division')
+        self.parser.add_argument('--epochs', type=int, default=50, help='number of epochs to train')
         self.isTrain = True
 
     def parse(self):
@@ -49,6 +60,15 @@ class Options():
 
         self.opt = self.parser.parse_args()
         self.opt.isTrain = self.isTrain   # train or test
+
+        self.opt.root = pathlib.Path(__file__).parents[1]
+        self.opt.datadir = self.opt.root / self.opt.dataroot
+
+        # Concatenate to global paths
+        self.opt.images_file = self.opt.datadir / self.opt.images_file
+        self.opt.labels_file = self.opt.datadir / self.opt.labels_file
+        self.opt.serialization_target_dir = self.opt.datadir / self.opt.serialization_target_dir
+        self.opt.serialization_source_dir = self.opt.datadir / self.opt.serialization_source_dir
 
         args = vars(self.opt)
 
