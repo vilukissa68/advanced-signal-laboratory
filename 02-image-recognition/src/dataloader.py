@@ -7,6 +7,8 @@ from torchvision import transforms
 from torchvision.io import read_image
 from utils import show_image
 
+excluded = [2346, 3975]
+
 def preprocess(image, opt):
     transformation = transforms.Resize((opt.isize, opt.isize))
     return transformation(image)
@@ -40,8 +42,11 @@ def serialize_all_in_dir(opt):
 
     no_files = 0
     for n, label in enumerate(labels):
+        if n + 1 in excluded:
+            continue
         file_name = "file{}.jpg".format(str(n + 1).zfill(4))
         image_path = opt.serialization_source_dir / file_name
+        print(image_path)
         image = preprocess(read_image(str(image_path)), opt)
         file_name = file_name.replace(".jpg", ".pickle")
         with open(opt.serialization_target_dir / file_name, 'wb') as f:
