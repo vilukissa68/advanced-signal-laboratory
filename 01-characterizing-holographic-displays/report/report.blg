@@ -1,9 +1,17 @@
 [0] Config.pm:307> INFO - This is Biber 2.19
 [0] Config.pm:310> INFO - Logfile is 'report.blg'
-[55] biber:340> INFO - === Fri Sep 15, 2023, 11:56:08
-[70] Biber.pm:419> INFO - Reading 'report.bcf'
-[125] Biber.pm:979> INFO - Found 0 citekeys in bib section 0
-[136] bbl.pm:660> INFO - Writing 'report.bbl' with encoding 'UTF-8'
-[136] bbl.pm:763> INFO - Output to report.bbl
-[136] Biber.pm:131> WARN - The file 'report.bcf' does not contain any citations!
-[136] Biber.pm:133> INFO - WARNINGS: 1
+[55] biber:340> INFO - === Tue Oct  3, 2023, 13:44:32
+[69] Biber.pm:419> INFO - Reading 'report.bcf'
+[125] Biber.pm:979> INFO - Found 2 citekeys in bib section 0
+[135] Biber.pm:4419> INFO - Processing section 0
+[144] Biber.pm:4610> INFO - Looking for bibtex file 'references.bib' for section 0
+[145] bibtex.pm:1713> INFO - LaTeX decoding ...
+[151] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
+[185] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[185] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[185] Biber.pm:4239> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[185] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[187] bbl.pm:660> INFO - Writing 'report.bbl' with encoding 'UTF-8'
+[188] bbl.pm:763> INFO - Output to report.bbl
+[189] Biber.pm:131> WARN - legacy month field 'August' in entry 'labassignment' is not an integer - this will probably not sort properly.
+[189] Biber.pm:133> INFO - WARNINGS: 1

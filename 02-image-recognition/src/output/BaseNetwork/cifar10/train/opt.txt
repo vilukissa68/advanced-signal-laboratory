@@ -19,7 +19,7 @@ layers32: 2
 layers64: 1
 layers8: 1
 load_into_memory: True
-lr: 0.002
+lr: 0.001
 model: BaseNetwork
 name: BaseNetwork/cifar10
 nc: 3

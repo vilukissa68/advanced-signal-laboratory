@@ -64,8 +64,7 @@ autocite=inline
 \begin{flushright}  
     \begin{spacing}{1.0}
       \textsf{Faculty of Information Technology and Communication Sciences (ITC)\\
-      \@thesistype\\
-      September 2023}
+      \@thesistype\\}
     \end{spacing}
 \end{flushright}
 
@@ -86,7 +85,7 @@ autocite=inline
 \@thesistype\\
 Tampere University\\
 Master’s Degree Programme in Signal Processing\\
-September 2023
+October 2023 \\
 \end{spacing}
 \noindent\rule{12cm}{0.4pt}
 
@@ -172,7 +171,7 @@ The second method we implemented was Rayleigh-Sommerfeld synthesis (RSS), which 
   \label{eq:rss}
   U(x;0) = a_p\frac{z_p}{\sqrt{j \lambda}[(x-x_p)^2+z_p^2)]^\frac{3}{4}}exp[jk\sqrt{(x-x_p)^2+z_p^2}+\phi_p]
 \end{align}
-This formula is similar to the Fresnel but has some differences in calculating the hologram. 
+This formula is similar to the Fresnel but has some differences in calculating the hologram. Fresnel and RSS synthesis differ from the HSS synthesis by not using Euclidian distance or spatial frequency.
 
 \section{Retinal Image Formation Simulation}
 To be able to view the synthezised holograms, we had to simulate the viewing process of an eye. This was achieved with a simplified wave propagation model, where human eye is represented by a simple lens and a one-dimensional sensor behind the lens in relation to the viewed hologram.
@@ -200,7 +199,7 @@ where
   \label{eq:focus}
   f_z = \sqrt{\frac{1}{\lambda^2} - f_\xi ^ 2}.
 \end{align}
-In function~\ref{eq:field} the scalar optical field $U(\xi;z_0)$ is propagated using a technique called plane wave decomposition. This means that for each spatial frequency component $f_\xi$ in the field, a plane wave is propagated with its corresponding complex amplitude and sampled at the desired secondary positions $(x, z)$. The contributions of each plane wave are combined to obtain the total field $U(x;z)$.
+In function~\ref{eq:field} the scalar optical field $U(\xi;z_0)$ is propagated using a technique called plane wave decomposition. This means that for each spatial frequency component $f_\xi$ in the field, a plane wave is propagated with its corresponding complex amplitude and sampled at the desired secondary positions $(x, z)$. The contributions of each plane wave are combined to obtain the total field $U(x;z)$.~~\cite{labassignment}\cite{goodman2005introduction}
 
 \subsection{Field propagation implementation}
 The implementation of the field progation was provided to us in the code base, in the $propagateField\_PWD.m$ file. The file starts with defining the basic parameters, which are current location of the eye, distance from lens to sensor, the focal length of the eye and the physical size of the hologram plane.
@@ -336,24 +335,6 @@ In conclusion we were able to implement the required functionality in the simula
 
 \printbibliography[title=References]
 \addcontentsline{toc}{chapter}{References}
-
-\appendix
-\pagestyle{headings}
-
-
-
-%
-% a) Not-so-handy way, but at least it works
-%
-\def\appA{APPENDIX A. Something extra} % Define the name and numbering manually
-\chapter*{\appA}                       % Create chapter heading
-\markboth{\appA}{\appA}                % Set page header
-\addcontentsline{toc}{chapter}{\appA}  % Include this in TOC
-% Note that \label does not work with unnumbered chapter
-
-Appendices are purely optional.  All appendices must be referred to in
-the body text
-
 
 \end{document}
 

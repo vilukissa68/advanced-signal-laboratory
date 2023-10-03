@@ -11,4 +11,3 @@
 \contentsline {section}{\numberline {3.2}MTF Analysis}{5}{section.3.2}%
 \contentsline {chapter}{\numberline {4}Conclusions}{14}{chapter.4}%
 \contentsline {chapter}{References}{15}{chapter.4}%
-\contentsline {chapter}{APPENDIX A. Something extra}{15}{chapter.4}%

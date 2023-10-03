@@ -16,5 +16,60 @@
   {}
 \endgroup
 
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{goodman2005introduction}{article}{}
+      \name{author}{1}{}{%
+        {{hash=715ae9f4b2b2a8e252870bb9ebf7884c}{%
+           family={Goodman},
+           familyi={G\bibinitperiod},
+           given={Joseph\bibnamedelima W},
+           giveni={J\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \strng{namehash}{715ae9f4b2b2a8e252870bb9ebf7884c}
+      \strng{fullhash}{715ae9f4b2b2a8e252870bb9ebf7884c}
+      \strng{bibnamehash}{715ae9f4b2b2a8e252870bb9ebf7884c}
+      \strng{authorbibnamehash}{715ae9f4b2b2a8e252870bb9ebf7884c}
+      \strng{authornamehash}{715ae9f4b2b2a8e252870bb9ebf7884c}
+      \strng{authorfullhash}{715ae9f4b2b2a8e252870bb9ebf7884c}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Introduction to Fourier optics, 3rd ed., by JW Goodman. Englewood, CO: Roberts \& Co. Publishers, 2005}
+      \field{title}{Introduction to Fourier optics}
+      \field{volume}{1}
+      \field{year}{2005}
+      \keyw{fourier optics}
+    \endentry
+    \entry{labassignment}{manual}{}
+      \name{author}{1}{}{%
+        {{hash=2d3b1aecb6dcbb4f92c2458f6f4bdd11}{%
+           family={Mäkinen},
+           familyi={M\bibinitperiod},
+           given={Jani},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Tampere University}%
+      }
+      \strng{namehash}{2d3b1aecb6dcbb4f92c2458f6f4bdd11}
+      \strng{fullhash}{2d3b1aecb6dcbb4f92c2458f6f4bdd11}
+      \strng{bibnamehash}{2d3b1aecb6dcbb4f92c2458f6f4bdd11}
+      \strng{authorbibnamehash}{2d3b1aecb6dcbb4f92c2458f6f4bdd11}
+      \strng{authornamehash}{2d3b1aecb6dcbb4f92c2458f6f4bdd11}
+      \strng{authorfullhash}{2d3b1aecb6dcbb4f92c2458f6f4bdd11}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{8}
+      \field{note}{Laboratory assignment instructions}
+      \field{title}{Characterizing holographic displays via numerical simulations}
+      \field{year}{2023}
+    \endentry
+  \enddatalist
+\endrefsection
 \endinput
 

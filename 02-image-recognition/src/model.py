@@ -94,7 +94,7 @@ class BaseNetwork(nn.Module):
         # Vectorize 1x128
         layers.append(nn.Linear(128, 1, bias=False))
 
-        # Prediction
+        # Prediction not needed since we use BCEWithLogitsLoss
         #layers.append(nn.Sigmoid())
 
         self.layers = nn.Sequential(*layers)
