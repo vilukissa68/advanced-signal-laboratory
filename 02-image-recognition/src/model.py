@@ -9,9 +9,10 @@ import torch.nn as nn
 import numpy as np
 import torchvision.transforms as transforms
 from torch.utils.tensorboard import SummaryWriter
-from torch.optim import Adam, AdamW
+from torch.optim import Adam, AdamW, SGD
 from torchmetrics.classification import AUROC
 from sklearn.metrics import roc_curve, auc, average_precision_score, f1_score
+from utils import show_image, get_metrics, precision, accuracy, recall, f1_score
 
 
 # Flags
@@ -28,6 +29,7 @@ class BaseNetwork(nn.Module):
         self.epoch = 0
         self.total_steps = 0
         self.loss = 0
+        self.best_accuracy = 0
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         layers = []
 
@@ -35,11 +37,13 @@ class BaseNetwork(nn.Module):
             if opt.batchnorm:
                 return nn.Sequential(
                     nn.LeakyReLU(0.2, inplace=True),
-                    nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=2, padding=1, bias=False),
+                    nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=1, padding=1, bias=False),
+                    nn.MaxPool2d(kernel_size=2, stride=2),
                     nn.BatchNorm2d(opt.ndf))
             return nn.Sequential(
                 nn.LeakyReLU(0.2, inplace=True),
-                nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=2, padding=1, bias=False))
+                nn.Conv2d(opt.ndf, opt.ndf, kernel_size=3, stride=1, padding=1, bias=False),
+                nn.MaxPool2d(kernel_size=2, stride=2))
 
         def __conv_block(opt):
             if opt.batchnorm:
@@ -91,7 +95,7 @@ class BaseNetwork(nn.Module):
         layers.append(nn.Linear(128, 1, bias=False))
 
         # Prediction
-        layers.append(nn.Sigmoid())
+        #layers.append(nn.Sigmoid())
 
         self.layers = nn.Sequential(*layers)
 
@@ -100,10 +104,12 @@ class BaseNetwork(nn.Module):
         self.gt = torch.empty(size=(self.opt.batch_size,), dtype=torch.float32, device=self.device)
 
         # Optimizer
-        self.optimizer = Adam(self.parameters(), lr=opt.lr, betas=(opt.beta1, opt.beta2))
+        self.optimizer = Adam(self.parameters(), lr=opt.lr)
+        #self.optimizer = SGD(self.parameters(), lr=opt.lr, momentum=0.9)
 
         # Loss function
-        self.criterion = nn.BCELoss()
+        self.criterion = nn.BCEWithLogitsLoss()
+
 
 
     def forward(self, input):
@@ -125,19 +131,40 @@ class BaseNetwork(nn.Module):
         self.loss += loss.item()
 
 
-    def train_epoch(self, dataloader):
+    def train_epoch(self, train_loader):
         '''Train model per epoch'''
-        for i, data in enumerate(dataloader, 0):
-            print(f'Batch {i} total steps {self.total_steps}')
+        for i, data in enumerate(train_loader, 0):
             self.total_steps += self.opt.batch_size
             self.set_input(data)
             self.optimize_parameters()
+        print(f'Epoch {self.epoch} loss: {self.loss}')
+        self.loss = 0.0
 
 
-    def train(self, data_loader):
+
+    def train(self, train_loader, val_loader):
         '''Train model for opt.epochs'''
         print(f'Start training at {datetime.datetime.now()}')
         for self.epoch in range(0, self.opt.epochs):
-            self.train_epoch(data_loader)
-            print(f'Epoch {self.epoch} loss: {self.loss}')
-            self.loss = 0.0
+            self.train_epoch(train_loader)
+            self.test(val_loader)
+
+    def test(self, val_loader):
+        '''Test model'''
+        predictions = []
+        gts = []
+        with torch.no_grad():
+            for i, data in enumerate(val_loader, 0):
+                self.set_input(data)
+                prediction = self.forward(self.input_tensor).squeeze(1)
+                prediction_labels = [1 if x > 0.5 else 0 for x in prediction]
+                predictions += (prediction_labels)
+                gts += ([int(x) for x in self.gt])
+            tp, fp, tn, fn = get_metrics(predictions, gts)
+            print(f'TP: {tp}, FP: {fp}, TN: {tn}, FN: {fn}')
+            print(f'Accuracy: {(tp + tn) / (tp + tn + fp + fn)}')
+
+            accuracy = (tp + tn) / (tp + tn + fp + fn)
+            if accuracy > self.best_accuracy:
+                self.best_accuracy = accuracy
+                print(f'New Best accuracy: {self.best_accuracy}')

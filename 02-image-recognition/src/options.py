@@ -44,13 +44,13 @@ class Options():
         self.parser.add_argument('--layers16', type=int, default=2, help='16x16 layer count')
         self.parser.add_argument('--layers8', type=int, default=1, help='8x8 layer count')
         self.parser.add_argument('--batchnorm', type=bool, default=True, help='use batch normalization')
-        self.parser.add_argument('--beta1', type=int, default=0.5, help='beta1')
-        self.parser.add_argument('--beta2', type=int, default=0.999, help='beta2')
-        self.parser.add_argument('--lr', type=int, default=0.002, help='learning rate')
+        self.parser.add_argument('--beta1', type=float, default=0.5, help='beta1')
+        self.parser.add_argument('--beta2', type=float, default=0.999, help='beta2')
+        self.parser.add_argument('--lr', type=float, default=0.002, help='learning rate')
 
         # Train
         self.parser.add_argument('--batch_size', type=int, default=16, help='batch size')
-        self.parser.add_argument('--train_split', type=int, default=0.8, help='train-to-test split division')
+        self.parser.add_argument('--train_split', type=float, default=0.8, help='train-to-test split division')
         self.parser.add_argument('--epochs', type=int, default=50, help='number of epochs to train')
         self.isTrain = True
 

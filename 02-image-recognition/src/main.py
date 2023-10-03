@@ -12,7 +12,7 @@ def main():
 
     train, test = get_dataloaders(opt)
 
-    model.train(train)
+    model.train(train, test)
 
 
 if __name__ == '__main__':

@@ -104,7 +104,7 @@ class GENKI4KDataset(Dataset):
             temp = self._load_file(self.files[idx])
 
         # Normalize
-        image = (temp[self.opt.key_features] - 127.5) / 127.5
+        image = temp[self.opt.key_features].float() / 255.0
         return image, temp[self.opt.key_classes]
 
 
@@ -115,6 +115,6 @@ if __name__ == '__main__':
     dataset = GENKI4KDataset(opt)
     dataloader = DataLoader(dataset, batch_size=opt.batch_size, shuffle=True, num_workers=opt.num_workers)
     for i, data in enumerate(dataloader):
-        show_image(data[0][i])
+        show_image(data[0][i], data[1][i])
         if i > 10:
             break
