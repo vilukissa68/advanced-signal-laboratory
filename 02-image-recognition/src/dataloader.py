@@ -2,6 +2,8 @@
 from options import Options
 import os
 import pickle
+import torch
+import numpy as np
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms
 from torchvision.io import read_image
@@ -98,6 +100,12 @@ class GENKI4KDataset(Dataset):
         return len(self.files)
 
     def __getitem__(self, idx):
+        if self.opt.random_input:
+            # Give random input for testing purposes
+            image = np.random.rand(3, self.opt.isize, self.opt.isize)
+            label = np.random.randint(0, 2)
+            return image, label
+
         if self.opt.load_into_memory:
             temp = self.files[idx]
         else:

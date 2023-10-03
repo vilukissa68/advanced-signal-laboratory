@@ -13,6 +13,8 @@ def main():
 
     model.to(opt.device)
     model.train(train, test)
+    print("Training finished")
+    print("Best accuracy: ", model.best_accuracy)
 
 
 if __name__ == '__main__':

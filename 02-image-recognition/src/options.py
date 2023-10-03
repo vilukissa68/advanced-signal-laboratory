@@ -56,6 +56,9 @@ class Options():
         self.parser.add_argument('--optimizer', type=str, default='adam', help='optimizer: sgd | adam | adamw')
         self.isTrain = True
 
+        # Debugging
+        self.parser.add_argument('--random_input', type=bool, default=False, help='use random input, debugging only')
+
     def parse(self):
         """ Parse Arguments.
         """

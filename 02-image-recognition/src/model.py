@@ -13,7 +13,7 @@ from torch.optim import Adam, AdamW, SGD
 from torchmetrics.classification import AUROC
 from torchsummary import summary
 from sklearn.metrics import roc_curve, auc, average_precision_score, f1_score
-from utils import show_image, get_metrics, precision, accuracy, recall, f1_score
+from utils import show_image, show_batch, get_metrics, precision, accuracy, recall, f1_score
 
 
 # Flags
@@ -167,7 +167,6 @@ class BaseNetwork(nn.Module):
         self.optimizer.step()
         self.loss += loss.item()
 
-
     def train_epoch(self, train_loader):
         '''Train model per epoch'''
         for i, data in enumerate(train_loader, 0):
@@ -176,8 +175,6 @@ class BaseNetwork(nn.Module):
             self.optimize_parameters()
         print(f'Epoch {self.epoch} loss: {self.loss}')
         self.loss = 0.0
-
-
 
     def train(self, train_loader, val_loader):
         '''Train model for opt.epochs'''
@@ -188,20 +185,23 @@ class BaseNetwork(nn.Module):
 
     def test(self, val_loader):
         '''Test model'''
-        predictions = []
-        gts = []
         with torch.no_grad():
+            predictions = []
+            gts = []
             for i, data in enumerate(val_loader, 0):
                 self.set_input(data)
-                prediction = self.forward(self.input_tensor).squeeze(1)
-                prediction_labels = [1 if x > 0.5 else 0 for x in prediction]
-                predictions += (prediction_labels)
-                gts += ([int(x) for x in self.gt])
-            tp, fp, tn, fn = get_metrics(predictions, gts)
-            print(f'TP: {tp}, FP: {fp}, TN: {tn}, FN: {fn}')
-            print(f'Accuracy: {(tp + tn) / (tp + tn + fp + fn)}')
+                outputs = self.forward(self.input_tensor).squeeze(1)
+                outputs = torch.sigmoid(outputs)
+                predicted = (outputs > 0.5)
 
+                predictions.extend(predicted.tolist())
+                gts.extend(self.gt.tolist())
+                #show_batch(self.input_tensor.to('cpu'), self.gt.to('cpu'), prediction_labels)
+            tp, tn, fp, fn = get_metrics(predictions, gts)
             accuracy = (tp + tn) / (tp + tn + fp + fn)
+            print(f'Epoch {self.epoch}---------------------------------------------------------------')
+            print(f'Accuracy: {accuracy} | TP: {tp}, TN: {tn}, fp: {fp}, FN: {fn}')
+
             if accuracy > self.best_accuracy:
                 self.best_accuracy = accuracy
                 print(f'New Best accuracy: {self.best_accuracy}')
