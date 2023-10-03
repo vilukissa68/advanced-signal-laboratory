@@ -3,15 +3,15 @@
 from options import Options
 from model import BaseNetwork
 from dataloader import get_dataloaders
-from torchsummary import summary
 
 def main():
     opt = Options().parse()
     model = BaseNetwork(opt)
-    summary(model, (opt.nc, opt.isize, opt.isize), batch_size = opt.batch_size, device=opt.device)
+    model.print_network()
 
     train, test = get_dataloaders(opt)
 
+    model.to(opt.device)
     model.train(train, test)
 
 

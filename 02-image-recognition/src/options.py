@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import time
 import pathlib
 
 # pylint: disable=C0103,C0301,R0903,W0622
@@ -19,7 +20,7 @@ class Options():
 
         ##
         # Base
-        self.parser.add_argument('--device', type=str, default='cpu', help='Device: gpu | cpu')
+        self.parser.add_argument('--device', type=str, default='cpu', help='Device: cuda | cpu | mps')
         self.parser.add_argument('--outf', default='./output', help='folder to output images and model checkpoints')
         self.parser.add_argument('--verbose', action='store_true', help='Print the training and model details.')
         self.parser.add_argument('--name', type=str, default='experiment_name', help='name of the experiment')
@@ -46,12 +47,13 @@ class Options():
         self.parser.add_argument('--batchnorm', type=bool, default=True, help='use batch normalization')
         self.parser.add_argument('--beta1', type=float, default=0.5, help='beta1')
         self.parser.add_argument('--beta2', type=float, default=0.999, help='beta2')
-        self.parser.add_argument('--lr', type=float, default=0.002, help='learning rate')
+        self.parser.add_argument('--lr', type=float, default=0.0005, help='learning rate')
 
         # Train
-        self.parser.add_argument('--batch_size', type=int, default=16, help='batch size')
+        self.parser.add_argument('--batch_size', type=int, default=64, help='batch size')
         self.parser.add_argument('--train_split', type=float, default=0.8, help='train-to-test split division')
         self.parser.add_argument('--epochs', type=int, default=50, help='number of epochs to train')
+        self.parser.add_argument('--optimizer', type=str, default='adam', help='optimizer: sgd | adam | adamw')
         self.isTrain = True
 
     def parse(self):
@@ -71,6 +73,10 @@ class Options():
         self.opt.serialization_source_dir = self.opt.datadir / self.opt.serialization_source_dir
 
         args = vars(self.opt)
+
+        # Set tag by start time, experiment name, and model
+        self.opt.starttime = time.strftime("%Y%m%d-%H%M%S")
+        self.opt.tag = '%s_%s_%s' % (self.opt.starttime, self.opt.name, self.opt.model)
 
         if self.opt.verbose:
             print('------------ Options -------------')
