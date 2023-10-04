@@ -5,9 +5,9 @@
 
 \special{papersize=210mm,297mm}
 
-\author{Forename Surname}
-\title{Thesis title} % primary title (for front page)
-\thesistype{Master's thesis} % or Bachelor of Science, Laboratory Report... 
+\author{Roosa Kuusivaara \& Väinö-Waltteri Granat}
+\title{Image Recognition - Report} % primary title (for front page)
+\thesistype{Laboratory Report} % or Bachelor of Science, Laboratory Report...
 
 \usepackage{lastpage}
 \usepackage[english]{babel}
@@ -62,8 +62,7 @@ autocite=inline
 \begin{flushright}  
     \begin{spacing}{1.0}
       \textsf{Faculty of Information Technology and Communication Sciences (ITC)\\
-      \@thesistype\\
-      April 2019}
+      \@thesistype\\}
     \end{spacing}
 \end{flushright}
 
@@ -83,8 +82,8 @@ autocite=inline
 \noindent \@author: \@title\\
 \@thesistype\\
 Tampere University\\
-Master’s Degree Programme in Software Development\\
-April 2019
+Master’s Degree Programme in Signal Processing\\
+October 2023 \\
 \end{spacing}
 \noindent\rule{12cm}{0.4pt}
 
@@ -94,19 +93,13 @@ April 2019
 % Abstract and keywords
 % ---------------------------------------
 
-\noindent The abstract is a concise 1-page description of the work: what was the
-problem, what was done, and what are the results. Do not include
-charts or tables in the abstract.
+\noindent
+This report documents the work done in the Image Recognition assignment as a part of the Advanced Signal Processing Laboratory course. In the assignment we familiarize ourselves with modern machine learning, in particular deep learning, and apply them to the task of building a smile detector for real-time execution. The goal is to achieve an accuracy of at least $85 \%$ in classifying images based on facial expressions, smiles or non-smiles, using GENKI-4k dataset for training the network.
 
-These instructions are intended for students of Computer Sciences at the Tampere University. They cover questions of writing a thesis, such as use of the literature, structure of the thesis and style, the external appearance of the thesis and the use of tools.  These instructions do not cover the scientific content of the thesis.
 
 ~
 
-\noindent\textbf{Keywords:} M.Sc. thesis, layout, writing style.
-
-~
-
-\noindent The originality of this thesis has been checked using the Turnitin Originality Check service.
+\noindent\textbf{Keywords:} Laboratory Report, Machine Learning, Deep Learning, Image Recognition
 
 
 % Add the table of contents
@@ -131,10 +124,9 @@ These instructions are intended for students of Computer Sciences at the Tampere
 
 \chapter{Introduction}
 \label{ch:intro} 
-This is and introduction
+This is an introduction
 \pagenumbering{arabic}
 \setcounter{page}{1} 
-\cite{wolf08}
 
 \chapter{Methodology}
 \label{sec:methodology}
