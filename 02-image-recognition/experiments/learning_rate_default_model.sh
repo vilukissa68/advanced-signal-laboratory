@@ -4,23 +4,23 @@ batch_size=32
 epochs=50
 t1=$(python ../src/main.py --epochs=$epochs --lr=0.02 --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent)
-echo "$t{1} lr=0.02"
+echo "${t1} lr=0.02"
 
 t2=$(python ../src/main.py --epochs=$epochs --lr=0.002 --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent)
-echo "$t{1} lr=0.002"
+echo "${t2} lr=0.002"
 
 t3=$(python ../src/main.py --epochs=$epochs --lr=0.0002 --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent)
-echo "$t{1} lr=0.0002"
+echo "${t3} lr=0.0002"
 
 t4=$(python ../src/main.py --epochs=$epochs --lr=0.0002 --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent)
-echo "$t{1} lr=0.00002"
+echo "${t4} lr=0.00002"
 
 t5=$(python ../src/main.py --epochs=$epochs --lr=0.0002 --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent)
-echo "$t{1} lr=0.000002"
+echo "${t5} lr=0.000002"
 
 
 echo $t1 | awk -F " " '{print $2}'
