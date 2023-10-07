@@ -22,20 +22,19 @@ class Options():
         # Base
         self.parser.add_argument('--device', type=str, default='cpu', help='Device: cuda | cpu | mps')
         self.parser.add_argument('--outf', default='./output', help='folder to output images and model checkpoints')
-        self.parser.add_argument('--verbose', action='store_true', help='Print the training and model details.')
         self.parser.add_argument('--name', type=str, default='experiment_name', help='name of the experiment')
-        self.parser.add_argument('--model', type=str, default='BaseNetwork', help='chooses which model to use')
-        self.parser.add_argument('--dataset', default='cifar10', help='folder | cifar10 | mnist ')
+        self.parser.add_argument('--model', type=str, default='SimpleCNN', help='chooses which model to use')
+        self.parser.add_argument('--dataset', default='GENKI-4K', help='folder | cifar10 | mnist ')
         self.parser.add_argument('--dataroot', default='data/GENKI-R2009a/Subsets/GENKI-4K/', help='relative from project root path to dataset')
         self.parser.add_argument('--images_file', default='GENKI-4K_Images.txt', help='Name of image file')
         self.parser.add_argument('--labels_file', default='GENKI-4K_Labels.txt', help='Name of the labels file')
         self.parser.add_argument('--serialization_target_dir', default='serialized', help='where to put serialized data')
         self.parser.add_argument('--serialization_source_dir', default='files', help='source images for serialization')
-        self.parser.add_argument('--models_dir', default='models/', help='directory to save models')
-        self.parser.add_argument('--weights', default='models/', help='name of the weights file')
+        self.parser.add_argument('--models_dir', type=str, default='models/', help='directory to save models')
+        self.parser.add_argument('--weights', type=str, default='models/', help='name of the weights file')
         self.parser.add_argument('--key_classes', default='label', help='key for class')
         self.parser.add_argument('--key_features', default='features', help='key for features')
-        self.parser.add_argument('--load_into_memory', type=bool, default=True, help='load inputs in to memory')
+        self.parser.add_argument('--load_into_memory', type=bool, default=True, action=argparse.BooleanOptionalAction, help='load inputs in to memory')
         self.parser.add_argument('--num_workers', type=int, default=1, help='number of of dataloading workers')
 
         # Model
@@ -46,7 +45,7 @@ class Options():
         self.parser.add_argument('--layers32', type=int, default=2, help='32x32 layer count')
         self.parser.add_argument('--layers16', type=int, default=2, help='16x16 layer count')
         self.parser.add_argument('--layers8', type=int, default=1, help='8x8 layer count')
-        self.parser.add_argument('--batchnorm', type=bool, default=True, help='use batch normalization')
+        self.parser.add_argument('--batchnorm', type=bool, default=True, action=argparse.BooleanOptionalAction, help='use batch normalization')
         self.parser.add_argument('--beta1', type=float, default=0.5, help='beta1')
         self.parser.add_argument('--beta2', type=float, default=0.999, help='beta2')
         self.parser.add_argument('--lr', type=float, default=0.0005, help='learning rate')
@@ -60,6 +59,8 @@ class Options():
 
         # Debugging
         self.parser.add_argument('--random_input', type=bool, default=False, help='use random input, debugging only')
+        self.parser.add_argument('--verbose', type=bool, default=False, action=argparse.BooleanOptionalAction, help='Print the training and model details.')
+        self.parser.add_argument('--silent', type=bool, default=False, action=argparse.BooleanOptionalAction, help='silent mode, used in shell scripts, only print output to stdout')
 
     def parse(self):
         """ Parse Arguments.
@@ -80,6 +81,11 @@ class Options():
 
         args = vars(self.opt)
 
+        assert self.opt.silent != self.opt.verbose, "Cannot be silent and verbose at the same time."
+
+        ## Model name based on the layers
+        self.opt.model = '%s_%sx64_%sx32_%sx16_%sx8' % (self.opt.model, self.opt.layers64, self.opt.layers32, self.opt.layers16, self.opt.layers8)
+
         # Set tag by start time, experiment name, and model
         self.opt.starttime = time.strftime("%Y%m%d-%H%M%S")
         self.opt.tag = '%s_%s_%s' % (self.opt.starttime, self.opt.name, self.opt.model)
@@ -93,15 +99,11 @@ class Options():
         # save to the disk
         if self.opt.name == 'experiment_name':
             self.opt.name = "%s/%s" % (self.opt.model, self.opt.dataset)
-        expr_dir = os.path.join(self.opt.outf, self.opt.name, 'train')
-        test_dir = os.path.join(self.opt.outf, self.opt.name, 'test')
 
-        if not os.path.isdir(expr_dir):
-            os.makedirs(expr_dir)
-        if not os.path.isdir(test_dir):
-            os.makedirs(test_dir)
+        if not os.path.isdir(self.opt.models_dir):
+            os.makedirs(self.opt.models_dir)
 
-        file_name = os.path.join(expr_dir, 'opt.txt')
+        file_name = os.path.join(self.opt.models_dir, (self.opt.tag + '_opt.txt'))
         with open(file_name, 'wt') as opt_file:
             opt_file.write('------------ Options -------------\n')
             for k, v in sorted(args.items()):

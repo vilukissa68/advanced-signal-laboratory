@@ -33,6 +33,7 @@ class BaseNetwork(nn.Module):
         self.total_steps = 0
         self.loss = 0
         self.best_accuracy = 0
+        self.best_epoch = 0
         self.init_function = nn.init.normal_
         layers = []
 
@@ -207,6 +208,7 @@ class BaseNetwork(nn.Module):
 
             if accuracy > self.best_accuracy:
                 self.best_accuracy = accuracy
+                self.best_epoch = self.epoch
                 print(f'New Best accuracy: {self.best_accuracy}')
                 self.save_model()
 
@@ -226,7 +228,7 @@ class BaseNetwork(nn.Module):
         '''Save model'''
         if not os.path.exists(self.opt.models_dir):
             os.makedirs(self.opt.models_dir)
-        filename = f'{self.opt.models_dir}/model_{self.opt.tag}.model'
+        filename = f'{self.opt.models_dir}/{self.opt.tag}.model'
         torch.save({
             "model_state_dict": self.state_dict(),
             "optimizer_state_dict": self.optimizer.state_dict(),
@@ -237,7 +239,8 @@ class BaseNetwork(nn.Module):
             "init_function": self.init_function,
             "opt": self.opt
         }, filename)
-        print(f'Saved model {filename} with accuracy {self.best_accuracy}')
+        if self.opt.verbose:
+            print(f'Saved model {filename} with accuracy {self.best_accuracy}')
 
     def load_model(self, filename):
         '''Load model'''

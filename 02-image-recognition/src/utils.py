@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 import matplotlib.pyplot as plt
 import numpy as np
+import sys, os
+
+def blockPrint():
+    """Disable print"""
+    sys.stdout = open(os.devnull, 'w')
+
+def enablePrint():
+    """Enable print"""
+    sys.stdout = sys.__stdout__
 
 def show_image(image, label):
     plt.imshow(image.permute(1, 2, 0))
