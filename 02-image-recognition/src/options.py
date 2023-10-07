@@ -31,6 +31,8 @@ class Options():
         self.parser.add_argument('--labels_file', default='GENKI-4K_Labels.txt', help='Name of the labels file')
         self.parser.add_argument('--serialization_target_dir', default='serialized', help='where to put serialized data')
         self.parser.add_argument('--serialization_source_dir', default='files', help='source images for serialization')
+        self.parser.add_argument('--models_dir', default='models/', help='directory to save models')
+        self.parser.add_argument('--weights', default='models/', help='name of the weights file')
         self.parser.add_argument('--key_classes', default='label', help='key for class')
         self.parser.add_argument('--key_features', default='features', help='key for features')
         self.parser.add_argument('--load_into_memory', type=bool, default=True, help='load inputs in to memory')
@@ -74,6 +76,7 @@ class Options():
         self.opt.labels_file = self.opt.datadir / self.opt.labels_file
         self.opt.serialization_target_dir = self.opt.datadir / self.opt.serialization_target_dir
         self.opt.serialization_source_dir = self.opt.datadir / self.opt.serialization_source_dir
+        self.opt.models_dir = self.opt.root / self.opt.models_dir
 
         args = vars(self.opt)
 

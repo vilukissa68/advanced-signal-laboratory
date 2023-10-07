@@ -12,7 +12,7 @@ def main():
     train, test = get_dataloaders(opt)
 
     model.to(opt.device)
-    model.train(train, test)
+    model.trainining_loop(train, test)
     print("Training finished")
     print("Best accuracy: ", model.best_accuracy)
 

@@ -27,6 +27,7 @@ class BaseNetwork(nn.Module):
 
         assert opt.isize == 64, "only support 64x64 input images"
         self.opt = opt
+        self.opt_runtime = None
         self.dtype = torch.float
         self.epoch = 0
         self.total_steps = 0
@@ -173,18 +174,20 @@ class BaseNetwork(nn.Module):
             self.total_steps += self.opt.batch_size
             self.set_input(data)
             self.optimize_parameters()
-        print(f'Epoch {self.epoch} loss: {self.loss}')
-        self.loss = 0.0
 
-    def train(self, train_loader, val_loader):
+    def trainining_loop(self, train_loader, val_loader):
         '''Train model for opt.epochs'''
+        self.train()
         print(f'Start training at {datetime.datetime.now()}')
         for self.epoch in range(0, self.opt.epochs):
             self.train_epoch(train_loader)
             self.test(val_loader)
+            print(f'loss: {self.loss}\n')
+            self.loss = 0.0
 
     def test(self, val_loader):
         '''Test model'''
+        self.eval()
         with torch.no_grad():
             predictions = []
             gts = []
@@ -205,6 +208,48 @@ class BaseNetwork(nn.Module):
             if accuracy > self.best_accuracy:
                 self.best_accuracy = accuracy
                 print(f'New Best accuracy: {self.best_accuracy}')
+                self.save_model()
 
+    def predict(self, input):
+        '''Predict image'''
+        self.eval()
+        with torch.no_grad():
+            prediction = self.forward(input)
+            prediction = torch.sigmoid(prediction)
+            return prediction
+
+    
     def print_network(self):
         summary(self, (self.opt.nc, self.opt.isize, self.opt.isize), batch_size = self.opt.batch_size, device='cpu')
+
+    def save_model(self):
+        '''Save model'''
+        if not os.path.exists(self.opt.models_dir):
+            os.makedirs(self.opt.models_dir)
+        filename = f'{self.opt.models_dir}/model_{self.opt.tag}.model'
+        torch.save({
+            "model_state_dict": self.state_dict(),
+            "optimizer_state_dict": self.optimizer.state_dict(),
+            "dtype": self.dtype,
+            "epoch": self.epoch,
+            "total_steps": self.total_steps,
+            "best_accuracy": self.best_accuracy,
+            "init_function": self.init_function,
+            "opt": self.opt
+        }, filename)
+        print(f'Saved model {filename} with accuracy {self.best_accuracy}')
+
+    def load_model(self, filename):
+        '''Load model'''
+        if not os.path.exists(filename):
+            raise ValueError(f'File {filename} does not exist')
+        dict = torch.load(filename)
+        self.load_state_dict(dict["model_state_dict"])
+        self.optimizer.load_state_dict(dict["optimizer_state_dict"])
+        self.dtype = dict["dtype"]
+        self.epoch = dict["epoch"]
+        self.total_steps = dict["total_steps"]
+        self.best_accuracy = dict["best_accuracy"]
+        self.init_function = dict["init_function"]
+        self.opt = dict["opt"]
+        print(f'Loaded model {filename} with accuracy {self.best_accuracy}')
