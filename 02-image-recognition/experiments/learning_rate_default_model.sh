@@ -14,11 +14,11 @@ t3=$(python ../src/main.py --epochs=$epochs --lr=0.0002 --batch_size=$batch_size
     --device=$device --optimizer=adam --silent)
 echo "${t3} lr=0.0002"
 
-t4=$(python ../src/main.py --epochs=$epochs --lr=0.0002 --batch_size=$batch_size \
+t4=$(python ../src/main.py --epochs=$epochs --lr=0.00002 --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent)
 echo "${t4} lr=0.00002"
 
-t5=$(python ../src/main.py --epochs=$epochs --lr=0.0002 --batch_size=$batch_size \
+t5=$(python ../src/main.py --epochs=$epochs --lr=0.00002 --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent)
 echo "${t5} lr=0.000002"
 
