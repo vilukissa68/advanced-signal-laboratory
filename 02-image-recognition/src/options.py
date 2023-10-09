@@ -81,7 +81,7 @@ class Options():
 
         args = vars(self.opt)
 
-        assert self.opt.silent != self.opt.verbose, "Cannot be silent and verbose at the same time."
+        assert not (self.opt.silent == True and self.opt.verbose == True), "Cannot be silent and verbose at the same time."
 
         ## Model name based on the layers
         self.opt.model = '%s_%sx64_%sx32_%sx16_%sx8' % (self.opt.model, self.opt.layers64, self.opt.layers32, self.opt.layers16, self.opt.layers8)
