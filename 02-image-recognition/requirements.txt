@@ -6,3 +6,4 @@ torchsummary
 torchmetrics
 scikit-learn
 tensorboard
+opencv-python
