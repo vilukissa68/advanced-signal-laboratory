@@ -186,6 +186,7 @@ class GENKI4KDataset(Dataset):
             raise ValueError('Unknown dataset: %s' % self.opt.dataset)
 
         self.files = list(self.load_dir.glob("*.pickle"))
+        print("Found {} files in {}".format(len(self.files), self.load_dir))
 
         if self.opt.load_into_memory:
             for i, f in enumerate(self.files):
