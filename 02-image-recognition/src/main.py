@@ -4,6 +4,7 @@ from options import Options
 from model import BaseNetwork
 from dataloader import get_dataloaders, serialize_all_in_dir, show_image
 from utils import enablePrint, blockPrint, show_batch
+from smile_detection import smile_detection
 
 def main():
     opt = Options().parse()
@@ -30,6 +31,7 @@ def main():
     model = BaseNetwork(opt)
     model.print_network()
 
+
     if opt.train:
         train, test = get_dataloaders(opt)
 
@@ -42,6 +44,7 @@ def main():
             enablePrint()
             print("accuracy: ", model.best_accuracy, " epoch: ", model.best_epoch)
 
+    smile_detection(model)
 
 if __name__ == '__main__':
     main()
