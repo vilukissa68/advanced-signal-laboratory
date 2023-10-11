@@ -47,7 +47,7 @@ class BaseNetwork(nn.Module):
         self.init_function = nn.init.normal_
 
         if opt.tensorboard:
-            self.writer = SummaryWriter(log_dir=opt.tensorboard_dir + "/" + self.opt.tag)
+            self.writer = SummaryWriter(log_dir=opt.tensorboard_dir / self.opt.tag)
 
         layers = []
 

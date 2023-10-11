@@ -91,6 +91,9 @@ class Options():
         self.opt.serialization_target_dir_augmented = self.opt.datadir / self.opt.serialization_target_dir_augmented
         self.opt.serialization_target_dir_grayscale_augmented = self.opt.datadir / self.opt.serialization_target_dir_grayscale_augmented
 
+        # Tensorboard dir
+        self.opt.tensorboard_dir = self.opt.root / self.opt.tensorboard_dir
+
         self.opt.models_dir = self.opt.root / self.opt.models_dir
 
         # Set input channels based on dataset
@@ -108,7 +111,7 @@ class Options():
 
         # Set tag by start time, experiment name, and model
         self.opt.starttime = time.strftime("%Y%m%d-%H%M%S")
-        self.opt.tag = '%s_%s_%s' % (self.opt.starttime, self.opt.name, self.opt.model)
+        self.opt.tag = '%s_%s_%s_%s' % (self.opt.starttime, self.opt.name, self.opt.model, self.opt.dataset)
 
         if self.opt.verbose:
             print('------------ Options -------------')

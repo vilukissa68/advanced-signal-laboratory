@@ -47,6 +47,7 @@ echo $t6 | awk -F " " '{print $2}'
 echo $t7 | awk -F " " '{print $2}'
 
 # Write to file
+touch results/extra_layers_default_model.txt
 echo batch_size=$batch_size > results/extra_layers_default_model.txt
 echo epochs=$epochs >> results/extra_layers_default_model.txt
 echo lr=$lr >> results/extra_layers_default_model.txt
