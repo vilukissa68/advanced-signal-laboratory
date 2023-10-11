@@ -25,6 +25,13 @@ class BaseNetwork(nn.Module):
         super(BaseNetwork, self).__init__()
 
         assert opt.isize == 64, "only support 64x64 input images"
+
+        # Make sure that the number of channels is correct
+        if opt.dataset == 'GENKI-4K-Grayscale' or opt.dataset == 'GENKI-4K-Grayscale-Augmented':
+            assert opt.nc == 1, "only support grayscale input images"
+        else:
+            assert opt.nc == 3, "only support RGB input images"
+
         self.opt = opt
         self.opt_runtime = None
         self.dtype = torch.float

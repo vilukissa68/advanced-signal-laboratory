@@ -24,11 +24,14 @@ class Options():
         self.parser.add_argument('--outf', default='./output', help='folder to output images and model checkpoints')
         self.parser.add_argument('--name', type=str, default='experiment_name', help='name of the experiment')
         self.parser.add_argument('--model', type=str, default='SimpleCNN', help='chooses which model to use')
-        self.parser.add_argument('--dataset', default='GENKI-4K', help='folder | cifar10 | mnist ')
+        self.parser.add_argument('--dataset', default='GENKI-4K', help='GENKI-4K | GENKI-4K-Grayscale | GENKI-4K-Augmented | GENKI-4K-Grayscale-Augmented')
         self.parser.add_argument('--dataroot', default='data/GENKI-R2009a/Subsets/GENKI-4K/', help='relative from project root path to dataset')
         self.parser.add_argument('--images_file', default='GENKI-4K_Images.txt', help='Name of image file')
         self.parser.add_argument('--labels_file', default='GENKI-4K_Labels.txt', help='Name of the labels file')
         self.parser.add_argument('--serialization_target_dir', default='serialized', help='where to put serialized data')
+        self.parser.add_argument('--serialization_target_dir_grayscale', default='grayscale', help='where to put serialized data')
+        self.parser.add_argument('--serialization_target_dir_augmented', default='augmented', help='where to put serialized data')
+        self.parser.add_argument('--serialization_target_dir_grayscale_augmented', default='grayscale_augmented', help='where to put serialized data')
         self.parser.add_argument('--serialization_source_dir', default='files', help='source images for serialization')
         self.parser.add_argument('--models_dir', type=str, default='models/', help='directory to save models')
         self.parser.add_argument('--weights', type=str, default='models/', help='name of the weights file')
@@ -36,6 +39,11 @@ class Options():
         self.parser.add_argument('--key_features', default='features', help='key for features')
         self.parser.add_argument('--load_into_memory', type=bool, default=True, action=argparse.BooleanOptionalAction, help='load inputs in to memory')
         self.parser.add_argument('--num_workers', type=int, default=1, help='number of of dataloading workers')
+        self.parser.add_argument('--train', type=bool, default=False, action=argparse.BooleanOptionalAction, help='train model')
+
+        # Data
+        self.parser.add_argument('--serialize', type=bool, default=False, action=argparse.BooleanOptionalAction, help='serialize data')
+        self.parser.add_argument('--view-data', type=bool, default=False, action=argparse.BooleanOptionalAction, help='serialize data')
 
         # Model
         self.parser.add_argument('--isize', type=int, default=64, help='input image size.')
@@ -77,9 +85,19 @@ class Options():
         # Concatenate to global paths
         self.opt.images_file = self.opt.datadir / self.opt.images_file
         self.opt.labels_file = self.opt.datadir / self.opt.labels_file
-        self.opt.serialization_target_dir = self.opt.datadir / self.opt.serialization_target_dir
         self.opt.serialization_source_dir = self.opt.datadir / self.opt.serialization_source_dir
+        self.opt.serialization_target_dir = self.opt.datadir / self.opt.serialization_target_dir
+        self.opt.serialization_target_dir_grayscale = self.opt.datadir / self.opt.serialization_target_dir_grayscale
+        self.opt.serialization_target_dir_augmented = self.opt.datadir / self.opt.serialization_target_dir_augmented
+        self.opt.serialization_target_dir_grayscale_augmented = self.opt.datadir / self.opt.serialization_target_dir_grayscale_augmented
+
         self.opt.models_dir = self.opt.root / self.opt.models_dir
+
+        # Set input channels based on dataset
+        if self.opt.dataset == 'GENKI-4K-Grayscale' or self.opt.dataset == 'GENKI-4K-Grayscale-Augmented':
+            self.opt.nc = 1
+        else:
+            self.opt.nc = 3
 
         args = vars(self.opt)
 
