@@ -61,6 +61,8 @@ class Options():
         self.parser.add_argument('--random_input', type=bool, default=False, help='use random input, debugging only')
         self.parser.add_argument('--verbose', type=bool, default=False, action=argparse.BooleanOptionalAction, help='Print the training and model details.')
         self.parser.add_argument('--silent', type=bool, default=False, action=argparse.BooleanOptionalAction, help='silent mode, used in shell scripts, only print output to stdout')
+        self.parser.add_argument('--tensorboard', type=bool, default=False, action=argparse.BooleanOptionalAction, help='use tensorboard for logging')
+        self.parser.add_argument('--tensorboard_dir', type=str, default='runs', help='tensorboard log directory')
 
     def parse(self):
         """ Parse Arguments.

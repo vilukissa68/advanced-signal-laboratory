@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#!/usr/bin/env python3
 
 import os
 import time
@@ -32,9 +31,17 @@ class BaseNetwork(nn.Module):
         self.epoch = 0
         self.total_steps = 0
         self.loss = 0
-        self.best_accuracy = 0
+        self.recall = 0.0
+        self.precision = 0.0
+        self.f1 = 0.0
+        self.accuracy = 0.0
+        self.best_accuracy = 0.0
         self.best_epoch = 0
         self.init_function = nn.init.normal_
+
+        if opt.tensorboard:
+            self.writer = SummaryWriter(log_dir=opt.tensorboard_dir + "/" + self.opt.tag)
+
         layers = []
 
         # Select device
@@ -184,6 +191,9 @@ class BaseNetwork(nn.Module):
             self.train_epoch(train_loader)
             self.test(val_loader)
             print(f'loss: {self.loss}\n')
+            if self.opt.tensorboard:
+                self.writer.add_scalar('Loss/train', self.loss, self.epoch)
+                self.writer.add_scalar('Accuracy/train', self.accuracy, self.epoch)
             self.loss = 0.0
 
     def test(self, val_loader):
@@ -197,17 +207,19 @@ class BaseNetwork(nn.Module):
                 outputs = self.forward(self.input_tensor).squeeze(1)
                 outputs = torch.sigmoid(outputs)
                 predicted = (outputs > 0.5)
-
                 predictions.extend(predicted.tolist())
                 gts.extend(self.gt.tolist())
                 #show_batch(self.input_tensor.to('cpu'), self.gt.to('cpu'), prediction_labels)
             tp, tn, fp, fn = get_metrics(predictions, gts)
-            accuracy = (tp + tn) / (tp + tn + fp + fn)
+            self.accuracy = (tp + tn) / (tp + tn + fp + fn)
+            self.precision = tp / (tp + fp) if tp + fp > 0 else 0
+            self.recall = tp / (tp + fn) if tp + fn > 0 else 0
+            self.f1 = 2 * self.precision * self.recall / (self.precision + self.recall) if self.precision + self.recall > 0 else 0
             print(f'Epoch {self.epoch}---------------------------------------------------------------')
-            print(f'Accuracy: {accuracy} | TP: {tp}, TN: {tn}, fp: {fp}, FN: {fn}')
+            print(f'Accuracy: {self.accuracy} | TP: {tp}, TN: {tn}, fp: {fp}, FN: {fn}')
 
-            if accuracy > self.best_accuracy:
-                self.best_accuracy = accuracy
+            if self.accuracy >= self.best_accuracy:
+                self.best_accuracy = self.accuracy
                 self.best_epoch = self.epoch
                 print(f'New Best accuracy: {self.best_accuracy}')
                 self.save_model()
