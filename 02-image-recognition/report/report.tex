@@ -123,16 +123,56 @@ This report documents the work done in the Image Recognition assignment as a par
 
 
 \chapter{Introduction}
-\label{ch:intro} 
-This is an introduction
+\label{ch:intro}
+In this report we describe our work done in the 'Image Recognition' laboratory assignment for the Advanced Signal Processing Laboratory. In this assignment we were to implement a system that would detect if a person was smiling or not from a live video feed, using Machine Learning approach, more specifically a Convolution Neural Network trained as a binary classifier.
+
+The system consisted of two major modules. First a neural network which could classify smiling and non-smiling images with a minimum 85\% accuracy. The second module would capture live video feed from computers web camera, from which the module would capture a face from each frame. These frames would then be given for the network to classify if that captured face was smiling or not. The classification would then be shown in the programs UI to the user.
+
 \pagenumbering{arabic}
 \setcounter{page}{1} 
+\section{Neural networks}
+Neural networks are
+Generally neural networks are trained using the gradien descdent algorithm.
+
+\section{Face detection}
+
 
 \chapter{Methodology}
 \label{sec:methodology}
+\section{Dataset}
+For this assignment we were required to use the GENKI-4K dataset~\cite{genki}. GENKI-4K consists of 4000 images of faces, labeled either smiling or not smiling. This data set was to be randomly split into portions of 80:20 for training dataset and testing dataset.
+
+To be able to input the GENKI-4K images into the neural network we resized the images to match the required 64x64 pixels size used by the network. The images were also normalized to values $0...1$. This is generally recommended to prevent issues with division and square root operations that would happend when using discrete integers.
+
+
+\section{Base model implementation}
+The described model was implemented as Pytorch~\cite{pytorch} model.
+
+The base model didn't perform as well as was required by the assignment instructions, so we implemented multiple methods that are generally known to improve the accuracy of image classification models.
+
+\section{Improved models}
+Since the base model was a relatively small network, we decided to start optimizing accuracy by increasing the number of layers in the network. The basic idea was that by increasing the number of layers the network would be able to learn more detailed information and capture more of the latent features and thus be able to more accurately make predictions. The danger of increasing the size of the network is that each added parameters increases the training time and more importantly increases the prediction time. The increased prediction time could mean that our program would not be able to make predictions of real time video fast enough to be usable.
+
+We ran a test were we trained models of different size with the same hyperparameters, to find what kind of layers would have the most benefit for the accuracy of the predictions. We noticed that by encreasing the the number of larger layers had more of a impact.
+
+\section{Optimizing Hyperparameters}
+The next step to increase the performance of the network was to optimize our hyperparameters. This is usually a difficult problem so we focused only on the following parameters: learning rate, number of epoch and batch size. The best choice for the hyperparameters is dependent on the network we decide to use, so we tested the base model and two of the best performing bigger models to find the optimal model and accompanying parameters.
+
+We also experimented with two different optimizers, Adam and AdamW.
+AdamW uses the same optimization algorithm as Adam, with the addition of dynamic learning rate (TODO:CONFIRM THIS!!!). Dynamic learning rate allows the optimizer to change the learning rate during training. In general we want to start with a high learning rate to find the area of local maximum fast and the use increasingly smaller learning rate to find the lowest loss. This should make the training faster and prediction a bit more accurate.
+
+
+
+\section{Data augmentation}
+Since the GENKI-4K dataset is a very small dataset in today's standards we used data augmentation to increase the amount of training data available. In the augmented dataset we included all the original images as such, plus 2 augmented images of each original images.
+
+We used 3 different augmentations methods: flipping creates a mirror image relative to the y-axis, rotation rotates the image 90, 180 or 270 degrees, and finally color jitter changes the saturation of the images. The augmentations we applied at random during augmented dataset serialization and one augmented images be applied with 0 to 3 augmentations.
+
+Finally we experimented with grayscale images. Greyscale images consist only of 1 channel pixels, where as color images use 3 channels. This means that neural network that takes only grayscale images has less parameters, and therefore faster predictions when compared to color images. Our hypothesis was that since smile should be classifiable from both grayscale images and color images equally well, the grayscale models might use the freed parameters to make more accurate predictions faster. We also created a grayscale version of the augmented dataset.
 
 \chapter{Results}
 \label{sec:results}
+\section{Base Model}
 
 \chapter{Conclusions}
 \label{ch:conclusions}
