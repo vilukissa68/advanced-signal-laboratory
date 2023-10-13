@@ -40,6 +40,7 @@ class Options():
         self.parser.add_argument('--load_into_memory', type=bool, default=True, action=argparse.BooleanOptionalAction, help='load inputs in to memory')
         self.parser.add_argument('--num_workers', type=int, default=1, help='number of of dataloading workers')
         self.parser.add_argument('--train', type=bool, default=False, action=argparse.BooleanOptionalAction, help='train model')
+        self.parser.add_argument('--modelpath', help='path to trained model')
 
         # Data
         self.parser.add_argument('--serialize', type=bool, default=False, action=argparse.BooleanOptionalAction, help='serialize data')

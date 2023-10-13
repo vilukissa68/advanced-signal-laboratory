@@ -44,7 +44,8 @@ def main():
             enablePrint()
             print("accuracy: ", model.best_accuracy, " epoch: ", model.best_epoch)
 
-    smile_detection(model)
+    if opt.modelpath:
+        smile_detection(model)
 
 if __name__ == '__main__':
     main()
