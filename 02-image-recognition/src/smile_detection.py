@@ -1,12 +1,7 @@
 import cv2
 import torch
-from options import Options
 
 def smile_detection(model):
-    opt = Options().parse()
-
-    model_path = opt.modelpath
-    model.load_model(model_path)
 
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 

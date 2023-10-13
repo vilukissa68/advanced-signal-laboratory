@@ -45,6 +45,8 @@ def main():
             print("accuracy: ", model.best_accuracy, " epoch: ", model.best_epoch)
 
     if opt.modelpath:
+        model_path = opt.modelpath
+        model.load_model(model_path)
         smile_detection(model)
 
 if __name__ == '__main__':
