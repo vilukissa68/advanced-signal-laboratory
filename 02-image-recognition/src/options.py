@@ -33,14 +33,14 @@ class Options():
         self.parser.add_argument('--serialization_target_dir_augmented', default='augmented', help='where to put serialized data')
         self.parser.add_argument('--serialization_target_dir_grayscale_augmented', default='grayscale_augmented', help='where to put serialized data')
         self.parser.add_argument('--serialization_source_dir', default='files', help='source images for serialization')
-        self.parser.add_argument('--models_dir', type=str, default='models/', help='directory to save models')
-        self.parser.add_argument('--weights', type=str, default='models/', help='name of the weights file')
         self.parser.add_argument('--key_classes', default='label', help='key for class')
         self.parser.add_argument('--key_features', default='features', help='key for features')
         self.parser.add_argument('--load_into_memory', type=bool, default=True, action=argparse.BooleanOptionalAction, help='load inputs in to memory')
         self.parser.add_argument('--num_workers', type=int, default=1, help='number of of dataloading workers')
         self.parser.add_argument('--train', type=bool, default=False, action=argparse.BooleanOptionalAction, help='train model')
-        self.parser.add_argument('--modelpath', help='path to trained model')
+        self.parser.add_argument('--load_model', type=bool, default=False, action=argparse.BooleanOptionalAction, help='load existing model')
+        self.parser.add_argument('--models_dir', type=str, default='models/', help='directory to save models')
+        self.parser.add_argument('--weights', type=str, default='best.model', help='name of the weights file')
 
         # Data
         self.parser.add_argument('--serialize', type=bool, default=False, action=argparse.BooleanOptionalAction, help='serialize data')
@@ -94,6 +94,9 @@ class Options():
 
         # Tensorboard dir
         self.opt.tensorboard_dir = self.opt.root / self.opt.tensorboard_dir
+
+        # Path to load weights
+        self.opt.weights = self.opt.root / self.opt.models_dir / self.opt.weights
 
         self.opt.models_dir = self.opt.root / self.opt.models_dir
 

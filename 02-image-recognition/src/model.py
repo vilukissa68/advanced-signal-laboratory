@@ -261,17 +261,19 @@ class BaseNetwork(nn.Module):
         if self.opt.verbose:
             print(f'Saved model {filename} with accuracy {self.best_accuracy}')
 
-    def load_model(self, filename):
-        '''Load model'''
-        if not os.path.exists(filename):
-            raise ValueError(f'File {filename} does not exist')
-        dict = torch.load(filename)
-        self.load_state_dict(dict["model_state_dict"])
-        self.optimizer.load_state_dict(dict["optimizer_state_dict"])
-        self.dtype = dict["dtype"]
-        self.epoch = dict["epoch"]
-        self.total_steps = dict["total_steps"]
-        self.best_accuracy = dict["best_accuracy"]
-        self.init_function = dict["init_function"]
-        self.opt = dict["opt"]
-        print(f'Loaded model {filename} with accuracy {self.best_accuracy}')
+def load_model(path):
+    '''Load model'''
+    if not os.path.exists(path):
+        raise ValueError(f'File {path} does not exist')
+    dict = torch.load(path)
+    model = BaseNetwork(dict["opt"])
+    model.load_state_dict(dict["model_state_dict"])
+    model.optimizer.load_state_dict(dict["optimizer_state_dict"])
+    model.dtype = dict["dtype"]
+    model.epoch = dict["epoch"]
+    model.total_steps = dict["total_steps"]
+    model.best_accuracy = dict["best_accuracy"]
+    model.init_function = dict["init_function"]
+    model.opt = dict["opt"]
+    print(f'Loaded model {path} with accuracy {model.best_accuracy}')
+    return model
