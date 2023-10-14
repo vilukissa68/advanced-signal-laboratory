@@ -1,7 +1,7 @@
 import cv2
 import torch
 
-def smile_detection(model):
+def smile_detection(model, opt):
 
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
@@ -11,18 +11,28 @@ def smile_detection(model):
         grab, frame = cap.read()
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        color = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
         faces = face_cascade.detectMultiScale(gray, 1.2, 5)
 
         # Draw rectangles around faces
         for (x, y, w, h) in faces:
-            face_roi = gray[y:y+h, x:x+w]
+            if model.opt.nc == 1:
+                face_roi = gray[y:y+h, x:x+w]
+            else:
+                face_roi = color[y:y+h, x:x+w]
 
             face_roi = cv2.resize(face_roi, (64, 64))
             face_roi = face_roi / 255.0
-            roi = torch.tensor(face_roi, dtype=torch.float32).unsqueeze(0)
 
-            (not_smile, smile) = model.predict(roi)
-            label = "smiling" if smile > not_smile else "not smiling"
+            # X, Y, C -> 0, C, X, Y
+            roi = torch.tensor(face_roi, dtype=model.dtype).to(opt.device)
+            roi = roi.permute(2, 0, 1).unsqueeze(0)
+
+            # 0 = not smiling, 1 = smiling
+            prediction = model.predict(roi)
+            label = "smiling" if prediction == 1 else "not smiling"
+
+            #label = "smiling" if smile > not_smile else "not smiling"
             cv2.putText(frame, label, (x, y-10),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)

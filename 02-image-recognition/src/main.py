@@ -27,7 +27,7 @@ def main():
 
     if opt.load_model:
         model = load_model(opt.weights)
-        smile_detection(model)
+        smile_detection(model, opt)
 
 
     if opt.train:

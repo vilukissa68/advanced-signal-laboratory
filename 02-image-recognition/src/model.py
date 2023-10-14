@@ -237,7 +237,8 @@ class BaseNetwork(nn.Module):
         with torch.no_grad():
             prediction = self.forward(input)
             prediction = torch.sigmoid(prediction)
-            return prediction
+            prediction = prediction.squeeze(1)
+            return prediction.item()
 
     
     def print_network(self):
