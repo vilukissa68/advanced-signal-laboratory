@@ -11,7 +11,7 @@ def smile_detection(model, opt):
         grab, frame = cap.read()
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        color = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+        color = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         faces = face_cascade.detectMultiScale(gray, 1.2, 5)
 
         # Draw rectangles around faces
@@ -26,7 +26,11 @@ def smile_detection(model, opt):
 
             # X, Y, C -> 0, C, X, Y
             roi = torch.tensor(face_roi, dtype=model.dtype).to(opt.device)
-            roi = roi.permute(2, 0, 1).unsqueeze(0)
+
+            if model.opt.nc == 1:
+                roi = roi.unsqueeze(0).unsqueeze(0)
+            else:
+                roi = roi.permute(2, 0, 1).unsqueeze(0)
 
             # 0 = not smiling, 1 = smiling
             prediction = model.predict(roi)
