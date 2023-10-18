@@ -16,10 +16,22 @@ def smile_detection(model, opt):
 
         # Draw rectangles around faces
         for (x, y, w, h) in faces:
+            scaling_factor = 1.5
+
+            expanded_w = int(w * scaling_factor)
+            expanded_h = int(h * scaling_factor)
+
+            # Calculate x, y to keep the center the same
+            expanded_x = max(0, x - (expanded_w - w) // 2)
+            expanded_y = max(0, y - (expanded_h - h) // 2)
+
             if model.opt.nc == 1:
-                face_roi = gray[y:y+h, x:x+w]
+                face_roi = gray[expanded_y:expanded_y+expanded_h,
+                                expanded_x:expanded_x+expanded_w]
+
             else:
-                face_roi = color[y:y+h, x:x+w]
+                face_roi = color[expanded_y:expanded_y+expanded_h,
+                                 expanded_x:expanded_x+expanded_w]
 
             face_roi = cv2.resize(face_roi, (64, 64))
             face_roi = face_roi / 255.0
@@ -36,10 +48,11 @@ def smile_detection(model, opt):
             prediction = model.predict(roi)
             label = "smiling" if prediction == 1 else "not smiling"
 
-            #label = "smiling" if smile > not_smile else "not smiling"
-            cv2.putText(frame, label, (x, y-10),
+            cv2.putText(frame, label, (expanded_x, expanded_y-10),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            cv2.rectangle(frame, (expanded_x, expanded_y),
+                          (expanded_x + expanded_w, expanded_y + expanded_h),
+                          (0, 255, 0), 2)
 
         cv2.imshow('Smile Detector', frame)
 
