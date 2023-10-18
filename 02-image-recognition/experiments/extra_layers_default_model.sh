@@ -3,7 +3,7 @@ device="mps"
 batch_size=32
 epochs=150
 lr=0.0002
-dataset="GENKI-4K-Augmented"
+dataset="GENKI-4K"
 t1=$(python ../src/main.py --epochs=$epochs --lr=$lr --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent --train --tensorboard \
     --layers64=2 --layers32=3 --layers16=3 --layers8=2 --dataset=$dataset)

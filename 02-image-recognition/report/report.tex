@@ -161,8 +161,6 @@ The next step to increase the performance of the network was to optimize our hyp
 We also experimented with two different optimizers, Adam and AdamW.
 AdamW uses the same optimization algorithm as Adam, with the addition of dynamic learning rate (TODO:CONFIRM THIS!!!). Dynamic learning rate allows the optimizer to change the learning rate during training. In general we want to start with a high learning rate to find the area of local maximum fast and the use increasingly smaller learning rate to find the lowest loss. This should make the training faster and prediction a bit more accurate.
 
-
-
 \section{Data augmentation}
 Since the GENKI-4K dataset is a very small dataset in today's standards we used data augmentation to increase the amount of training data available. In the augmented dataset we included all the original images as such, plus 2 augmented images of each original images.
 
@@ -173,6 +171,85 @@ Finally we experimented with grayscale images. Greyscale images consist only of 
 \chapter{Results}
 \label{sec:results}
 \section{Base Model}
+
+\section{Larger Models}
+
+To find a better model we experimented with larger models by adding non-downsampling blocks after the each side of downsampling block. The base models structure in our syntax is: 1x64 2x32 2x16 1x8. The last layer of each size is always a downsampling layers and the ones before that are non-downsampling layers. The extra layers should be able to capture more features which should enable for better classification. For this experimment we trained for 150 epochs to ensure that the larger models had enough time to learn.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Model} & \textbf{Accuracy}  \\ \hline
+2x64 3x64 3x16 2x8 & 0.82 \\ \hline
+3x64 4x64 4x16 3x8 & 0.66 \\ \hline
+4x64 5x64 5x16 4x8 & 0.63 \\ \hline
+2x64 2x64 2x16 1x8 & 0.80 \\ \hline
+3x64 2x64 2x16 1x8 & 0.81 \\ \hline
+1x64 4x64 4x16 1x8 & 0.83 \\ \hline
+3x64 3x64 2x16 1x8 & 0.80 \\ \hline
+\end{tabular}
+\caption{Training accuracy and loss for different CNN models with Adam optimizer}
+\label{tab:models}
+\end{table}
+
+Based on table results shown in table~\ref{tab:models} we can make an hypothesis that increasing the depth in the beginning of the network, where the layers are larger has greatly more effect to classification results.
+
+\section{Hyperparameter Optimization}
+
+\subsection{Learning rate}
+We tested multiple learning rate for both adam and adamW optimizers.
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Learning Rate} & \textbf{Adam} & \textbf{AdamW} \\ \hline
+0.2 & 0.62 & 0.55 \\ \hline
+0.02 & 0.56 & 0.56 \\ \hline
+0.002 & 0.58 & 0.55 \\ \hline
+0.0002 & 0.79 & 0.76 \\ \hline
+0.00002 & 0.62 & 0.60 \\ \hline
+0.000002 & 0.56 & 0.54 \\ \hline
+0.0000002 & 0.58 & 0.52 \\ \hline
+0.00000002 & 0.79 & 0.51 \\ \hline
+\end{tabular}
+\caption{Training accuracy for Adam and AdamW optimizers with different learning rates}
+\label{tab:learningrates}
+\end{table}
+
+\subsection{Batch Size}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Batch Size} & \textbf{Accuracy} \\ \hline
+1 & 0.80125 \\ \hline
+8 & 0.59375 \\ \hline
+16 & 0.60125 \\ \hline
+32 & 0.5575 \\ \hline
+64 & 0.5611979166666666 \\ \hline
+128 & 0.5416666666666666 \\ \hline
+256 & 0.5520833333333334 \\ \hline
+\end{tabular}
+\caption{Training accuracy for Adam optimizer with different batch sizes}
+\label{tab:batchsizes}
+\end{table}
+
+
+\section{Data augmentation}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Dataset} & \textbf{Accuracy} & \textbf{Loss} \\ \hline
+Base & 0.85 & 0.15 \\ \hline
+Grayscale & 0.91 & 0.09 \\ \hline
+Augmented & - & - \\ \hline
+Augmented Grayscale & - & - \\ \hline
+\end{tabular}
+\caption{Training accuracy and loss for Adam optimizer with the specified datasets}
+\label{table:8}
+\end{table}
 
 \chapter{Conclusions}
 \label{ch:conclusions}

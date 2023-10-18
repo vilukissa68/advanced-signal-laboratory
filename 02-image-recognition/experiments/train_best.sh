@@ -6,23 +6,23 @@ lr=0.0002
 
 t1=$(python ../src/main.py --epochs=$epochs --lr=$lr --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent --train --tensorboard \
-    --layers64=3 --layers32=3 --layers16=2 --layers8=1 --dataset="GENKI-4K")
-echo "${t1} 3x64 3x64 2x16 1x8 GENKI-4K"
+    --layers64=2 --layers32=4 --layers16=4 --layers8=1 --dataset="GENKI-4K")
+echo "${t1} 2x64 4x64 4x16 1x8 GENKI-4K"
 
 t2=$(python ../src/main.py --epochs=$epochs --lr=$lr --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent --train --tensorboard \
-    --layers64=3 --layers32=3 --layers16=2 --layers8=1 --dataset="GENKI-4K-Grayscale")
-echo "${t2} 3x64 3x64 2x16 1x8 GENKI-4K-Grayscale"
+    --layers64=2 --layers32=4 --layers16=4 --layers8=1 --dataset="GENKI-4K-Grayscale")
+echo "${t2} 2x64 4x64 4x16 1x8 GENKI-4K-Grayscale"
 
 t3=$(python ../src/main.py --epochs=$epochs --lr=$lr --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent --train --tensorboard \
-    --layers64=3 --layers32=3 --layers16=2 --layers8=1 --dataset="GENKI-4K-Augmented")
-echo "${t3} 3x64 3x64 2x16 1x8 GENKI-4K-Augmented"
+    --layers64=2 --layers32=4 --layers16=4 --layers8=1 --dataset="GENKI-4K-Augmented")
+echo "${t3} 2x64 4x64 4x16 1x8 GENKI-4K-Augmented"
 
 t4=$(python ../src/main.py --epochs=$epochs --lr=$lr --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent --train --tensorboard \
-    --layers64=3 --layers32=3 --layers16=2 --layers8=1 --dataset="GENKI-4K-Grayscale-Augmented")
-echo "${t4} 3x64 3x64 2x16 1x8 GENKI-4K-Grayscale-Augmented"
+    --layers64=2 --layers32=4 --layers16=4 --layers8=1 --dataset="GENKI-4K-Grayscale-Augmented")
+echo "${t4} 2x64 4x64 4x16 1x8 GENKI-4K-Grayscale-Augmented"
 
 touch results/train_best.txt
 echo batch_size=$batch_size > results/train_best.txt
