@@ -46,7 +46,12 @@ def smile_detection(model, opt):
 
             # 0 = not smiling, 1 = smiling
             prediction = model.predict(roi)
-            label = "smiling" if prediction == 1 else "not smiling"
+            if prediction == 1:
+                label = "smiling"
+            elif prediction == 0:
+                label = "not smiling"
+            else:
+                label = "predicting"
 
             cv2.putText(frame, label, (expanded_x, expanded_y-10),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
