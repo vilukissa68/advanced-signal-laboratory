@@ -133,6 +133,7 @@ class BaseNetwork(nn.Module):
         # Initialize inputs and ground truth
         self.input_tensor = torch.empty(size=(self.opt.batch_size, self.opt.nc, self.opt.isize, self.opt.isize), dtype=self.dtype, device=self.device)
         self.gt = torch.empty(size=(self.opt.batch_size,), dtype=self.dtype, device=self.device)
+        self.noise = torch.empty(size=(self.opt.batch_size, self.opt.nc, self.opt.isize, self.opt.isize), dtype=self.dtype, device=self.device)
 
         # Optimizer
         if self.opt.optimizer == 'adam':
@@ -171,6 +172,9 @@ class BaseNetwork(nn.Module):
     def set_input(self, data):
         '''Set input per batch'''
         with torch.no_grad():
+            if self.opt.isTrain and self.opt.with_noise:
+                self.noise.data.copy_(torch.normal(0, self.opt.noise_std, size=self.noise.size()))
+
             self.input_tensor.resize_(data[0].size()).copy_(data[0])
             self.gt.resize_(data[1].size()).copy_(data[1])
 
@@ -211,7 +215,7 @@ class BaseNetwork(nn.Module):
             gts = []
             for i, data in enumerate(val_loader, 0):
                 self.set_input(data)
-                outputs = self.forward(self.input_tensor).squeeze(1)
+                outputs = self.forward(self.input_tensor + self.noise).squeeze(1)
                 outputs = torch.sigmoid(outputs)
                 predicted = (outputs > 0.5)
                 predictions.extend(predicted.tolist())

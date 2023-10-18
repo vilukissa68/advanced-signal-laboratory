@@ -66,6 +66,8 @@ class Options():
         self.parser.add_argument('--train_split', type=float, default=0.8, help='train-to-test split division')
         self.parser.add_argument('--epochs', type=int, default=50, help='number of epochs to train')
         self.parser.add_argument('--optimizer', type=str, default='adam', help='optimizer: sgd | adam | adamw')
+        self.parser.add_argument('--with_noise', type=bool, default=False, action=argparse.BooleanOptionalAction, help='add noise to input during training')
+        self.parser.add_argument('--noise_std', type=float, default=0.1, action=argparse.BooleanOptionalAction, help='noise amplitude')
         self.isTrain = True
 
         # Debugging
