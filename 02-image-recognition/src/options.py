@@ -41,6 +41,8 @@ class Options():
         self.parser.add_argument('--load_model', type=bool, default=False, action=argparse.BooleanOptionalAction, help='load existing model')
         self.parser.add_argument('--models_dir', type=str, default='models/', help='directory to save models')
         self.parser.add_argument('--weights', type=str, default='best.model', help='name of the weights file')
+        self.parser.add_argument('--scaling_factor', type=float, default=1, help='the scaling factor for face ROI')
+
 
         # Data
         self.parser.add_argument('--serialize', type=bool, default=False, action=argparse.BooleanOptionalAction, help='serialize data')

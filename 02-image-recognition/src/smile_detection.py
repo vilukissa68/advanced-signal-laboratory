@@ -16,7 +16,7 @@ def smile_detection(model, opt):
 
         # Draw rectangles around faces
         for (x, y, w, h) in faces:
-            scaling_factor = 1.5
+            scaling_factor = opt.scaling_factor
 
             expanded_w = int(w * scaling_factor)
             expanded_h = int(h * scaling_factor)
