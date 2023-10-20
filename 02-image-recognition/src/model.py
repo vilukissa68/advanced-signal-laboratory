@@ -45,6 +45,7 @@ class BaseNetwork(nn.Module):
         self.best_accuracy = 0.0
         self.best_epoch = 0
         self.init_function = nn.init.normal_
+        self.best_matrix = None
 
         if opt.tensorboard:
             self.writer = SummaryWriter(log_dir=opt.tensorboard_dir / self.opt.tag)
@@ -181,7 +182,7 @@ class BaseNetwork(nn.Module):
     def optimize_parameters(self):
         '''Optimize parameters per batch'''
         self.optimizer.zero_grad()
-        prediction = self.forward(self.input_tensor)
+        prediction = self.forward(self.input_tensor + self.noise)
         loss = self.criterion(prediction, self.gt.unsqueeze(1))
         loss.backward()
         self.optimizer.step()
@@ -215,7 +216,7 @@ class BaseNetwork(nn.Module):
             gts = []
             for i, data in enumerate(val_loader, 0):
                 self.set_input(data)
-                outputs = self.forward(self.input_tensor + self.noise).squeeze(1)
+                outputs = self.forward(self.input_tensor).squeeze(1)
                 outputs = torch.sigmoid(outputs)
                 predicted = (outputs > 0.5)
                 predictions.extend(predicted.tolist())
@@ -232,6 +233,7 @@ class BaseNetwork(nn.Module):
             if self.accuracy >= self.best_accuracy:
                 self.best_accuracy = self.accuracy
                 self.best_epoch = self.epoch
+                self.best_matrix = (tp, tn, fp, fn)
                 print(f'New Best accuracy: {self.best_accuracy}')
                 self.save_model()
 
@@ -261,7 +263,8 @@ class BaseNetwork(nn.Module):
             "total_steps": self.total_steps,
             "best_accuracy": self.best_accuracy,
             "init_function": self.init_function,
-            "opt": self.opt
+            "opt": self.opt,
+            "matrix": self.best_matrix
         }, filename)
         if self.opt.verbose:
             print(f'Saved model {filename} with accuracy {self.best_accuracy}')
@@ -280,5 +283,6 @@ def load_model(path):
     model.best_accuracy = dict["best_accuracy"]
     model.init_function = dict["init_function"]
     model.opt = dict["opt"]
+    model.best_matrix = dict["matrix"]
     print(f'Loaded model {path} with accuracy {model.best_accuracy}')
     return model

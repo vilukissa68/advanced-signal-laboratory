@@ -9,6 +9,7 @@ def smile_detection(model, opt):
 
     while True:
         grab, frame = cap.read()
+        print(opt.device)
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         color = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

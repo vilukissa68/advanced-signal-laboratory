@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
 device="mps"
 batch_size=32
-epochs=300
-lr=0.0001
+epochs=500
+lr=0.0002
 
 t1=$(python ../src/main.py --epochs=$epochs --lr=$lr --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent --train --tensorboard \
-    --name="Best" \
-    --layers64=2 --layers32=3 --layers16=3 --layers8=1 --dataset="GENKI-4K")
-echo "${t1} 2x64 4x64 4x16 1x8 GENKI-4K with noise"
+    --name="Best" --with_noise \
+    --layers64=3 --layers32=3 --layers16=2 --layers8=1 --dataset="GENKI-4K-Augmented")
+echo "${t1} 3x64 3x64 2x16 1x8 GENKI-4K"
 
 #t2=$(python ../src/main.py --epochs=$epochs --lr=$lr --batch_size=$batch_size \
 #    --device=$device --optimizer=adam --silent --train --tensorboard \

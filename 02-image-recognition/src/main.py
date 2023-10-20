@@ -12,7 +12,6 @@ def main():
     if opt.silent:
         blockPrint()
 
-
     if opt.serialize:
         print("Serializing data")
         serialize_all_in_dir(opt)
@@ -27,6 +26,7 @@ def main():
 
     if opt.load_model:
         model = load_model(opt.weights)
+        model.to(opt.device)
         smile_detection(model, opt)
 
 

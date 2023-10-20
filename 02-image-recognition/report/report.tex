@@ -131,8 +131,13 @@ The system consisted of two major modules. First a neural network which could cl
 \pagenumbering{arabic}
 \setcounter{page}{1} 
 \section{Neural networks}
-Neural networks are
-Generally neural networks are trained using the gradien descdent algorithm.
+Neural networks are a type of machine learning algorithm that are inspired by the human brain. They are made up of layers of nodes that work together to make predictions or classifications. Each node performs a simple calculation on its inputs and passes the result to the next layer. This process continues until the final layer produces an output.
+
+Artifical neural networks (ANNs) are the most common type of neural network. They have an input layer, one or more hidden layers, and an output layer. The input layer represents the features of the input data, while the output layer is the final prediction of the network. The hidden layers perform transformations on the input data to extract higher-level features that are useful for making predictions.
+
+Training a neural network involves adjusting the weights and biases of each node so that the network produces accurate predictions for the training data. This is done using an optimization algorithm called gradient descent. Gradient descent is an iterative algorithm that adjusts the weights and biases of each node in small steps to minimize a cost function.
+
+For image classification tasks like the one in this project, it's common to use CNNs. CNNs are a type of a neural network where the layers perform convolution operation for the inputs.
 
 \section{Face detection}
 
@@ -174,7 +179,32 @@ Adding noise to training images is a common technique to improve the training of
 
 \chapter{Results}
 \label{sec:results}
+
 \section{Base Model}
+One of the requirements of the assignment was to implement the basic model that was described in the instructions, and report it's accuracy. To more accurately evaluate the base model we ran the training 5 times to reduce the effect of random initialization. The results of these runs are presented in table~\ref{tab:basemodel}.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Run & Accuracy \\
+\hline
+1 & 0.58 \\
+2 & 0.6075 \\
+3 & 0.60875 \\
+4 & 0.5575 \\
+5 & 0.59375 \\
+\hline
+Avg & 0.5935 \\
+\hline
+\end{tabular}
+\caption{Accuracy values}
+\label{tab:basemodel}
+\end{table}
+
+From the results we can see that there was one run that had noticeably lower accuracy than the other runs. This can be explained by the fact the 50 epochs of training for a dataset this small doesn't have enough time to converge. Also the random starting point of the function causes training to some time converge earlier and sometimes later.
+
+From the runs we could take an average accuracy of 0.59\% for the basemodel.
 
 \section{Larger Models}
 
@@ -200,6 +230,7 @@ To find a better model we experimented with larger models by adding non-downsamp
 Based on table results shown in table~\ref{tab:models} we can make an hypothesis that increasing the depth in the beginning of the network, where the layers are larger has greatly more effect to classification results.
 
 \section{Hyperparameter Optimization}
+This section presents the results of the different tests where we experimented with different hyperparameters.
 
 \subsection{Learning rate}
 We tested multiple learning rate for both adam and adamW optimizers. These results are shown in the table~\ref{tab:learningrates}. From the results we can see that the use of adamW didn't really benefit us, not in terms of training time or improved accuracy. This experiment helped us to better narrow down the optimal learning rate for our model.
@@ -287,6 +318,10 @@ Since we were limited on time and processing hardware we cannot be sure that thi
 
 \chapter{Conclusions}
 \label{ch:conclusions}
+The goal of this assignment was to build a program that could classify from live video feed if the person in the video is smiling or not, with an accuracy of atleast 85\%. The program we build during this project satisfies these requirements.
+
+First we build and trained a CNN based on the basic design layed out in the instructions with Pytorch.
+Second, we integrated the model with the OpenCV library to classify smiles from a live video feed.
 
 %
 % The bibliography, i.e the list of references
