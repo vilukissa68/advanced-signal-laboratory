@@ -56,6 +56,34 @@ def get_metrics(predictions, labels):
     fn = [1 if p == 0 and l == 1 else 0 for p, l in zip(predictions, labels)].count(1)
     return tp, tn, fp ,fn
 
+def draw_matrix(tp, tn, fp, fn):
+    # Create the data array
+    data = np.array([[tp, fp], [fn, tn]])
+
+    # Plot the confusion matrix
+    heatmap = plt.pcolor(data, cmap='Blues')
+
+    # Add colorbar legend
+    plt.colorbar(heatmap)
+
+    # Add axis labels and ticks
+    plt.xticks([0.5, 1.5], ['Positive', 'Negative'])
+    plt.yticks([0.5, 1.5], ['Positive', 'Negative'])
+    plt.xlabel('True Label')
+    plt.ylabel('Predicted Label')
+
+    # Add text annotations for each cell
+    for i in range(data.shape[0]):
+        for j in range(data.shape[1]):
+            plt.text(j + 0.5, i + 0.5, str(data[i, j]), ha='center', va='center')
+
+    # Save as svg
+    plt.savefig('confusion_matrix.svg', format='svg', dpi=1200)
+
+    # Show the plot
+    plt.show()
+
+
 def precision(tp, fp):
     return tp / (tp + fp)
 

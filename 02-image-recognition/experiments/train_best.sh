@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 device="mps"
-batch_size=32
+batch_size=1
 epochs=500
 lr=0.0002
 
 t1=$(python ../src/main.py --epochs=$epochs --lr=$lr --batch_size=$batch_size \
     --device=$device --optimizer=adam --silent --train --tensorboard \
-    --name="Best" --with_noise \
+    --name="Best" \
     --layers64=3 --layers32=3 --layers16=2 --layers8=1 --dataset="GENKI-4K-Augmented")
 echo "${t1} 3x64 3x64 2x16 1x8 GENKI-4K"
 

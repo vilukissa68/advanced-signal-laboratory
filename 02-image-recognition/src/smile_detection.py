@@ -9,7 +9,6 @@ def smile_detection(model, opt):
 
     while True:
         grab, frame = cap.read()
-        print(opt.device)
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         color = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -47,6 +46,10 @@ def smile_detection(model, opt):
 
             # 0 = not smiling, 1 = smiling
             prediction = model.predict(roi)
+
+            # Sigmoid to binary
+            prediction = int(prediction > 0.5)
+
             if prediction == 1:
                 label = "smiling"
             elif prediction == 0:

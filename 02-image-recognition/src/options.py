@@ -42,6 +42,7 @@ class Options():
         self.parser.add_argument('--models_dir', type=str, default='models/', help='directory to save models')
         self.parser.add_argument('--weights', type=str, default='best.model', help='name of the weights file')
         self.parser.add_argument('--scaling_factor', type=float, default=1, help='the scaling factor for face ROI')
+        self.parser.add_argument('--draw_matrix', type=bool, default=False, action=argparse.BooleanOptionalAction, help='Draw confusion matrix from best epoch')
 
 
         # Data

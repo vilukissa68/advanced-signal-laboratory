@@ -13,11 +13,12 @@
 \usepackage[english]{babel}
 \usepackage[
 backend=biber,
-style=authoryear,
-citestyle=authoryear,
+style=numeric,
+citestyle=numeric,
 autocite=inline
 ]{biblatex}
 \usepackage{csquotes}
+\usepackage{svg}
 
 \addbibresource{references.bib} %Imports bibliography file
 
@@ -124,7 +125,7 @@ This report documents the work done in the Image Recognition assignment as a par
 
 \chapter{Introduction}
 \label{ch:intro}
-In this report we describe our work done in the 'Image Recognition' laboratory assignment for the Advanced Signal Processing Laboratory. In this assignment we were to implement a system that would detect if a person was smiling or not from a live video feed, using Machine Learning approach, more specifically a Convolution Neural Network trained as a binary classifier.
+In this report we describe our work done in the 'Image Recognition' laboratory assignment for the Advanced Signal Processing Laboratory course. In this assignment we were to implement a system that would detect if a person was smiling or not from a live video feed, using Machine Learning approach, more specifically a Convolution Neural Network trained as a binary classifier.
 
 The system consisted of two major modules. First a neural network which could classify smiling and non-smiling images with a minimum 85\% accuracy. The second module would capture live video feed from computers web camera, from which the module would capture a face from each frame. These frames would then be given for the network to classify if that captured face was smiling or not. The classification would then be shown in the programs UI to the user.
 
@@ -137,7 +138,7 @@ Artifical neural networks (ANNs) are the most common type of neural network. The
 
 Training a neural network involves adjusting the weights and biases of each node so that the network produces accurate predictions for the training data. This is done using an optimization algorithm called gradient descent. Gradient descent is an iterative algorithm that adjusts the weights and biases of each node in small steps to minimize a cost function.
 
-For image classification tasks like the one in this project, it's common to use CNNs. CNNs are a type of a neural network where the layers perform convolution operation for the inputs.
+For image classification tasks like the one in this project, it's common to use CNNs. CNNs are a type of a neural network where the layers perform convolution operation for the inputs.~\cite{dlbook}
 
 \section{Face detection}
 
@@ -151,9 +152,9 @@ To be able to input the GENKI-4K images into the neural network we resized the i
 
 
 \section{Base model implementation}
-The described model was implemented as Pytorch~\cite{pytorch} model.
+The described model was implemented as Pytorch~\cite{pytorch} model. We chose to use Pytorch since it allows for GPU accleration on M1/M2 macbooks via the MPS backend and since we already had some familiarity with it.
 
-The base model didn't perform as well as was required by the assignment instructions, so we implemented multiple methods that are generally known to improve the accuracy of image classification models.
+The expectation by us and by the assignment instructor was that the base model wouldn't perform as accurately as desired. For this reason we will need to improve upon the basic design of the base model, and use different methods to increase it's accuracy
 
 \section{Improved models}
 Since the base model was a relatively small network, we decided to start optimizing accuracy by increasing the number of layers in the network. The basic idea was that by increasing the number of layers the network would be able to learn more detailed information and capture more of the latent features and thus be able to more accurately make predictions. The danger of increasing the size of the network is that each added parameters increases the training time and more importantly increases the prediction time. The increased prediction time could mean that our program would not be able to make predictions of real time video fast enough to be usable.
@@ -163,19 +164,18 @@ We ran a test were we trained models of different size with the same hyperparame
 \section{Optimizing Hyperparameters}
 The next step to increase the performance of the network was to optimize our hyperparameters. This is usually a difficult problem so we focused only on the following parameters: learning rate, number of epoch and batch size. The best choice for the hyperparameters is dependent on the network we decide to use, so we tested the base model and two of the best performing bigger models to find the optimal model and accompanying parameters.
 
-We also experimented with two different optimizers, Adam and AdamW.
-AdamW uses the same optimization algorithm as Adam, with the addition of dynamic learning rate (TODO:CONFIRM THIS!!!). Dynamic learning rate allows the optimizer to change the learning rate during training. In general we want to start with a high learning rate to find the area of local maximum fast and the use increasingly smaller learning rate to find the lowest loss. This should make the training faster and prediction a bit more accurate.
+We also experimented with two different optimizers, Adam and AdamW. AdamW uses the same optimization algorithm as Adam, with the addition of dynamic learning rate. Dynamic learning rate allows the optimizer to change the learning rate during training. In general we want to start with a high learning rate to find the area of local maximum fast and the use increasingly smaller learning rate to find the lowest loss. This should make the training faster and prediction a bit more accurate.~\cite{adamw}
 
 \section{Data augmentation}
 \label{sec:dataaug}
-Since the GENKI-4K dataset is a very small dataset in today's standards we used data augmentation to increase the amount of training data available. In the augmented dataset we included all the original images as such, plus 2 augmented images of each original images.
+Since the GENKI-4K dataset is a very small dataset in today's standards we used data augmentation to increase the amount of training data available. In theory increasing the number of training samples allows for better tuning of the weights since the model can be trained for longer withouth converging.\cite{dlbook}
 
-We used 3 different augmentations methods: flipping creates a mirror image relative to the y-axis, rotation rotates the image 90, 180 or 270 degrees, and finally color jitter changes the saturation of the images. The augmentations we applied at random during augmented dataset serialization and one augmented images be applied with 0 to 3 augmentations.
+In the augmented dataset we included all the original images as such, plus 2 augmented images of each original images. We used 3 different augmentations methods: flipping creates a mirror image relative to the y-axis, rotation rotates the image 90, 180 or 270 degrees, and finally color jitter changes the saturation of the images. The augmentations we applied at random during augmented dataset serialization and one augmented images be applied with 0 to 3 augmentations.
 
 Finally we experimented with grayscale images. Greyscale images consist only of 1 channel pixels, where as color images use 3 channels. This means that neural network that takes only grayscale images has less parameters, and therefore faster predictions when compared to color images. Our hypothesis was that since smile should be classifiable from both grayscale images and color images equally well, the grayscale models might use the freed parameters to make more accurate predictions faster. We also created a grayscale version of the augmented dataset.
 
 \subsection{Noise}
-Adding noise to training images is a common technique to improve the training of image classification models. It differs from the previous data augmentation methods in the sense that it doesn't increase the size of the dataset, but prevents the network from seeing exactly the same images over and over again. Noise is added to images randomly with the goal of encouragin the model to explore the possibility space.
+Adding noise to training images is a common technique to improve the training of image classification models. It differs from the previous data augmentation methods in the sense that it doesn't increase the size of the dataset, but prevents the network from seeing exactly the same images over and over again. Noise is added to images randomly with the goal of encouragin the model to explore the possibility space.\cite{dlbook}
 
 \chapter{Results}
 \label{sec:results}
@@ -185,6 +185,7 @@ One of the requirements of the assignment was to implement the basic model that 
 
 \begin{table}[h!]
 \centering
+\caption{Accuracy values for the base model runs}
 \begin{tabular}{|c|c|}
 \hline
 Run & Accuracy \\
@@ -198,7 +199,6 @@ Run & Accuracy \\
 Avg & 0.5935 \\
 \hline
 \end{tabular}
-\caption{Accuracy values}
 \label{tab:basemodel}
 \end{table}
 
@@ -212,6 +212,7 @@ To find a better model we experimented with larger models by adding non-downsamp
 
 \begin{table}[h!]
 \centering
+\caption{Training accuracy and loss for different CNN models with Adam optimizer}
 \begin{tabular}{|c|c|}
 \hline
 \textbf{Model} & \textbf{Accuracy}  \\ \hline
@@ -223,7 +224,6 @@ To find a better model we experimented with larger models by adding non-downsamp
 1x64 4x64 4x16 1x8 & 0.83 \\ \hline
 3x64 3x64 2x16 1x8 & 0.80 \\ \hline
 \end{tabular}
-\caption{Training accuracy and loss for different CNN models with Adam optimizer}
 \label{tab:models}
 \end{table}
 
@@ -236,6 +236,7 @@ This section presents the results of the different tests where we experimented w
 We tested multiple learning rate for both adam and adamW optimizers. These results are shown in the table~\ref{tab:learningrates}. From the results we can see that the use of adamW didn't really benefit us, not in terms of training time or improved accuracy. This experiment helped us to better narrow down the optimal learning rate for our model.
 \begin{table}[h!]
 \centering
+\caption{Training accuracy for Adam and AdamW optimizers with different learning rates}
 \begin{tabular}{|c|c|c|}
 \hline
 \textbf{Learning Rate} & \textbf{Adam} & \textbf{AdamW} \\ \hline
@@ -248,7 +249,6 @@ We tested multiple learning rate for both adam and adamW optimizers. These resul
 0.0000002 & 0.58 & 0.52 \\ \hline
 0.00000002 & 0.79 & 0.51 \\ \hline
 \end{tabular}
-\caption{Training accuracy for Adam and AdamW optimizers with different learning rates}
 \label{tab:learningrates}
 \end{table}
 
@@ -256,6 +256,7 @@ We decided to do another experiment with learning rates closer to the values of 
 
 \begin{table}[h!]
 \centering
+\caption{Training accuracy for Adam and AdamW optimizers with different learning rates}
 \begin{tabular}{|c|c|c|}
 \hline
 \textbf{Learning Rate} & \textbf{Adam} & \textbf{AdamW} \\ \hline
@@ -265,16 +266,16 @@ We decided to do another experiment with learning rates closer to the values of 
 0.0005 & 0.62 & 0.62 \\ \hline
 0.0007 & 0.61 & 0.58 \\ \hline
 \end{tabular}
-\caption{Training accuracy for Adam and AdamW optimizers with different learning rates}
 \label{tab:learningrates2}
 \end{table}
 
-From the results we can again see that the choice of optimizer doesn't have much effect in our cage, but it's clear that the learning rate of 0.0001 has produced best results for both of the optimizers.
+From the results we can again see that the choice of optimizer doesn't have much effect in our cage, but it's clear that the learning rate of 0.0001 has produced best results for both of the optimizers. This is still a worse accuracy than what we got with a learning rate of 0.0002.
 
 \subsection{Batch Size}
 Batch size is an improtant factor to consider during the training. Using a large enough batch size will allow the model to be trained faster than with a smaller batch size. Large batch size might also faciliate for some randomness in the optimization preventing the model from getting stuck in local minimas. We tested some possible batch sizes as shown in the table~\ref{tab:batchsizes}.
 \begin{table}[h!]
 \centering
+\caption{Training accuracy for Adam optimizer with different batch sizes}
 \begin{tabular}{|c|c|}
 \hline
 \textbf{Batch Size} & \textbf{Accuracy} \\ \hline
@@ -286,7 +287,6 @@ Batch size is an improtant factor to consider during the training. Using a large
 128 & 0.54 \\ \hline
 256 & 0.55 \\ \hline
 \end{tabular}
-\caption{Training accuracy for Adam optimizer with different batch sizes}
 \label{tab:batchsizes}
 \end{table}
 
@@ -296,6 +296,7 @@ From the results we can see that the batch size didn't have a massive effect on 
 We tested the following model: 1x64 3x32 3x16 1x8 with all the datasets described in~\ref{sec:dataaug}. These results are shown in table~\ref{tab:dataaug}.
 \begin{table}[h!]
 \centering
+\caption{Training accuracy and loss for Adam optimizer with the specified datasets}
 \begin{tabular}{|c|c|}
 \hline
 \textbf{Dataset} & \textbf{Accuracy} \\ \hline
@@ -304,17 +305,24 @@ Grayscale & 0.75 \\ \hline
 Augmented & 0.87  \\ \hline
 Augmented Grayscale & 0.83  \\ \hline
 \end{tabular}
-\caption{Training accuracy and loss for Adam optimizer with the specified datasets}
 \label{tab:dataaug}
 \end{table}
 
 From the results we can conclude that our hypothesis about grayscale leaving more space for parameters to find features was not correct, since the grayscale datasets performed clearly worse then the color sets. We can also see that data augmentaion improved our accuracy a bit.
 
 \section{The Final Model}
-After all the experimentation we settled on the following model for our training:
+After all the experimentation we settled on the following model for our training: 3x64 3x32 2x16 1x8, and we trained for 200 epochs, with the augmented color images, without noise, with a learning rate of $0.0002$ using the Adam optimizer, with batches of 32. On M1 macbook this took around 90 minutes with GPU acceleration via the MPS backend.
 
-Since we were limited on time and processing hardware we cannot be sure that this given model is the most performant model that we could have achieved. In our testing the model achieved a accuracy of: xx\% and was sufficiently accurate and fast when we tested it in the completed system.
+Since we were limited on time and processing hardware we cannot be sure that this given model is the most performant model that we could have achieved. In our testing the model achieved a accuracy of: 88\% and was sufficiently accurate and fast when we tested it in the completed system.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/confusion_matrix_best.pdf}
+  \caption{Confusion matrix for the best performing model}
+  \label{fig:confusion_matrix_best}
+\end{figure}
+
+The figure~\ref{fig:confusion_matrix_best} shows the confusion matrix for the final model.
 
 \chapter{Conclusions}
 \label{ch:conclusions}

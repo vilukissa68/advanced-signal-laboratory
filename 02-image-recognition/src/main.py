@@ -3,11 +3,12 @@
 from options import Options
 from model import BaseNetwork, load_model
 from dataloader import get_dataloaders, serialize_all_in_dir, show_image
-from utils import enablePrint, blockPrint, show_batch
+from utils import enablePrint, blockPrint, show_batch, draw_matrix
 from smile_detection import smile_detection
 
 def main():
     opt = Options().parse()
+    model = None
 
     if opt.silent:
         blockPrint()
@@ -44,6 +45,15 @@ def main():
         if opt.silent:
             enablePrint()
             print("accuracy: ", model.best_accuracy, " epoch: ", model.best_epoch)
+
+    if opt.draw_matrix:
+        if not model:
+            model = load_model(opt.weights)
+            model.to(opt.device)
+        lst = model.best_matrix
+        print(lst)
+        draw_matrix(lst[0], lst[1], lst[2], lst[3])
+
 
 
 if __name__ == '__main__':
