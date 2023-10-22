@@ -134,7 +134,7 @@ The system consisted of two major modules. First a neural network which could cl
 \section{Neural networks}
 Neural networks are a type of machine learning algorithm that are inspired by the human brain. They are made up of layers of nodes that work together to make predictions or classifications. Each node performs a simple calculation on its inputs and passes the result to the next layer. This process continues until the final layer produces an output.
 
-Artifical neural networks (ANNs) are the most common type of neural network. They have an input layer, one or more hidden layers, and an output layer. The input layer represents the features of the input data, while the output layer is the final prediction of the network. The hidden layers perform transformations on the input data to extract higher-level features that are useful for making predictions.
+Artificial neural networks (ANNs) are the most common type of neural network. They have an input layer, one or more hidden layers, and an output layer. The input layer represents the features of the input data, while the output layer is the final prediction of the network. The hidden layers perform transformations on the input data to extract higher-level features that are useful for making predictions.
 
 Training a neural network involves adjusting the weights and biases of each node so that the network produces accurate predictions for the training data. This is done using an optimization algorithm called gradient descent. Gradient descent is an iterative algorithm that adjusts the weights and biases of each node in small steps to minimize a cost function.
 
@@ -148,18 +148,18 @@ For image classification tasks like the one in this project, it's common to use 
 \section{Dataset}
 For this assignment we were required to use the GENKI-4K dataset~\cite{genki}. GENKI-4K consists of 4000 images of faces, labeled either smiling or not smiling. This data set was to be randomly split into portions of 80:20 for training dataset and testing dataset.
 
-To be able to input the GENKI-4K images into the neural network we resized the images to match the required 64x64 pixels size used by the network. The images were also normalized to values $0...1$. This is generally recommended to prevent issues with division and square root operations that would happend when using discrete integers.
+To be able to input the GENKI-4K images into the neural network we resized the images to match the required 64x64 pixels size used by the network. The images were also normalized to values $0...1$. This is generally recommended to prevent issues with division and square root operations that would happen when using discrete integers.
 
 
 \section{Base model implementation}
-The described model was implemented as Pytorch~\cite{pytorch} model. We chose to use Pytorch since it allows for GPU accleration on M1/M2 macbooks via the MPS backend and since we already had some familiarity with it.
+The described model was implemented as Pytorch~\cite{pytorch} model. We chose to use Pytorch since it allows for GPU acceleration on M1/M2 macbooks via the MPS backend and since we already had some familiarity with it.
 
 The expectation by us and by the assignment instructor was that the base model wouldn't perform as accurately as desired. For this reason we will need to improve upon the basic design of the base model, and use different methods to increase it's accuracy
 
 \section{Improved models}
 Since the base model was a relatively small network, we decided to start optimizing accuracy by increasing the number of layers in the network. The basic idea was that by increasing the number of layers the network would be able to learn more detailed information and capture more of the latent features and thus be able to more accurately make predictions. The danger of increasing the size of the network is that each added parameters increases the training time and more importantly increases the prediction time. The increased prediction time could mean that our program would not be able to make predictions of real time video fast enough to be usable.
 
-We ran a test were we trained models of different size with the same hyperparameters, to find what kind of layers would have the most benefit for the accuracy of the predictions. We noticed that by encreasing the the number of larger layers had more of a impact.
+We ran a test were we trained models of different size with the same hyperparameters, to find what kind of layers would have the most benefit for the accuracy of the predictions. We noticed that by increasing the number of larger layers had more of an impact.
 
 \section{Optimizing Hyperparameters}
 The next step to increase the performance of the network was to optimize our hyperparameters. This is usually a difficult problem so we focused only on the following parameters: learning rate, number of epoch and batch size. The best choice for the hyperparameters is dependent on the network we decide to use, so we tested the base model and two of the best performing bigger models to find the optimal model and accompanying parameters.
@@ -168,20 +168,32 @@ We also experimented with two different optimizers, Adam and AdamW. AdamW uses t
 
 \section{Data augmentation}
 \label{sec:dataaug}
-Since the GENKI-4K dataset is a very small dataset in today's standards we used data augmentation to increase the amount of training data available. In theory increasing the number of training samples allows for better tuning of the weights since the model can be trained for longer withouth converging.\cite{dlbook}
+Since the GENKI-4K dataset is a very small dataset in today's standards we used data augmentation to increase the amount of training data available. In theory increasing the number of training samples allows for better tuning of the weights since the model can be trained for longer without converging.\cite{dlbook}
 
 In the augmented dataset we included all the original images as such, plus 2 augmented images of each original images. We used 3 different augmentations methods: flipping creates a mirror image relative to the y-axis, rotation rotates the image 90, 180 or 270 degrees, and finally color jitter changes the saturation of the images. The augmentations we applied at random during augmented dataset serialization and one augmented images be applied with 0 to 3 augmentations.
 
 Finally we experimented with grayscale images. Greyscale images consist only of 1 channel pixels, where as color images use 3 channels. This means that neural network that takes only grayscale images has less parameters, and therefore faster predictions when compared to color images. Our hypothesis was that since smile should be classifiable from both grayscale images and color images equally well, the grayscale models might use the freed parameters to make more accurate predictions faster. We also created a grayscale version of the augmented dataset.
 
 \subsection{Noise}
-Adding noise to training images is a common technique to improve the training of image classification models. It differs from the previous data augmentation methods in the sense that it doesn't increase the size of the dataset, but prevents the network from seeing exactly the same images over and over again. Noise is added to images randomly with the goal of encouragin the model to explore the possibility space.\cite{dlbook}
+Adding noise to training images is a common technique to improve the training of image classification models. It differs from the previous data augmentation methods in the sense that it doesn't increase the size of the dataset, but prevents the network from seeing exactly the same images over and over again. Noise is added to images randomly with the goal of encouraging the model to explore the possibility space.\cite{dlbook}
+
+\section{Smile detection}
+After successfully training our model for smile classification, the next step is to implement the real-time smile detector. The goal is to capture live video feed from a computers webcam and determine if the person is smiling or not. We used VideoCapture class of OpenCV library to capture frames from the webcam. 
+
+\subsection{Frame Processing}
+Each frame captured from a webcam goes through a series of pre-processing steps to prepare it for smile classification. First, we converted the frames to grayscale and color channels. To identify faces in the video stream, we utilized the OpenCV's Haar Cascade Classifier which represent the detected faces as a list of rectangles, containing face's coordinates, width and height. For each face detected, we determined a region of interest (ROI) by using the set of variables included in the list.
+
+\subsection{Smile Classification}
+After a region of interest (ROI) was determined, the next step is to resize the frame to 64x64 pixels and normalize to values between 0 and 1 to match the requirements of the neural networks (section 2.1). The normalized face ROI is converted into a PyTorch tensor. Depending on whether the model is designed for grayscale or color images (model.opt.nc), the tensor is reshaped for input.
+
+With the prepared face ROI and trained model, we execute smile detection in real-time. For each face detected in a video frame, the deep learning model predicts whether the person is smiling or not. The model's output is converted to a binary, with "1" meaning "smiling" and "0" representing "not smiling". The result of the smile classification is shown on the screen in real-time using OpenCV's imshow and waitKey combination. The user can see the smile detection outcome from the UI as the live video feed is processed frame by frame.
+
 
 \chapter{Results}
 \label{sec:results}
 
 \section{Base Model}
-One of the requirements of the assignment was to implement the basic model that was described in the instructions, and report it's accuracy. To more accurately evaluate the base model we ran the training 5 times to reduce the effect of random initialization. The results of these runs are presented in table~\ref{tab:basemodel}.
+One of the requirements of the assignment was to implement the basic model that was described in the instructions, and report its accuracy. To more accurately evaluate the base model we ran the training 5 times to reduce the effect of random initialization. The results of these runs are presented in table~\ref{tab:basemodel}.
 
 \begin{table}[h!]
 \centering
@@ -208,7 +220,7 @@ From the runs we could take an average accuracy of 0.59\% for the basemodel.
 
 \section{Larger Models}
 
-To find a better model we experimented with larger models by adding non-downsampling blocks after the each side of downsampling block. The base models structure in our syntax is: 1x64 2x32 2x16 1x8. The last layer of each size is always a downsampling layers and the ones before that are non-downsampling layers. The extra layers should be able to capture more features which should enable for better classification. For this experimment we trained for 150 epochs to ensure that the larger models had enough time to learn.
+To find a better model we experimented with larger models by adding non-downsampling blocks after the each side of downsampling block. The base models structure in our syntax is: 1x64 2x32 2x16 1x8. The last layer of each size is always a downsampling layers and the ones before that are non-downsampling layers. The extra layers should be able to capture more features which should enable for better classification. For this experiment we trained for 150 epochs to ensure that the larger models had enough time to learn.
 
 \begin{table}[h!]
 \centering
@@ -272,7 +284,7 @@ We decided to do another experiment with learning rates closer to the values of 
 From the results we can again see that the choice of optimizer doesn't have much effect in our cage, but it's clear that the learning rate of 0.0001 has produced best results for both of the optimizers. This is still a worse accuracy than what we got with a learning rate of 0.0002.
 
 \subsection{Batch Size}
-Batch size is an improtant factor to consider during the training. Using a large enough batch size will allow the model to be trained faster than with a smaller batch size. Large batch size might also faciliate for some randomness in the optimization preventing the model from getting stuck in local minimas. We tested some possible batch sizes as shown in the table~\ref{tab:batchsizes}.
+Batch size is an important factor to consider during the training. Using a large enough batch size will allow the model to be trained faster than with a smaller batch size. Large batch size might also faciliate for some randomness in the optimization preventing the model from getting stuck in local minimas. We tested some possible batch sizes as shown in the table~\ref{tab:batchsizes}.
 \begin{table}[h!]
 \centering
 \caption{Training accuracy for Adam optimizer with different batch sizes}
@@ -290,7 +302,7 @@ Batch size is an improtant factor to consider during the training. Using a large
 \label{tab:batchsizes}
 \end{table}
 
-From the results we can see that the batch size didn't have a massive effect on the accuracy. This is most likely since we train for so many epochs. There is a clear outlier in batch size of 1. This might be due to a lucky change in inital weights, but generally larger batch size a used with image classification.
+From the results we can see that the batch size didn't have a massive effect on the accuracy. This is most likely since we train for so many epochs. There is a clear outlier in batch size of 1. This might be due to a lucky change in initial weights, but generally larger batch size a used with image classification.
 
 \section{Data augmentation}
 We tested the following model: 1x64 3x32 3x16 1x8 with all the datasets described in~\ref{sec:dataaug}. These results are shown in table~\ref{tab:dataaug}.
@@ -313,7 +325,7 @@ From the results we can conclude that our hypothesis about grayscale leaving mor
 \section{The Final Model}
 After all the experimentation we settled on the following model for our training: 3x64 3x32 2x16 1x8, and we trained for 200 epochs, with the augmented color images, without noise, with a learning rate of $0.0002$ using the Adam optimizer, with batches of 32. On M1 macbook this took around 90 minutes with GPU acceleration via the MPS backend.
 
-Since we were limited on time and processing hardware we cannot be sure that this given model is the most performant model that we could have achieved. In our testing the model achieved a accuracy of: 88\% and was sufficiently accurate and fast when we tested it in the completed system.
+Since we were limited on time and processing hardware we cannot be sure that this given model is the most performant model that we could have achieved. In our testing the model achieved an accuracy of: 88\% and was sufficiently accurate and fast when we tested it in the completed system.
 
 \begin{figure}
   \centering
@@ -326,7 +338,7 @@ The figure~\ref{fig:confusion_matrix_best} shows the confusion matrix for the fi
 
 \chapter{Conclusions}
 \label{ch:conclusions}
-The goal of this assignment was to build a program that could classify from live video feed if the person in the video is smiling or not, with an accuracy of atleast 85\%. The program we build during this project satisfies these requirements.
+The goal of this assignment was to build a program that could classify from live video feed if the person in the video is smiling or not, with an accuracy of at least 85\%. The program we build during this project satisfies these requirements.
 
 First we build and trained a CNN based on the basic design layed out in the instructions with Pytorch.
 Second, we integrated the model with the OpenCV library to classify smiles from a live video feed.
