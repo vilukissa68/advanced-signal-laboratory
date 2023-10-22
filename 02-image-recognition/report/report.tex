@@ -336,6 +336,11 @@ Since we were limited on time and processing hardware we cannot be sure that thi
 
 The figure~\ref{fig:confusion_matrix_best} shows the confusion matrix for the final model.
 
+\section{Smile Detection}
+When we initially tested our smile detection system with real-time video feed, the results did not totally meet our expectations, despite achieving a training model accuracy of over 85\%. After further research, we found a potential problem in the Region of Interest (ROI) around detected faces. In the training images used for the model, the images were much farther away taken (with hair and shoulders included), compared to our face ROI, which is capped only on the face.  
+
+To solve this problem, we added a "scalar factor" parameter, that allows us to dynamically scale the ROI. We found that by increasing the face ROI to twice the size of the original ROI obtained from the Cascade classifier, our smile recognition system improved significantly.
+
 \chapter{Conclusions}
 \label{ch:conclusions}
 The goal of this assignment was to build a program that could classify from live video feed if the person in the video is smiling or not, with an accuracy of at least 85\%. The program we build during this project satisfies these requirements.
