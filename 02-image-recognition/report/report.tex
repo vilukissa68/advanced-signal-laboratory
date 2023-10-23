@@ -138,7 +138,7 @@ Artificial neural networks (ANNs) are the most common type of neural network. Th
 
 Training a neural network involves adjusting the weights and biases of each node so that the network produces accurate predictions for the training data. This is done using an optimization algorithm called gradient descent. Gradient descent is an iterative algorithm that adjusts the weights and biases of each node in small steps to minimize a cost function.
 
-For image classification tasks like the one in this project, it's common to use CNNs. CNNs are a type of a neural network where the layers perform convolution operation for the inputs.~\cite{dlbook}
+For image classification tasks like the one in this project, it's common to use CNNs. CNNs are a type of neural network where the layers perform convolution operation for the inputs.~\cite{dlbook}
 
 \section{Real-time face detection and smile classification}
 The second module of our project involved real-time face detection and smile classification. We utilized the OpenCV (Open Source Computer Vision) library~\cite{opencv_library}, which is a powerful tool for its computer vision capabilities,  especially in real-time processing. With OpenCV, we used the 'capture module' to access the computer's webcam and continuously retrieve frames from the live video feed.
@@ -148,6 +148,7 @@ For each frame in the video stream, our system needed to identify and extract th
 
 \chapter{Methodology}
 \label{sec:methodology}
+In the methodology chapter, we describe the used dataset, the implementation of the base model, and the subsequent improvements to the model architecture. We also discuss the hyperparameter optimization, data augmentation techniques, and the process of real-time smile detection.
 \section{Dataset}
 For this assignment we were required to use the GENKI-4K dataset~\cite{genki}. GENKI-4K consists of 4000 images of faces, labeled either smiling or not smiling. This data set was to be randomly split into portions of 80:20 for training dataset and testing dataset.
 
@@ -157,7 +158,7 @@ To be able to input the GENKI-4K images into the neural network we resized the i
 \section{Base model implementation}
 The described model was implemented as Pytorch~\cite{pytorch} model. We chose to use Pytorch since it allows for GPU acceleration on M1/M2 macbooks via the MPS backend and since we already had some familiarity with it.
 
-The expectation by us and by the assignment instructor was that the base model wouldn't perform as accurately as desired. For this reason we will need to improve upon the basic design of the base model, and use different methods to increase it's accuracy
+The expectation by us and by the assignment instructor was that the base model wouldn't perform as accurately as desired. For this reason we will need to improve upon the basic design of the base model, and use different methods to increase its accuracy.
 
 \section{Improved models}
 Since the base model was a relatively small network, we decided to start optimizing accuracy by increasing the number of layers in the network. The basic idea was that by increasing the number of layers the network would be able to learn more detailed information and capture more of the latent features and thus be able to more accurately make predictions. The danger of increasing the size of the network is that each added parameters increases the training time and more importantly increases the prediction time. The increased prediction time could mean that our program would not be able to make predictions of real time video fast enough to be usable.
@@ -167,15 +168,15 @@ We ran a test were we trained models of different size with the same hyperparame
 \section{Optimizing Hyperparameters}
 The next step to increase the performance of the network was to optimize our hyperparameters. This is usually a difficult problem so we focused only on the following parameters: learning rate, number of epoch and batch size. The best choice for the hyperparameters is dependent on the network we decide to use, so we tested the base model and two of the best performing bigger models to find the optimal model and accompanying parameters.
 
-We also experimented with two different optimizers, Adam and AdamW. AdamW uses the same optimization algorithm as Adam, with the addition of dynamic learning rate. Dynamic learning rate allows the optimizer to change the learning rate during training. In general we want to start with a high learning rate to find the area of local maximum fast and the use increasingly smaller learning rate to find the lowest loss. This should make the training faster and prediction a bit more accurate.~\cite{adamw}
+We also experimented with two different optimizers, Adam and AdamW. AdamW uses the same optimization algorithm as Adam, with the addition of dynamic learning rate. Dynamic learning rate allows the optimizer to change the learning rate during training. In general we want to start with a high learning rate to find the area of local maximum fast and then use increasingly smaller learning rate to find the lowest loss. This should make the training faster and prediction a bit more accurate.~\cite{adamw}
 
 \section{Data augmentation}
 \label{sec:dataaug}
 Since the GENKI-4K dataset is a very small dataset in today's standards we used data augmentation to increase the amount of training data available. In theory increasing the number of training samples allows for better tuning of the weights since the model can be trained for longer without converging.\cite{dlbook}
 
-In the augmented dataset we included all the original images as such, plus 2 augmented images of each original images. We used 3 different augmentations methods: flipping creates a mirror image relative to the y-axis, rotation rotates the image 90, 180 or 270 degrees, and finally color jitter changes the saturation of the images. The augmentations we applied at random during augmented dataset serialization and one augmented images be applied with 0 to 3 augmentations.
+In the augmented dataset we included all the original images as such, plus 2 augmented images of each original images. We used three different augmentations methods: flipping creates a mirror image relative to the y-axis, rotation rotates the image 90, 180 or 270 degrees, and finally color jitter changes the saturation of the images. The augmentations we applied at random during augmented dataset serialization and one augmented images be applied with 0 to 3 augmentations.
 
-Finally we experimented with grayscale images. Greyscale images consist only of 1 channel pixels, where as color images use 3 channels. This means that neural network that takes only grayscale images has less parameters, and therefore faster predictions when compared to color images. Our hypothesis was that since smile should be classifiable from both grayscale images and color images equally well, the grayscale models might use the freed parameters to make more accurate predictions faster. We also created a grayscale version of the augmented dataset.
+Finally we experimented with grayscale images. Greyscale images consist only of one channel pixels, whereas color images use three channels. This means that neural network that takes only grayscale images has less parameters, and therefore faster predictions when compared to color images. Our hypothesis was that since smile should be classifiable from both grayscale images and color images equally well, the grayscale models might use the freed parameters to make more accurate predictions faster. We also created a grayscale version of the augmented dataset.
 
 \subsection{Noise}
 \label{sec:noise}
@@ -195,9 +196,10 @@ With the prepared face ROI and trained model, we execute smile detection in real
 
 \chapter{Results}
 \label{sec:results}
+In this chapter, we summarize our findings: the base model's accuracy, the impact of larger model architectures, hyperparameter optimization, the influence of data augmentation, and the final model's performance. In addition, we deal with real-time smile detection improvements through dynamic scaling of the face ROI.
 
 \section{Base Model}
-One of the requirements of the assignment was to implement the basic model that was described in the instructions, and report its accuracy. To more accurately evaluate the base model we ran the training 5 times to reduce the effect of random initialization. The results of these runs are presented in table~\ref{tab:basemodel}.
+One of the requirements of the assignment was to implement the basic model that was described in the instructions, and report its accuracy. To more accurately evaluate the base model we ran the training five times to reduce the effect of random initialization. The results of these runs are presented in table~\ref{tab:basemodel}.
 
 \begin{table}[h!]
 \centering
@@ -237,7 +239,7 @@ To find a better model we experimented with larger models by adding non-downsamp
 
 \begin{table}[h!]
 \centering
-\caption{Training accuracy and loss for different CNN models with Adam optimizer}
+\caption{Training accuracy for different CNN models with Adam optimizer}
 \begin{tabular}{|c|c|}
 \hline
 \textbf{Model} & \textbf{Accuracy}  \\ \hline
@@ -322,7 +324,7 @@ From the results we can see that the batch size didn't have a massive effect on 
 We tested the following model: 1x64 3x32 3x16 1x8 with all the datasets described in~\ref{sec:dataaug}. These results are shown in table~\ref{tab:dataaug}.
 \begin{table}[h!]
 \centering
-\caption{Training accuracy and loss for Adam optimizer with the specified datasets}
+\caption{Training accuracy for Adam optimizer with the specified datasets}
 \begin{tabular}{|c|c|}
 \hline
 \textbf{Dataset} & \textbf{Accuracy} \\ \hline
@@ -360,12 +362,13 @@ To solve this problem, we added a "scalar factor" parameter, that allows us to d
 \chapter{Conclusions}
 \label{ch:conclusions}
 
-The goal of this assignment was to build a program that could classify from live video feed if the person in the video is smiling or not, with an accuracy of at least 85\%. The program we build during this project satisfies these requirements.
+In this assignment, we familiarized ourselves with machine learning in particular deep learning methods. Our goal was to create a smile detector using deep network and deploy that for real-time execution. 
 
 First we implemented and trained the baseline model as per assignment instructions, with Pytorch. We then evaluated the baseline's performance, and chose methods to improve the classification accuracy. Our main methods for increasing the model's accuracy were data augmentation, increasing the size of the network and hyperparameter tuning. With these methods we successfully increased the accuracy over the required threshold of 85\% up to 88\%.
 
-Second, we integrated the model with the OpenCV library to classify smiles from a live video feed.
+Second, we integrated the model with the OpenCV library to classify smiles from a live video feed. However, after the integration, our smile detection program didn't work as well as we hoped. To remedy this, we scaled the face Region of Interest (ROI) to cover a wider area. This adjustment led to significant improvements in the interface and we were satisfied with the result.
 
+In summary, the goal of this assignment was to build a program that could classify from live video feed if the person in the video is smiling or not, with an accuracy of at least 85\%. The program we built during this project satisfies these requirements.
 %
 % The bibliography, i.e the list of references
 %
