@@ -359,9 +359,11 @@ To solve this problem, we added a "scalar factor" parameter, that allows us to d
 
 \chapter{Conclusions}
 \label{ch:conclusions}
+
 The goal of this assignment was to build a program that could classify from live video feed if the person in the video is smiling or not, with an accuracy of at least 85\%. The program we build during this project satisfies these requirements.
 
-First we build and trained a CNN based on the basic design layed out in the instructions with Pytorch.
+First we implemented and trained the baseline model as per assignment instructions, with Pytorch. We then evaluated the baseline's performance, and chose methods to improve the classification accuracy. Our main methods for increasing the model's accuracy were data augmentation, increasing the size of the network and hyperparameter tuning. With these methods we successfully increased the accuracy over the required threshold of 85\% up to 88\%.
+
 Second, we integrated the model with the OpenCV library to classify smiles from a live video feed.
 
 %
