@@ -127,7 +127,7 @@ This report documents the work done in the Image Recognition assignment as a par
 \label{ch:intro}
 In this report we describe our work done in the 'Image Recognition' laboratory assignment for the Advanced Signal Processing Laboratory course. In this assignment we were to implement a system that would detect if a person was smiling or not from a live video feed, using Machine Learning approach, more specifically a Convolution Neural Network trained as a binary classifier.
 
-The system consisted of two major modules. First a neural network which could classify smiling and non-smiling images with a minimum 85\% accuracy. The second module would capture live video feed from computers web camera, from which the module would capture a face from each frame. These frames would then be given for the network to classify if that captured face was smiling or not. The classification would then be shown in the programs UI to the user.
+The system consisted of two major modules. First a neural network which could classify smiling and non-smiling images with a minimum 85\% accuracy. The second module would capture live video feed from computers web camera, from which the module would capture a face from each frame. The captured faces would be classified by the network, and the results would display in the program's user interface.
 
 \pagenumbering{arabic}
 \setcounter{page}{1} 
@@ -140,7 +140,10 @@ Training a neural network involves adjusting the weights and biases of each node
 
 For image classification tasks like the one in this project, it's common to use CNNs. CNNs are a type of a neural network where the layers perform convolution operation for the inputs.~\cite{dlbook}
 
-\section{Face detection}
+\section{Real-time face detection and smile classification}
+The second module of our project involved real-time face detection and smile classification. We utilized the OpenCV (Open Source Computer Vision) library, which is a powerful tool for its computer vision capabilities,  especially in real-time processing. With OpenCV, we used the 'capture module' to access the computer's webcam and continuously retrieve frames from the live video feed. 
+
+For each frame in the video stream, our system needed to identify and extract the faces. Subsequently, these extracted facial regions were passed to the neural network for classification, which determined whether the person in the frame was smiling or not. OpenCV's 'imshow' and 'waitKey' combination provided real-time smile classification results in a user interface.
 
 
 \chapter{Methodology}
