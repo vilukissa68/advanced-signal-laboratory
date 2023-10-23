@@ -141,7 +141,7 @@ Training a neural network involves adjusting the weights and biases of each node
 For image classification tasks like the one in this project, it's common to use CNNs. CNNs are a type of a neural network where the layers perform convolution operation for the inputs.~\cite{dlbook}
 
 \section{Real-time face detection and smile classification}
-The second module of our project involved real-time face detection and smile classification. We utilized the OpenCV (Open Source Computer Vision) library, which is a powerful tool for its computer vision capabilities,  especially in real-time processing. With OpenCV, we used the 'capture module' to access the computer's webcam and continuously retrieve frames from the live video feed. 
+The second module of our project involved real-time face detection and smile classification. We utilized the OpenCV (Open Source Computer Vision) library~\cite{opencv_library}, which is a powerful tool for its computer vision capabilities,  especially in real-time processing. With OpenCV, we used the 'capture module' to access the computer's webcam and continuously retrieve frames from the live video feed.
 
 For each frame in the video stream, our system needed to identify and extract the faces. Subsequently, these extracted facial regions were passed to the neural network for classification, which determined whether the person in the frame was smiling or not. OpenCV's 'imshow' and 'waitKey' combination provided real-time smile classification results in a user interface.
 
@@ -219,7 +219,16 @@ Avg & 0.5935 \\
 
 From the results we can see that there was one run that had noticeably lower accuracy than the other runs. This can be explained by the fact the 50 epochs of training for a dataset this small doesn't have enough time to converge. Also the random starting point of the function causes training to some time converge earlier and sometimes later.
 
-From the runs we could take an average accuracy of 0.59\% for the basemodel.
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/confusion_matrix_basic.pdf}
+  \caption{Confusion matrix for the baseline model, with accuracy of 0.61}
+  \label{fig:confusion_matrix_basic}
+\end{figure}
+
+The figure~\ref{fig:confusion_matrix_basic} shows the result matrix for one of the basic runs. This particular network leans clearly more towards positive results i.e. images with a smiling person, but this doesn't really help us in optimizing the model, since we are working with a binary classification task with equal proportions of classes.
+
+From the runs we could take an average accuracy of 0.59\% for the basemodel, which is clearly not enough as what was required in the assignment, so we need to apply additional methods to improve the accuracy.
 
 \section{Larger Models}
 
@@ -283,6 +292,7 @@ We decided to do another experiment with learning rates closer to the values of 
 \end{tabular}
 \label{tab:learningrates2}
 \end{table}
+
 
 From the results we can again see that the choice of optimizer doesn't have much effect in our cage, but it's clear that the learning rate of 0.0001 has produced best results for both of the optimizers. This is still a worse accuracy than what we got with a learning rate of 0.0002.
 
