@@ -1,0 +1,10 @@
+batch_size=32
+epochs=150
+lr=0.0002
+accuracy:  0.82  epoch:  132 2x64 3x64 3x16 2x8
+accuracy:  0.65625  epoch:  55 3x64 4x64 4x16 3x8
+accuracy:  0.63  epoch:  73 4x64 5x64 5x16 4x8
+accuracy:  0.8025  epoch:  114 2x64 2x64 2x16 1x8
+accuracy:  0.81375  epoch:  140 3x64 2x64 2x16 1x8
+accuracy:  0.82875  epoch:  117 1x64 4x64 4x16 1x8
+accuracy:  0.795  epoch:  140 3x64 3x64 2x16 1x8

@@ -1,0 +1,10 @@
+batch_size=32
+epochs=50
+accuracy:  0.6225  epoch:  47 0.2
+accuracy:  0.56  epoch:  49 0.02
+accuracy:  0.5775  epoch:  16 0.002
+accuracy:  0.78625  epoch:  41 0.0002
+accuracy:  0.63375  epoch:  41 0.00002
+accuracy:  0.5575  epoch:  5 0.000002
+accuracy:  0.56125  epoch:  48 0.0000002
+accuracy:  0.5375  epoch:  49 0.00000002

@@ -1,0 +1,9 @@
+epochs=50
+lr=0.00002
+accuracy:  0.80125  epoch:  48 bs=1
+accuracy:  0.59375  epoch:  47 bs=8
+accuracy:  0.60125  epoch:  40 bs=16
+accuracy:  0.5575  epoch:  46 bs=32
+accuracy:  0.5611979166666666  epoch:  29 bs=64
+accuracy:  0.5416666666666666  epoch:  11 bs=128
+accuracy:  0.5520833333333334  epoch:  32 bs=256

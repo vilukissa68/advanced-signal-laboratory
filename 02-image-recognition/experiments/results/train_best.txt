@@ -1,0 +1,4 @@
+batch_size=32
+epochs=300
+lr=0.0001
+accuracy:  0.8492398648648649  epoch:  286 3x64 3x64 2x16 1x8 GENKI-4K

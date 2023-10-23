@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 device="mps"
-batch_size=1
+batch_size=8
 epochs=500
 lr=0.0002
 
