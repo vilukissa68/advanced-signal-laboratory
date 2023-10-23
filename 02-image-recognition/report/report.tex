@@ -178,6 +178,7 @@ In the augmented dataset we included all the original images as such, plus 2 aug
 Finally we experimented with grayscale images. Greyscale images consist only of 1 channel pixels, where as color images use 3 channels. This means that neural network that takes only grayscale images has less parameters, and therefore faster predictions when compared to color images. Our hypothesis was that since smile should be classifiable from both grayscale images and color images equally well, the grayscale models might use the freed parameters to make more accurate predictions faster. We also created a grayscale version of the augmented dataset.
 
 \subsection{Noise}
+\label{sec:noise}
 Adding noise to training images is a common technique to improve the training of image classification models. It differs from the previous data augmentation methods in the sense that it doesn't increase the size of the dataset, but prevents the network from seeing exactly the same images over and over again. Noise is added to images randomly with the goal of encouraging the model to explore the possibility space.\cite{dlbook}
 
 \section{Smile detection}
@@ -334,6 +335,8 @@ Augmented Grayscale & 0.83  \\ \hline
 \end{table}
 
 From the results we can conclude that our hypothesis about grayscale leaving more space for parameters to find features was not correct, since the grayscale datasets performed clearly worse then the color sets. We can also see that data augmentaion improved our accuracy a bit.
+
+We also experimented with noise as mentioned in section~\ref{sec:noise}, by adding random gaussian noise to input dynamically before the forward pass. This didn't clearly benefit our model's performance in any way, rather it lowered the accuracy regardless of the other parameters and it slowed down the training by a small factor. The likely reason is that the amount of noise we are adding is too much or that the image are already noisy and adding more noise makes the task significantly harder. Either way we didn't have enough time to quantify the reason or do more indepth testing for this feature.
 
 \section{The Final Model}
 After all the experimentation we settled on the following model for our training: 3x64 3x32 2x16 1x8, and we trained for 200 epochs, with the augmented color images, without noise, with a learning rate of $0.0002$ using the Adam optimizer, with batches of 32. On M1 macbook this took around 90 minutes with GPU acceleration via the MPS backend.
