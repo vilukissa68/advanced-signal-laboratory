@@ -357,7 +357,7 @@ The figure~\ref{fig:confusion_matrix_best} shows the confusion matrix for the fi
 \section{Smile Detection}
 When we initially tested our smile detection system with real-time video feed, the results did not totally meet our expectations, despite achieving a training model accuracy of over 85\%. After further research, we found a potential problem in the Region of Interest (ROI) around detected faces. In the training images used for the model, the images were much farther away taken (with hair and shoulders included), compared to our face ROI, which is capped only on the face.  
 
-To solve this problem, we added a "scalar factor" parameter, that allows us to dynamically scale the ROI. We found that by increasing the face ROI to twice the size of the original ROI obtained from the Cascade classifier, our smile recognition system improved significantly.
+To solve this problem, we added a "scalar factor" parameter, that allows us to dynamically scale the ROI. We found that by increasing the face ROI to twice the size of the original ROI obtained from the Cascade classifier, our smile recognition system improved significantly. Figures~\ref{fig:smiling} and~\ref{fig:not_smiling} in the Appendix show positive and negative prediction results, from a live feed capture.
 
 \chapter{Conclusions}
 \label{ch:conclusions}
@@ -376,6 +376,38 @@ In summary, the goal of this assignment was to build a program that could classi
 
 \printbibliography[title=References]
 \addcontentsline{toc}{chapter}{References}
+
+\appendix
+\pagestyle{headings}
+
+%
+% a) Not-so-handy way, but at least it works
+%
+\def\appA{APPENDIX} % Define the name and numbering manually
+\chapter*{\appA}                       % Create chapter heading
+\markboth{\appA}{\appA}                % Set page header
+\addcontentsline{toc}{chapter}{\appA}  % Include this in TOC
+% Note that \label does not work with unnumbered chapter
+
+\section{Running the code}
+The instructions to run the program are displayed in the README.md file, which was hopefully included along side this document.
+
+\section{Live feed predictions}
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/smiling.png}
+  \caption{Confusion matrix for the best performing model}
+  \label{fig:smiling}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/not_smiling.png}
+  \caption{Confusion matrix for the best performing model}
+  \label{fig:not_smiling}
+\end{figure}
+
+
 
 \end{document}
 
