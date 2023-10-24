@@ -59,7 +59,12 @@ python main.py --train --device=mps
 After the model has been trained the prediction system can be ran using the following command in the /src directory
 
 ``` shell
-python main.py --load_model="{name of the model}.model"
+python main.py --load_model --weights="{name of the model}.model"
+```
+
+Leaving weights argument empty loads the best_model.model, which was included alongside this repository
+``` shell
+python main.py --load_model
 ```
 
 The predictor can be existed by pressing q

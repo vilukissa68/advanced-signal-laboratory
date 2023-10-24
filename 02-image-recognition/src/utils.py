@@ -12,6 +12,7 @@ def enablePrint():
     sys.stdout = sys.__stdout__
 
 def show_image(image, label):
+    '''Show a single image with plt show'''
     plt.imshow(image.permute(1, 2, 0))
     plt.title(label)
     plt.show()
@@ -32,24 +33,12 @@ def show_batch(images, labels, predictions=None):
         ax.set_xticks([])
         ax.set_yticks([])
 
-    # for i in range(s):
-    #     for j in range(s):
-    #         # Remove the ticks from the plot
-    #         fig.add_subplot(s, s, i * s + j + 1)
-    #         if predictions is None:
-    #             title = "GT:{0}".format(labels[i * s + j])
-    #         else:
-    #             title = "GT:{0} | Predicted:{0}".format(labels[i * s + j], predictions[i * s + j])
-    #         plt.title(title, fontsize=8)
-    #         plt.imshow(images[i * s + j].permute(1, 2, 0))
-    #         plt.xticks([])
-    #         plt.yticks([])
-    #
     plt.tight_layout()
     plt.show()
 
 
 def get_metrics(predictions, labels):
+    # Capture the total number of true positives, true negatives, false positives, and false negatives
     tp = [1 if p == 1 and l == 1 else 0 for p, l in zip(predictions, labels)].count(1)
     tn = [1 if p == 0 and l == 0 else 0 for p, l in zip(predictions, labels)].count(1)
     fp = [1 if p == 1 and l == 0 else 0 for p, l in zip(predictions, labels)].count(1)

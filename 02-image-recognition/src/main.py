@@ -11,14 +11,17 @@ def main():
     model = None
 
     if opt.silent:
+        # Disable printing to console when running from script
         blockPrint()
 
     if opt.serialize:
+        # Serialize data for faster loading and data augmentation
         print("Serializing data")
         serialize_all_in_dir(opt)
         print("Finished serializing data")
 
     if opt.view_data:
+        # View data
         print("Viewing data")
         train, test = get_dataloaders(opt)
         for batch in train:
@@ -26,12 +29,14 @@ def main():
         print("Finished viewing data")
 
     if opt.load_model:
+        # Load model for smile detection
         model = load_model(opt.weights)
         model.to(opt.device)
         smile_detection(model, opt)
 
 
     if opt.train:
+        # Train new model
         model = BaseNetwork(opt)
         model.print_network()
 
@@ -47,6 +52,7 @@ def main():
             print("accuracy: ", model.best_accuracy, " epoch: ", model.best_epoch)
 
     if opt.draw_matrix:
+        # Draw confusion matrix for best model
         if not model:
             model = load_model(opt.weights)
             model.to(opt.device)
