@@ -18,16 +18,16 @@ H_abs = abs(H);
 
 
 % Crop
-mask = imbinarize(H_abs, "global");
-S = regionprops(mask,'BoundingBox','Area');
-[MaxArea,MaxIndex] = max(vertcat(S.Area));
-rect = S(MaxIndex).BoundingBox;
+%mask = imbinarize(H_abs, "global");
+%S = regionprops(mask,'BoundingBox','Area');
+%[MaxArea,MaxIndex] = max(vertcat(S.Area));
+%rect = S(MaxIndex).BoundingBox;
 
-H_abs = imcrop(H_abs, rect);
+%H_abs = imcrop(H_abs, rect);
 
 % Zero centrum
 [width, height, c] = size(H_abs);
-radius = width * 0.1
+radius = width * 0.05
 for ii=1:width
     for jj=1:height
         x = ii - width/2;
@@ -58,9 +58,65 @@ for ii = 1:width-x0
     end
 end
 H = H_tmp;
-imshow(log(abs(H)), [])
+
+% Zeroing all but the center
+H_tmp = zeros(width,height);
+for ii=1:width
+    for jj=1:height
+     
+    x = ii - width/2;
+    y = jj - height/2;
+    
+    if (sqrt(x^2 + y^2) < radius) 
+        H_tmp(ii, jj) = H(ii, jj); 
+    end
+    end
+end
+
+U0 = H_tmp;
+%imshow(log(abs(H)), [])
+
 % Move to back to spatial domain
-U0 = ifftshift(ifft2(H));
-imshow(U0, []);
+%U0 = abs(ifft2(H));
+%imshow(U0, []);
 
 
+% Autofocus
+min_distance = distance-0.5;
+max_distance = distance+0.5;
+num_samples=50;
+
+% Define a range of distances to sample
+distances = linspace(min_distance, max_distance, num_samples);
+
+% Initialize a variable to store the best distance and its corresponding focus measure
+best_distance = 0;
+best_focus_measure = -Inf;
+
+% Loop over each distance
+%for distance = distances
+%    % Perform wavefront reconstruction at the current distance
+%    [wavefront, TF] = AngularSpectrum(0, distance/0.5, lambda, pixel_size);
+%
+%    % Compute a focus measure (e.g., variance of Laplacian)
+%    focus_measure = var(laplace(abs(U0(:))));
+%
+%    % If the current focus measure is better than the best one found so far, update the best distance and focus measure
+%    if focus_measure > best_focus_measure
+%        best_distance = distance;
+%        best_focus_measure = focus_measure;
+%    end
+%end
+
+% Now, best_distance should give you the distance that results in the most focused image
+[prop_wavefront, TF] = AngularSpectrum(H, distance, lambda, pixel_size);
+
+
+% Amplitude
+rec_abs = abs(prop_wavefront);
+
+% Phase
+rec_phase = angle(prop_wavefront);
+
+
+imshow(rec_phase, [])

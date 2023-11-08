@@ -1,3 +1,0 @@
-11 cm between ray and camera, through object
-532 nanometers wavelength
-pixel size is 3.45 micrometers
