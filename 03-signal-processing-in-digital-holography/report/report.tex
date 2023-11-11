@@ -5,16 +5,17 @@
 
 \special{papersize=210mm,297mm}
 
-\author{Forename Surname}
-\title{Thesis title} % primary title (for front page)
-\thesistype{Master's thesis} % or Bachelor of Science, Laboratory Report... 
+\author{Roosa Kuusivaara \& Väinö-Waltteri Granat}
+\title{Signal processing in digital holography - Report} % primary title (for front page)
+\thesistype{Laboratory Report} % or Bachelor of Science, Laboratory Report...
+
 
 \usepackage{lastpage}
 \usepackage[english]{babel}
 \usepackage[
 backend=biber,
-style=authoryear,
-citestyle=authoryear,
+style=numeric,
+citestyle=numeric,
 autocite=inline
 ]{biblatex}
 \usepackage{csquotes}
@@ -62,8 +63,7 @@ autocite=inline
 \begin{flushright}  
     \begin{spacing}{1.0}
       \textsf{Faculty of Information Technology and Communication Sciences (ITC)\\
-      \@thesistype\\
-      April 2019}
+      \@thesistype\\}
     \end{spacing}
 \end{flushright}
 
@@ -83,8 +83,8 @@ autocite=inline
 \noindent \@author: \@title\\
 \@thesistype\\
 Tampere University\\
-Master’s Degree Programme in Software Development\\
-April 2019
+Master’s Degree Programme in Signal Processing\\
+November 2023 \\
 \end{spacing}
 \noindent\rule{12cm}{0.4pt}
 
@@ -94,12 +94,8 @@ April 2019
 % Abstract and keywords
 % ---------------------------------------
 
-\noindent The abstract is a concise 1-page description of the work: what was the
-problem, what was done, and what are the results. Do not include
-charts or tables in the abstract.
-
-These instructions are intended for students of Computer Sciences at the Tampere University. They cover questions of writing a thesis, such as use of the literature, structure of the thesis and style, the external appearance of the thesis and the use of tools.  These instructions do not cover the scientific content of the thesis.
-
+\noindent
+This report documents the work done in the Signal processing in digital holography assingment as a part of the Advanced signal processing laboratory course. In this assignment we familiazired ourselves with basics of intereference based holography.
 ~
 
 \noindent\textbf{Keywords:} M.Sc. thesis, layout, writing style.
@@ -130,14 +126,41 @@ These instructions are intended for students of Computer Sciences at the Tampere
 
 
 \chapter{Introduction}
-\label{ch:intro} 
-This is and introduction
+\label{ch:intro}
+In this report we describe our work done in the 'Signal processing in digital holography' laboratory assignment for the Advanced Signal Processing Laboratory course. In this assignment we used a Mach-Zehnder interferometer to record holographic images and Matlab to reconstruct the object from the recorded wavefront.
+
 \pagenumbering{arabic}
 \setcounter{page}{1} 
-\cite{wolf08}
 
 \chapter{Methodology}
+This section describes the method we used to capture the holograms and reconstruct the objects.
 \label{sec:methodology}
+\subsection{Experiment setup}
+Holographic imagery relies on the phenomena of light wave superpositions. In this assignment the object is captured using a Mach-Zehnder interferometer, where a monochromatic laser is used to produce two wavefronts. The first wavefront passes trough the object which we want to record, and the second wavefront is used as reference wavefront. The wavefront are the combined to a single wavefront via the interference phenomena, so that one of the wavefronts is combined with the other wavefront in a slight angle, causing a phase difference. The resulting total wave is then captured with a CMOS camera to produce a image file. The phase difference is detectable as fringes in the captured images. The complete setup for the experiment is shown in figure~\ref{fig:lab_setup}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/lab_setup.png}
+  \caption{Experiment was done using a Mach-Zehnder interferometer. Taken from~\cite{assignment}}
+  \label{fig:lab_setup}
+\end{figure}
+
+
+\subsection{Object reconstruction}
+The object can be extracted from the captured hologram, using a two step method.
+
+First step is to use Fourier filtering to extract the object wave. Since we know that the hologram is defined by the following equation:
+\begin{equation}
+H(x, y) = E_0(x, y)^2 + E_r(x, y)^2 + U_0(x, y)U_r^*(x, y) + U_0^*(x, y)U_r(x, y)
+\end{equation}
+
+Where $H(x,y)$ is the hologram wavefront in given position, $E_0$ is the objects amplitude, $E_r$ is the reference wave's amplitude, $U_r$ is the reference wavefront and $U_0$ is the object wavefront which we want to extract.
+
+\begin{equation}
+\mathcal{F}[H(x, y)] = \mathcal{F}\left[E_0(x, y)^2 + E_r(x, y)^2\right] + \mathcal{F}\left[U_0(x, y)E_r \exp(i2\pi\eta)\right] + \mathcal{F}\left[U_0^*(x, y)E_r \exp(-i2\pi\eta)\right]
+\end{equation}
+
+
 
 \chapter{Results}
 \label{sec:results}
