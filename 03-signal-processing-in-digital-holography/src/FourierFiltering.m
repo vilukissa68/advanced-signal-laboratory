@@ -4,11 +4,11 @@ function H = FourierFiltering(image_path)
     H_abs = abs(H);
 
     % Crop
-    mask = imbinarize(H_abs, "global");
-    S = regionprops(mask,'BoundingBox','Area');
-    [MaxArea,MaxIndex] = max(vertcat(S.Area));
-    rect = S(MaxIndex).BoundingBox;
-    H_abs = imcrop(H_abs, rect);
+    %mask = imbinarize(H_abs, "global");
+    %S = regionprops(mask,'BoundingBox','Area');
+    %[MaxArea,MaxIndex] = max(vertcat(S.Area));
+    %rect = S(MaxIndex).BoundingBox;
+    %H_abs = imcrop(H_abs, rect);
 
     % Zero centrum
     [width, height, c] = size(H_abs);
@@ -25,10 +25,12 @@ function H = FourierFiltering(image_path)
     end
 
     % Zero left side of spectrum
-    H_abs(:,1:width/2) = 0;
+    H_abs(1:width/2, :) = 0;
+
 
     % Zero top of spectrum
-    H_abs(1:height/2,:) = 0;
+    H_abs(:, 1:height/2) = 0;
+
 
     % Shift 2nd order to center
     maximum = max(max(H_abs));
@@ -42,7 +44,8 @@ function H = FourierFiltering(image_path)
             H_tmp(ii, jj) = H(ii+x0,jj+y0); 
         end
     end
-    H = H_tmp;
+    H = H_tmp; 
+
 
     % Zeroing all but the center
     H_tmp = zeros(width,height);
@@ -52,11 +55,13 @@ function H = FourierFiltering(image_path)
         x = ii - width/2;
         y = jj - height/2;
 
-        if (sqrt(x^2 + y^2) < radius) 
+        if (sqrt(x^2 + y^2) < radius*2) 
             H_tmp(ii, jj) = H(ii, jj); 
         end
         end
     end
 
     H = H_tmp;
+    %imshow(log(abs(H)), [])
+
 end

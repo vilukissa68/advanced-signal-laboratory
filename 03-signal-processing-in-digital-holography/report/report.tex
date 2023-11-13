@@ -19,6 +19,9 @@ citestyle=numeric,
 autocite=inline
 ]{biblatex}
 \usepackage{csquotes}
+\usepackage{subcaption}
+\usepackage{subfigure}
+\usepackage{graphicx}
 
 \addbibresource{references.bib} %Imports bibliography file
 
@@ -98,7 +101,7 @@ November 2023 \\
 This report documents the work done in the Signal processing in digital holography assingment as a part of the Advanced signal processing laboratory course. In this assignment we familiazired ourselves with basics of intereference based holography.
 ~
 
-\noindent\textbf{Keywords:} M.Sc. thesis, layout, writing style.
+\noindent\textbf{Keywords:} Hologram, Mach-Zehnder interferometer, Wave propagation.
 
 ~
 
@@ -135,7 +138,7 @@ In this report we describe our work done in the 'Signal processing in digital ho
 \chapter{Methodology}
 This section describes the method we used to capture the holograms and reconstruct the objects.
 \label{sec:methodology}
-\subsection{Experiment setup}
+\section{Experiment setup}
 Holographic imagery relies on the phenomena of light wave superpositions. In this assignment the object is captured using a Mach-Zehnder interferometer, where a monochromatic laser is used to produce two wavefronts. The first wavefront passes trough the object which we want to record, and the second wavefront is used as reference wavefront. The wavefront are the combined to a single wavefront via the interference phenomena, so that one of the wavefronts is combined with the other wavefront in a slight angle, causing a phase difference. The resulting total wave is then captured with a CMOS camera to produce a image file. The phase difference is detectable as fringes in the captured images. The complete setup for the experiment is shown in figure~\ref{fig:lab_setup}.
 
 \begin{figure}
@@ -146,24 +149,73 @@ Holographic imagery relies on the phenomena of light wave superpositions. In thi
 \end{figure}
 
 
-\subsection{Object reconstruction}
+\section{Object reconstruction}
 The object can be extracted from the captured hologram, using a two step method.
 
 First step is to use Fourier filtering to extract the object wave. Since we know that the hologram is defined by the following equation:
 \begin{equation}
 H(x, y) = E_0(x, y)^2 + E_r(x, y)^2 + U_0(x, y)U_r^*(x, y) + U_0^*(x, y)U_r(x, y)
+\label{eq:hologram}
 \end{equation}
 
-Where $H(x,y)$ is the hologram wavefront in given position, $E_0$ is the objects amplitude, $E_r$ is the reference wave's amplitude, $U_r$ is the reference wavefront and $U_0$ is the object wavefront which we want to extract.
+Where $H(x,y)$ is the hologram wavefront in given position, $E_0$ is the objects amplitude, $E_r$ is the reference wave's amplitude, $U_r$ is the reference wavefront and $U_0$ is the object wavefront which we want to extract. The extraction can the be accomplished by performing frequency filtering to the Fourier transformation of the hologram, which is shown in equation~\ref{eq:hologramfft}. From the Fourier transformation we can see that the second term of the hologram contains the object wavefront $U_0$. Equations~\ref{eq:secondterm} and~\ref{eq:thirdterm} show the Fourier transformations for the second and third term respectively.
+
+\begin{align}
+\mathcal{F}[H(x, y)] &= \mathcal{F}\left[E_0(x, y)^2 + E_r(x, y)^2\right] + \mathcal{F}\left[U_0(x, y)E_r \exp(i2\pi\eta)\right] \notag \\
+& + \mathcal{F}\left[U_0^*(x, y)E_r \exp(-i2\pi\eta)\right]
+\label{eq:hologramfft}
+\end{align}
 
 \begin{equation}
-\mathcal{F}[H(x, y)] = \mathcal{F}\left[E_0(x, y)^2 + E_r(x, y)^2\right] + \mathcal{F}\left[U_0(x, y)E_r \exp(i2\pi\eta)\right] + \mathcal{F}\left[U_0^*(x, y)E_r \exp(-i2\pi\eta)\right]
+F [U_0(x, y)E_r \exp(i2\pi\eta)] = F [U_0] E_r \otimes \delta(f - \eta)
+\label{eq:secondterm}
 \end{equation}
 
+\begin{equation}
+F [U_0^*(x, y)E_r \exp(-i2\pi\eta)] = F [U_0^*] E_r \otimes \delta(f + \eta)
+\label{eq:thirdterm}
+\end{equation}
+
+By removing all the other terms from the Fourier transformation of the hologram, we are left with only the Fourier transformation of the object wave. The object wave can the be brought back to spatial domain with inverse Fourier transformation. The figure~\ref{fig:fourierfiltering} shows how the second term is isolated from the rest of the hologram.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/filter_process.png}
+  \caption{Extracting the second term from Fourier transformation of the hologram}
+  \label{fig:fourierfiltering}
+\end{figure}
+
+The wavefront alone isn't that usable. The object needs to be projected to an object plane using wave propagation. Using Rayleigh-Sommerfield holographic model with the angular spectrum transfer function defined in equation~\ref{eq:transferfunction} the object is projected on the object plane as defined by the equation~\ref{eq:projection}, where $z$ is the propagation distance. To recontruct a object that is in focus, we need to determine the optimal distance for the wave to be propagated. This can be accomplished with an autofocusing algorithm or manually by comparing reconstruction results with different values of $z$ by eye.
+
+\begin{align}
+H(f_x,f_y,z) &=
+\begin{cases}
+\exp[i2\pi z \sqrt{1 - \lambda^2 (f_x^2 + f_y^2)}],& f_x^2 + f_y^2 \leq 1/\lambda^2 \\
+0, & \text{otherwise}
+\end{cases} \label{eq:transferfunction}
+\end{align}
+
+\begin{align}
+U_0(x,y,z) &= F^{-1}[H(f_x,f_y,z) \cdot F[U_0(x,y,0)]] \notag \\
+\label{eq:projection}
+\end{align}
 
 
 \chapter{Results}
 \label{sec:results}
+This section of report presents the results of the wavefront reconstruction, and the analysis of those results.
+The object wavefront reconstruction process described in the section~\ref{sec:methodology} was implmented as a Matlab script, using a provided implementation of the wave propagation algorithm.
+
+In the laboratory we captured to hologram containing the same object with two different fringe widths. The first one had fringes of 5 pixels and the second one had fringes of 12 pixels.
+
+The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images of the reconstructed object wavefronts.
+
+\begin{figure}
+  \centering
+  \subfigure[Amplitude]{\includegraphics[width=0.49\linewidth]{img/5px_amplitude.png}}
+  \subfigure[Phase]{\includegraphics[width=0.49\linewidth]{img/5px_phase.png}}
+  \caption{Object wavefront reconstruction of the 5p fringe image}
+\end{figure}
 
 \chapter{Conclusions}
 \label{ch:conclusions}
@@ -175,6 +227,33 @@ Where $H(x,y)$ is the hologram wavefront in given position, $E_0$ is the objects
 
 \printbibliography[title=References]
 \addcontentsline{toc}{chapter}{References}
+\appendix
+\pagestyle{headings}
 
+%
+% a) Not-so-handy way, but at least it works
+%
+\def\appA{APPENDIX} % Define the name and numbering manually
+\chapter*{\appA}                       % Create chapter heading
+\markboth{\appA}{\appA}                % Set page header
+\addcontentsline{toc}{chapter}{\appA}  % Include this in TOC
+% Note that \label does not work with unnumbered chapter
+\begin{figure}[p]
+    \centering
+    \rotatebox{270}{
+        \includegraphics[width=\textheight]{img/5px_amplitude.png}
+    }
+    \caption{Caption for your image}
+    \label{fig:my_label}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \rotatebox{270}{
+        \includegraphics[width=\textheight]{img/5px_phase.png}
+    }
+    \caption{Caption for your image}
+    \label{fig:my_label}
+\end{figure}
 \end{document}
 

@@ -10,9 +10,9 @@ distance = 0.11;
 lambda = 532E-9;
 
 % Scan iteration variables
-start_distance = -0.30
-step_distance = 0.0001
-end_distance = -0.29
+start_distance = -0.35
+step_distance = 0.001
+end_distance = -0.25
 
 % Move to back to spatial domain
 U0 = ifft2(ifftshift(FourierFiltering("images/object5px.png")));
