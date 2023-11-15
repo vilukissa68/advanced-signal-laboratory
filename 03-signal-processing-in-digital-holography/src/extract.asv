@@ -4,18 +4,18 @@ clc;
 crop_size = [100, 100];
 
 pixel_size = 3.45E-6;
-pixel_amount = 5;
+pixel_amount = 12;
 
 distance = 0.11;
 lambda = 532E-9;
 
 % Scan iteration variables
-start_distance = -0.35
-step_distance = 0.001
-end_distance = -0.25
+start_distance = -0.30
+step_distance = 0.0001
+end_distance = -0.29
 
 % Move to back to spatial domain
-U0 = ifft2(ifftshift(FourierFiltering("images/object5px.png")));
+U0 = ifft2(ifftshift(FourierFiltering("images/object12px.png")));
 
 % Define your range of distances
 distances = start_distance:step_distance:end_distance;
