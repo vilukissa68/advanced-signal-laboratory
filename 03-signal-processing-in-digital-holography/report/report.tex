@@ -105,8 +105,6 @@ This report documents the work done in the Signal processing in digital holograp
 
 ~
 
-\noindent The originality of this thesis has been checked using the Turnitin Originality Check service.
-
 
 % Add the table of contents
 
@@ -185,7 +183,7 @@ By removing all the other terms from the Fourier transformation of the hologram,
   \label{fig:fourierfiltering}
 \end{figure}
 
-The wavefront alone isn't that usable. The object needs to be projected to an object plane using wave propagation. Using Rayleigh-Sommerfield holographic model with the angular spectrum transfer function defined in equation~\ref{eq:transferfunction} the object is projected on the object plane as defined by the equation~\ref{eq:projection}, where $z$ is the propagation distance. To recontruct a object that is in focus, we need to determine the optimal distance for the wave to be propagated. This can be accomplished with an autofocusing algorithm or manually by comparing reconstruction results with different values of $z$ by eye.
+The wavefront alone isn't that usable. The object needs to be projected to an object plane using wave propagation. Using Rayleigh-Sommerfield holographic model with the angular spectrum transfer function defined in equation~\ref{eq:transferfunction} the object is projected on the object plane as defined by the equation~\ref{eq:projection}, where $z$ is the propagation distance. To reconstruct an object that is in focus, we need to determine the optimal distance for the wave to be propagated. This can be accomplished with an autofocusing algorithm or manually by comparing reconstruction results with different values of $z$ by eye.
 
 \begin{align}
 H(f_x,f_y,z) &=
@@ -204,11 +202,14 @@ U_0(x,y,z) &= F^{-1}[H(f_x,f_y,z) \cdot F[U_0(x,y,0)]] \notag \\
 \chapter{Results}
 \label{sec:results}
 This section of report presents the results of the wavefront reconstruction, and the analysis of those results.
-The object wavefront reconstruction process described in the section~\ref{sec:methodology} was implmented as a Matlab script, using a provided implementation of the wave propagation algorithm.
+The object wavefront reconstruction process described in the section~\ref{sec:methodology} was implemented as a Matlab script, using a provided implementation of the wave propagation algorithm. 
 
-In the laboratory we captured to hologram containing the same object with two different fringe widths. The first one had fringes of 5 pixels and the second one had fringes of 12 pixels.
+\section{Wavefront Reconstruction}
+In the laboratory we captured to hologram containing the same object with two different fringe widths. The distance between ray and camera was 11 cm, wavelength was ${532 * 10^{-9}}$ m, and a number of pixels was ${3,45*10^{-6}}$ m. The first hologram had fringes of 5 pixels and the second had fringes of 12 pixels.
 
-The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images of the reconstructed object wavefronts.
+\section{Analysis}
+The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images of the reconstructed object wavefronts. In 5 pixel fringe hologram, for getting the sharpest details of phase, the best propagation distance was 29,77 cm. In 12 pixel fringe hologram, the sharpest details of phase was determined to be 29,86 cm.
+
 
 \begin{figure}
   \centering
@@ -218,6 +219,7 @@ The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images
    \label{fig:5px}
 \end{figure}
 
+
 \begin{figure}
   \centering
   \subfigure[Amplitude]{\includegraphics[width=0.49\linewidth]{img/12px_amplitude.png}}
@@ -225,6 +227,8 @@ The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images
   \caption{Object wavefront reconstruction of the 12px fringe image}
     \label{fig:12px}
 \end{figure}
+
+
 
 \chapter{Conclusions}
 \label{ch:conclusions}
