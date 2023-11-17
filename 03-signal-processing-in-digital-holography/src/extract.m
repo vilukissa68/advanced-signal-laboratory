@@ -49,8 +49,11 @@ slider = uicontrol('Style', 'slider', 'Position', [20 20 200 20], 'Value', 1,...
 wavefront_with_obj = FourierFiltering('images/object5px.png');
 wavefront_no_obj = FourierFiltering('images/object12px.png');
 
-wavefront_with_obj = AngularSpectrum(wavefront_with_obj, distances(1), lambda, pixel_size);
-wavefront_no_obj = AngularSpectrum(wavefront_no_obj, distances(1), lambda, pixel_size);
+best_distance_1 = -0.2977
+best_distance_2 = -0.2986
+
+wavefront_with_obj = AngularSpectrum(wavefront_with_obj, best_distance_1, lambda, pixel_size);
+wavefront_no_obj = AngularSpectrum(wavefront_no_obj, best_distance_2, lambda, pixel_size);
 
 % Flatten images by taking mean of each row
 amplitude1 = abs(wavefront_with_obj);

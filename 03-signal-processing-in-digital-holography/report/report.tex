@@ -210,6 +210,11 @@ In the laboratory we captured to hologram containing the same object with two di
 \section{Analysis}
 The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images of the reconstructed object wavefronts. In 5 pixel fringe hologram, for getting the sharpest details of phase, the best propagation distance was 29,77 cm. In 12 pixel fringe hologram, the sharpest details of phase was determined to be 29,86 cm.
 
+From the images we can see that the picture with smaller fringes had a more clear reconstruction, and the image with larger fringes was more blurry even after fine tuning the focus. This is because the smaller fringes enable for finer phase information to be captured. This is how higher resolution cameras can capture more information than lower resoultion cameras, creating sharper images when capturing objects in focus.
+
+Figure~\ref{fig:lines} compares the mean amplitudes and phases of between the two captured object wavefronts. From the figure we can see that wavefront with 5px fringes has noticebly higher amplitude along the part of the image where the object is. This indicates that more light is present at that part in comparision to the iamge with 12px fringes. [TODO: Lue kirjasta tälle selitys]
+
+The phase comparison doesn't tell more than that the wavefrons are in different phases. This makes sense since the angle of the mirros is different between the images, causing interference in different phase.
 
 \begin{figure}
   \centering
@@ -228,10 +233,19 @@ The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images
     \label{fig:12px}
 \end{figure}
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{img/lines.eps}
+  \caption{Amplitude and phase graphs for objects with 5px and 12px fringes}
+  \label{fig:lines}
+\end{figure}
+
 
 
 \chapter{Conclusions}
 \label{ch:conclusions}
+The goal of this assignment was to learn about signal processing in digital holography by capturing and reconstructing an object from a holographic image, by methods of Fourier filtering and wavepropagation. The hologram was created and captured with a Mach-Zehnder interferometer, and the reconstruction was succesfully implemented with a Matlab script.
+
 
 %
 % The bibliography, i.e the list of references
@@ -256,7 +270,7 @@ The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images
     \rotatebox{270}{
         \includegraphics[width=\textheight]{img/5px_amplitude.png}
     }
-    \caption{Caption for your image}
+    \caption{Amplitude of 5px image}
     \label{fig:my_label}
 \end{figure}
 
@@ -265,8 +279,35 @@ The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images
     \rotatebox{270}{
         \includegraphics[width=\textheight]{img/5px_phase.png}
     }
-    \caption{Caption for your image}
+    \caption{Phase of 5px image}
     \label{fig:my_label}
 \end{figure}
-\end{document}
 
+\begin{figure}[p]
+    \centering
+    \rotatebox{270}{
+        \includegraphics[width=\textheight]{img/12px_amplitude.png}
+    }
+    \caption{Amplitude of 12px image}
+    \label{fig:my_label}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \rotatebox{270}{
+        \includegraphics[width=\textheight]{img/12px_phase.png}
+    }
+    \caption{Phase of 12px image}
+    \label{fig:my_label}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \rotatebox{270}{
+        \includegraphics[width=\textheight]{img/lines.eps}
+    }
+    \caption{Mean amplitudes and phases between 5px and 12px wavefronts}
+    \label{fig:my_label}
+\end{figure}
+
+\end{document}
