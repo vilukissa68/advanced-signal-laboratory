@@ -134,7 +134,8 @@ In this report we describe our work done in the 'Signal processing in digital ho
 \setcounter{page}{1} 
 
 \chapter{Methodology}
-This section describes the method we used to capture the holograms and reconstruct the objects.
+This section describes the methods and equations we used to capture the holograms and reconstruct the objects.
+
 \label{sec:methodology}
 \section{Experiment setup}
 Holographic imagery relies on the phenomena of light wave superpositions. In this assignment the object is captured using a Mach-Zehnder interferometer, where a monochromatic laser is used to produce two wavefronts. The first wavefront passes trough the object which we want to record, and the second wavefront is used as reference wavefront. The wavefront are the combined to a single wavefront via the interference phenomena, so that one of the wavefronts is combined with the other wavefront in a slight angle, causing a phase difference. The resulting total wave is then captured with a CMOS camera to produce a image file. The phase difference is detectable as fringes in the captured images. The complete setup for the experiment is shown in figure~\ref{fig:lab_setup}.
@@ -148,8 +149,9 @@ Holographic imagery relies on the phenomena of light wave superpositions. In thi
 
 
 \section{Object reconstruction}
-The object can be extracted from the captured hologram, using a two step method.
+The object can be extracted from the captured hologram, using a two step method, Fourier filtering and wavefront propagation.
 
+\subsection{Fourier filtering}
 First step is to use Fourier filtering to extract the object wave. Since we know that the hologram is defined by the following equation:
 \begin{equation}
 H(x, y) = E_0(x, y)^2 + E_r(x, y)^2 + U_0(x, y)U_r^*(x, y) + U_0^*(x, y)U_r(x, y)
@@ -183,7 +185,8 @@ By removing all the other terms from the Fourier transformation of the hologram,
   \label{fig:fourierfiltering}
 \end{figure}
 
-The wavefront alone isn't that usable. The object needs to be projected to an object plane using wave propagation. Using Rayleigh-Sommerfield holographic model with the angular spectrum transfer function defined in equation~\ref{eq:transferfunction} the object is projected on the object plane as defined by the equation~\ref{eq:projection}, where $z$ is the propagation distance. To reconstruct an object that is in focus, we need to determine the optimal distance for the wave to be propagated. This can be accomplished with an autofocusing algorithm or manually by comparing reconstruction results with different values of $z$ by eye.
+\subsection{Wave propagation}
+The wavefront alone isn't that usable. The object needs to be projected to an object plane using wave propagation. Using Rayleigh-Sommerfield holographic model with the angular spectrum transfer function defined in equation~\ref{eq:transferfunction} the object is projected on the object plane as defined by the equation~\ref{eq:projection}, where $z$ is the propagation distance. 
 
 \begin{align}
 H(f_x,f_y,z) &=
@@ -197,7 +200,7 @@ H(f_x,f_y,z) &=
 U_0(x,y,z) &= F^{-1}[H(f_x,f_y,z) \cdot F[U_0(x,y,0)]] \notag \\
 \label{eq:projection}
 \end{align}
-
+To reconstruct an object that is in focus, we need to determine the optimal distance for the wave to be propagated. This can be accomplished with an autofocusing algorithm or manually by comparing reconstruction results with different values of $z$ by eye.
 
 \chapter{Results}
 \label{sec:results}
@@ -205,16 +208,8 @@ This section of report presents the results of the wavefront reconstruction, and
 The object wavefront reconstruction process described in the section~\ref{sec:methodology} was implemented as a Matlab script, using a provided implementation of the wave propagation algorithm. 
 
 \section{Wavefront Reconstruction}
-In the laboratory we captured to hologram containing the same object with two different fringe widths. The distance between ray and camera was 11 cm, wavelength was ${532 * 10^{-9}}$ m, and a number of pixels was ${3,45*10^{-6}}$ m. The first hologram had fringes of 5 pixels and the second had fringes of 12 pixels.
-
-\section{Analysis}
-The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images of the reconstructed object wavefronts. In 5 pixel fringe hologram, for getting the sharpest details of phase, the best propagation distance was 29,77 cm. In 12 pixel fringe hologram, the sharpest details of phase was determined to be 29,86 cm.
-
-From the images we can see that the picture with smaller fringes had a more clear reconstruction, and the image with larger fringes was more blurry even after fine tuning the focus. This is because the smaller fringes enable for finer phase information to be captured. This is how higher resolution cameras can capture more information than lower resoultion cameras, creating sharper images when capturing objects in focus.
-
-Figure~\ref{fig:lines} compares the mean amplitudes and phases of between the two captured object wavefronts. From the figure we can see that wavefront with 5px fringes has noticebly higher amplitude along the part of the image where the object is. This indicates that more light is present at that part in comparision to the iamge with 12px fringes. [TODO: Lue kirjasta tälle selitys]
-
-The phase comparison doesn't tell more than that the wavefrons are in different phases. This makes sense since the angle of the mirros is different between the images, causing interference in different phase.
+In the laboratory we captured to hologram containing the same object with two different fringe widths. The distance between ray and camera was 11 cm, wavelength was ${532 * 10^{-9}}$ m, and a number of pixels was ${3,45*10^{-6}}$ m. The first hologram had fringes of 5 pixels and the second had fringes of 12 pixels. The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images of the reconstructed object wavefronts. 
+To determine the optimal propagation distance ($z$) for our figures, we implemented a "slider" to dynamically adjust the distance value. With this tool, we fine-tuned the reconstruction to get the sharpest phase image. In 5 pixel fringe hologram, the best propagation distance was 29,77 cm. In 12 pixel fringe hologram, the sharpest details of phase was determined to be 29,86 cm.
 
 \begin{figure}
   \centering
@@ -232,6 +227,15 @@ The phase comparison doesn't tell more than that the wavefrons are in different 
   \caption{Object wavefront reconstruction of the 12px fringe image}
     \label{fig:12px}
 \end{figure}
+
+\section{Analysis}
+From the images we can see that the picture with smaller fringes had a more clear reconstruction, and the image with larger fringes was more blurry even after fine tuning the focus. This is because the smaller fringes enable for finer phase information to be captured. This is how higher resolution cameras can capture more information than lower resoultion cameras, creating sharper images when capturing objects in focus.
+
+Figure~\ref{fig:lines} compares the mean amplitudes and phases of between the two captured object wavefronts. From the figure we can see that wavefront with 5px fringes has noticebly higher amplitude along the part of the image where the object is. This indicates that more light is present at that part in comparision to the image with 12px fringes. [TODO: Lue kirjasta tälle selitys]
+
+The phase comparison doesn't tell more than that the wavefronts are in different phases. This makes sense since the angle of the mirrors is different between the images, causing interference in different phase.
+
+
 
 \begin{figure}
   \centering
