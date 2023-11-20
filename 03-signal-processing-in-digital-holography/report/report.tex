@@ -98,7 +98,7 @@ November 2023 \\
 % ---------------------------------------
 
 \noindent
-This report documents the work done in the Signal processing in digital holography assingment as a part of the Advanced signal processing laboratory course. In this assignment we familiazired ourselves with basics of intereference based holography.
+This report documents the work done in the Signal processing in digital holography assignment as a part of the Advanced signal processing laboratory course. In this assignment we familiarized ourselves with basics of intereference based holography.
 ~
 
 \noindent\textbf{Keywords:} Hologram, Mach-Zehnder interferometer, Wave propagation.
@@ -128,7 +128,7 @@ This report documents the work done in the Signal processing in digital holograp
 
 \chapter{Introduction}
 \label{ch:intro}
-In this report we describe our work done in the 'Signal processing in digital holography' laboratory assignment for the Advanced Signal Processing Laboratory course. In this assignment we used a Mach-Zehnder interferometer to record holographic images and Matlab to reconstruct the object from the recorded wavefront.
+In this report we describe our work done in the 'Signal processing in digital holography' laboratory assignment for the Advanced Signal Processing Laboratory course. The work included a hands-on experimentation with a Mach-Zehnder interferometer, which we used to record holographic images. The other section of this lab work is done in Matlab, where we reconstructed the object to 3D from the recorded 2D wavefront data. This report summarizes the methodologies employed and the results obtained in the work. 
 
 \pagenumbering{arabic}
 \setcounter{page}{1} 
@@ -138,7 +138,7 @@ This section describes the methods and equations we used to capture the hologram
 
 \label{sec:methodology}
 \section{Experiment setup}
-Holographic imagery relies on the phenomena of light wave superpositions. In this assignment the object is captured using a Mach-Zehnder interferometer, where a monochromatic laser is used to produce two wavefronts. The first wavefront passes trough the object which we want to record, and the second wavefront is used as reference wavefront. The wavefront are the combined to a single wavefront via the interference phenomena, so that one of the wavefronts is combined with the other wavefront in a slight angle, causing a phase difference. The resulting total wave is then captured with a CMOS camera to produce a image file. The phase difference is detectable as fringes in the captured images. The complete setup for the experiment is shown in figure~\ref{fig:lab_setup}.
+Holographic imagery relies on the phenomena of light wave superpositions. In this assignment the object is captured using a Mach-Zehnder interferometer, where a monochromatic laser is used to produce two wavefronts. The first wavefront passes trough the object which we want to record, and the second wavefront is used as reference wavefront. The wavefront are the combined to a single wavefront via the interference phenomena, so that one of the wavefronts is combined with the other wavefront in a slight angle, causing a phase difference. The resulting total wave is then captured with a CMOS camera to produce an image file. The phase difference is detectable as fringes in the captured images. The complete setup for the experiment is shown in figure~\ref{fig:lab_setup}.
 
 \begin{figure}
   \centering
@@ -204,8 +204,7 @@ To reconstruct an object that is in focus, we need to determine the optimal dist
 
 \chapter{Results}
 \label{sec:results}
-This section of report presents the results of the wavefront reconstruction, and the analysis of those results.
-The object wavefront reconstruction process described in the section~\ref{sec:methodology} was implemented as a Matlab script, using a provided implementation of the wave propagation algorithm. 
+This section of report presents the results of the wavefront reconstruction, analysis of those results and discusses possible sources of errors in our results. The object wavefront reconstruction process described in the section~\ref{sec:methodology} was implemented as a Matlab script, using a provided implementation of the wave propagation algorithm. 
 
 \section{Wavefront Reconstruction}
 In the laboratory we captured to hologram containing the same object with two different fringe widths. The distance between ray and camera was 11 cm, wavelength was ${532 * 10^{-9}}$ m, and a number of pixels was ${3,45*10^{-6}}$ m. The first hologram had fringes of 5 pixels and the second had fringes of 12 pixels. The figures~\ref{fig:5px} and~\ref{fig:12px} show the amplitude and phase images of the reconstructed object wavefronts. 
@@ -229,13 +228,14 @@ To determine the optimal propagation distance ($z$) for our figures, we implemen
 \end{figure}
 
 \section{Analysis}
-From the images we can see that the picture with smaller fringes had a more clear reconstruction, and the image with larger fringes was more blurry even after fine tuning the focus. This is because the smaller fringes enable for finer phase information to be captured. This is how higher resolution cameras can capture more information than lower resoultion cameras, creating sharper images when capturing objects in focus.
+From the images we can see that the picture with smaller fringes had a more clear reconstruction, and the image with larger fringes was more blurry even after fine tuning the focus. This is because the smaller fringes enable for finer phase information to be captured. This is how higher resolution cameras can capture more information than lower resolution cameras, creating sharper images when capturing objects in focus.
 
-Figure~\ref{fig:lines} compares the mean amplitudes and phases of between the two captured object wavefronts. From the figure we can see that wavefront with 5px fringes has noticebly higher amplitude along the part of the image where the object is. This indicates that more light is present at that part in comparision to the image with 12px fringes. [TODO: Lue kirjasta tälle selitys]
+Figure~\ref{fig:lines} compares the mean amplitudes and phases of between the two captured object wavefronts. From the figure we can see that wavefront with 5px fringes has noticeable higher amplitude along the part of the image where the object is. This indicates that more light is present at that part in comparison to the image with 12px fringes. In an image with 12px fringes, a low amplitude indicates a decrease in spatial frequency. This reduced spatial frequency results in a reduced ability to capture and present variations in light, resulting in a loss of detail in the holographic reconstruction. ~\cite{holography}
 
 The phase comparison doesn't tell more than that the wavefronts are in different phases. This makes sense since the angle of the mirrors is different between the images, causing interference in different phase.
 
-
+\section{Sources of errors}
+Several potential sources of errors may impact the accuracy of our laboratory work. First of all, there could be some errors with the laboratory equipments and setup. For example misalignment of optical components, camera calibration, laser stability or inaccurate angle adjustment. Also human factors, external noise or interference during the hologram capturing can affect to the quality of the holograms. Mistakes in the code for wavefront reconstruction may introduce errors, and also incorrectly focusing the optimal propagation distance of the object. In this work, the distance is only focused by eye.
 
 \begin{figure}
   \centering
@@ -248,8 +248,8 @@ The phase comparison doesn't tell more than that the wavefronts are in different
 
 \chapter{Conclusions}
 \label{ch:conclusions}
-The goal of this assignment was to learn about signal processing in digital holography by capturing and reconstructing an object from a holographic image, by methods of Fourier filtering and wavepropagation. The hologram was created and captured with a Mach-Zehnder interferometer, and the reconstruction was succesfully implemented with a Matlab script.
-From the reconstruction results we were able to concluded that using a smaller angel between that wavefront produces smaller fringes, which in turned allower for better reconstruction of the captured objects.
+The goal of this assignment was to learn about signal processing in digital holography by capturing and reconstructing an object from a holographic image, by methods of Fourier filtering and wave propagation. The hologram was created and captured with a Mach-Zehnder interferometer, and the reconstruction was successfully implemented with a Matlab script.
+From the reconstruction results we were able to concluded that using a smaller angle between that wavefront produces smaller fringes, which in turned allowed for better reconstruction of the captured objects.
 
 
 %
