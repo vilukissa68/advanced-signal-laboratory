@@ -46,20 +46,20 @@ slider = uicontrol('Style', 'slider', 'Position', [20 20 200 20], 'Value', 1,...
 %%%% COMPARISONS
 % Assume wavefront1 and wavefront2 are your reconstructed wavefronts
 
-wavefront_with_obj = FourierFiltering('images/object5px.png');
-wavefront_no_obj = FourierFiltering('images/object12px.png');
+wavefront_5px = FourierFiltering('images/object5px.png');
+wavefront_12px = FourierFiltering('images/object12px.png');
 
 best_distance_1 = -0.2977
 best_distance_2 = -0.2986
 
-wavefront_with_obj = AngularSpectrum(wavefront_with_obj, best_distance_1, lambda, pixel_size);
-wavefront_no_obj = AngularSpectrum(wavefront_no_obj, best_distance_2, lambda, pixel_size);
+wavefront_5px = AngularSpectrum(wavefront_5px, best_distance_1, lambda, pixel_size);
+wavefront_12px = AngularSpectrum(wavefront_12px, best_distance_2, lambda, pixel_size);
 
 % Flatten images by taking mean of each row
-amplitude1 = abs(wavefront_with_obj);
-phase1 = angle(wavefront_with_obj);
-amplitude2 = abs(wavefront_no_obj);
-phase2 = angle(wavefront_no_obj);
+amplitude1 = abs(wavefront_5px);
+phase1 = angle(wavefront_5px);
+amplitude2 = abs(wavefront_12px);
+phase2 = angle(wavefront_12px);
 
 amplitude1 = mean(amplitude1, 1);
 phase1 = mean(phase1, 1);
