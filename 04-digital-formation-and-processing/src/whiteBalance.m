@@ -24,4 +24,7 @@ balancedImage(:,:,1) = image(:,:,1) ./ image(x,y,1);
 balancedImage(:,:,2) = image(:,:,2) ./ image(x,y,2);
 balancedImage(:,:,3) = image(:,:,3) ./ image(x,y,3);
 
+% Prevent values over limits
+balancedImage = min(max(balancedImage, 0), 1);
+
 end

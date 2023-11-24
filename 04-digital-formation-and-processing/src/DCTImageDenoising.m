@@ -1,12 +1,10 @@
-function [denoised] = DCTImageDenoising(image, lambda)
-    % Define the block size
-    blockSize = [8, 8];
+function [denoised] = DCTImageDenoising(image, lambda, transformBlockSize)
 
     % Create a custom function to be applied to each block
     fun = @(block_struct) idct2(thresholdDCT(block_struct.data, lambda));
 
     % Apply the function to each block
-    denoised = blockproc(image, blockSize, fun);
+    denoised = blockproc(image, transformBlockSize, fun);
 end
 
 function denoised = thresholdDCT(input, lambda)

@@ -2,97 +2,136 @@ clc;
 clear;
 
 % Constants
-lambda = 0.02; % Thresholding value used in DCT filtering
-transformBlockSize = [16, 16];
-
+lambda = 0.060; % Thresholding value used in DCT filtering NOTE: too small calue here will cause major clipping due to max value pixels not being normalized
+transformBlockSize = [32, 32];
+dctBlockSize = [8 8];
+%%
 
 % 1. Load image and convert to double
-img = imread('images/outoffocus.tiff');
-img = im2double(img);
+focus = imread('images/outoffocus.tiff');
+focus = im2double(focus);
+
+natural = imread('images/natural.tiff');
+natural = im2double(natural);
+
 
 % 2. Visualize Images, Bayer mosaic array
 % Define the block size
 figure;
-imshow(img, [])
+subplot(1,2,1); imshow(focus, []); title('out of focus image');
+subplot(1,2,2); imshow(natural, []); title('natural');
 
 % 3. Separe image into subchannels
-R = img(1:2:end, 1:2:end);
-G1 = img(2:2:end, 1:2:end);
-G2 = img(1:2:end, 2:2:end);
-B = img(2:2:end, 2:2:end);
+R_focus = focus(1:2:end, 1:2:end);
+G1_focus = focus(1:2:end, 2:2:end);
+G2_focus = focus(2:2:end, 1:2:end);
+B_focus = focus(2:2:end, 2:2:end);
 
-[M, N] = size(img);
-% Initialize the channels
-%R = zeros(M, N, 'double');
-%G1 = zeros(M, N, 'double');
-%G2 = zeros(M, N, 'double');
-%B = zeros(M, N, 'double');
+R_nat = natural(1:2:end, 1:2:end);
+G1_nat = natural(1:2:end, 2:2:end);
+G2_nat = natural(2:2:end, 1:2:end);
+B_nat = natural(2:2:end, 2:2:end);
 
-% Separate the channels
-%R(1:2:end, 1:2:end) = img(1:2:end, 1:2:end);  % Red
-%G1(1:2:end, 2:2:end) = img(1:2:end, 2:2:end);  % Green in Red rows
-%G2(2:2:end, 1:2:end) = img(2:2:end, 1:2:end);  % Green in Blue rows
-%B(2:2:end, 2:2:end) = img(2:2:end, 2:2:end);  % Blue
 
-%plotColorChannels(R, G1, G2, B)
+% Illustrare the bayer array
 
 % Plot channels
 figure;
-subplot(2,2,1); imshow(R, []); title('Red');
-subplot(2,2,2); imshow(G1, []); title('Green 1');
-subplot(2,2,3); imshow(G2, []); title('Green 2');
-subplot(2,2,4); imshow(B, []); title('Blue');
+subplot(2,2,1); imshow(R_focus, []); title('Red');
+subplot(2,2,2); imshow(G1_focus, []); title('Green 1');
+subplot(2,2,3); imshow(G2_focus, []); title('Green 2');
+subplot(2,2,4); imshow(B_focus, []); title('Blue');
+sgtitle("Out of focus image");
+
+figure;
+subplot(2,2,1); imshow(R_nat, []); title('Red');
+subplot(2,2,2); imshow(G1_nat, []); title('Green 1');
+subplot(2,2,3); imshow(G2_nat, []); title('Green 2');
+subplot(2,2,4); imshow(B_nat, []); title('Blue');
+sgtitle("Natural image");
 %% 
 
 % 4. Sliding window
-[meanValuesR, varianceValuesR] = calculateScatterPlot(R);
-[meanValuesG1, varianceValuesG1] = calculateScatterPlot(G1);
-[meanValuesG2, varianceValuesG2] = calculateScatterPlot(G2);
-[meanValuesB, varianceValuesB] = calculateScatterPlot(B);
+[meanValuesR_focus, varianceValuesR_focus] = calculateScatterPlot(R_focus);
+[meanValuesG1_focus, varianceValuesG1_focus] = calculateScatterPlot(G1_focus);
+[meanValuesG2_focus, varianceValuesG2_focus] = calculateScatterPlot(G2_focus);
+[meanValuesB_focus, varianceValuesB_focus] = calculateScatterPlot(B_focus);
+
+
+[meanValuesR_nat, varianceValuesR_nat] = calculateScatterPlot(R_nat);
+[meanValuesG1_nat, varianceValuesG1_nat] = calculateScatterPlot(G1_nat);
+[meanValuesG2_nat, varianceValuesG2_nat] = calculateScatterPlot(G2_nat);
+[meanValuesB_nat, varianceValuesB_nat] = calculateScatterPlot(B_nat);
+
 
 % 5. Plot scatter plots and regression lines
-pR = calculateRegression(meanValuesR, varianceValuesR);
-pG1 = calculateRegression(meanValuesG1, varianceValuesG1);
-pG2 = calculateRegression(meanValuesG2, varianceValuesG2);
-pB = calculateRegression(meanValuesB, varianceValuesB);
 
-produceScatterPlot(meanValuesR, varianceValuesR, pR, ...
-    meanValuesG1, varianceValuesG1, pG1, ...
-    meanValuesG2, varianceValuesG2, pG2, ...
-    meanValuesB, varianceValuesB, pB)
+% Out of focus
+pR_focus = calculateRegression(meanValuesR_focus, varianceValuesR_focus);
+pG1_focus = calculateRegression(meanValuesG1_focus, varianceValuesG1_focus);
+pG2_focus = calculateRegression(meanValuesG2_focus, varianceValuesG2_focus);
+pB_focus = calculateRegression(meanValuesB_focus, varianceValuesB_focus);
+
+% Natural
+pR_nat = calculateRegression(meanValuesR_nat, varianceValuesR_nat);
+pG1_nat = calculateRegression(meanValuesG1_nat, varianceValuesG1_nat);
+pG2_nat = calculateRegression(meanValuesG2_nat, varianceValuesG2_nat);
+pB_nat = calculateRegression(meanValuesB_nat, varianceValuesB_nat);
+
+% Produce scatter plot for the out of focus image
+produceScatterPlot(meanValuesR_focus, varianceValuesR_focus, pR_focus, ...
+    meanValuesG1_focus, varianceValuesG1_focus, pG1_focus, ...
+    meanValuesG2_focus, varianceValuesG2_focus, pG2_focus, ...
+    meanValuesB_focus, varianceValuesB_focus, pB_focus)
 
 % 6. Transformation
 % Define transformation
 % applyTransformation = @(block_struct, ac, bc)(2 * sqrt( (block_struct.data / ac) + (3/8) + (bc / (ac^2)) ));
 
 % Apply the transformation using blockproc for each subchannel
-transformedR = blockproc(R, transformBlockSize, @(block_struct) applyTransformation(block_struct, pR(1), pR(2)));
-transformedG1 = blockproc(G1, transformBlockSize, @(block_struct) applyTransformation(block_struct, pG1(1), pG1(2)));
-transformedG2 = blockproc(G2, transformBlockSize, @(block_struct) applyTransformation(block_struct, pG2(1), pG2(2)));
-transformedB = blockproc(B, transformBlockSize, @(block_struct) applyTransformation(block_struct, pB(1), pB(2)));
+transformedR_focus = blockproc(R_focus, transformBlockSize, @(block_struct) applyTransformation(block_struct, pR_focus(1), pR_focus(2)));
+transformedG1_focus = blockproc(G1_focus, transformBlockSize, @(block_struct) applyTransformation(block_struct, pG1_focus(1), pG1_focus(2)));
+transformedG2_focus = blockproc(G2_focus, transformBlockSize, @(block_struct) applyTransformation(block_struct, pG2_focus(1), pG2_focus(2)));
+transformedB_focus = blockproc(B_focus, transformBlockSize, @(block_struct) applyTransformation(block_struct, pB_focus(1), pB_focus(2)));
+
+transformedR_nat = blockproc(R_nat, transformBlockSize, @(block_struct) applyTransformation(block_struct, pR_nat(1), pR_nat(2)));
+transformedG1_nat = blockproc(G1_nat, transformBlockSize, @(block_struct) applyTransformation(block_struct, pG1_nat(1), pG1_nat(2)));
+transformedG2_nat = blockproc(G2_nat, transformBlockSize, @(block_struct) applyTransformation(block_struct, pG2_nat(1), pG2_nat(2)));
+transformedB_nat = blockproc(B_nat, transformBlockSize, @(block_struct) applyTransformation(block_struct, pB_nat(1), pB_nat(2)));
+
 
 % 7. Compute scatter plots
-[meanValuesTransformedR, varianceValuesTransformedR] = calculateScatterPlot(transformedR);
-[meanValuesTransformedG1, varianceValuesTransformedG1] = calculateScatterPlot(transformedG1);
-[meanValuesTransformedG2, varianceValuesTransformedG2] = calculateScatterPlot(transformedG2);
-[meanValuesTransformedB, varianceValuesTransformedB] = calculateScatterPlot(transformedB);
+[meanValuesTransformedR_focus, varianceValuesTransformedR_focus] = calculateScatterPlot(transformedR_focus);
+[meanValuesTransformedG1_focus, varianceValuesTransformedG1_focus] = calculateScatterPlot(transformedG1_focus);
+[meanValuesTransformedG2_focus, varianceValuesTransformedG2_focus] = calculateScatterPlot(transformedG2_focus);
+[meanValuesTransformedB_focus, varianceValuesTransformedB_focus] = calculateScatterPlot(transformedB_focus);
 
-pTR = calculateRegression(meanValuesTransformedR, varianceValuesTransformedR);
-pTG1 = calculateRegression(meanValuesTransformedG1, varianceValuesTransformedG1);
-pTG2 = calculateRegression(meanValuesTransformedG2, varianceValuesTransformedG2);
-pTB = calculateRegression(meanValuesTransformedB, varianceValuesTransformedB);
+% Fit regression for out of focus image
+pTR = calculateRegression(meanValuesTransformedR_focus, varianceValuesTransformedR_focus);
+pTG1 = calculateRegression(meanValuesTransformedG1_focus, varianceValuesTransformedG1_focus);
+pTG2 = calculateRegression(meanValuesTransformedG2_focus, varianceValuesTransformedG2_focus);
+pTB = calculateRegression(meanValuesTransformedB_focus, varianceValuesTransformedB_focus);
 
-produceScatterPlot(meanValuesTransformedR, varianceValuesTransformedR, pTR, ...
-    meanValuesTransformedG1, varianceValuesTransformedG1, pTG1, ...
-    meanValuesTransformedG2, varianceValuesTransformedG2, pTG2, ...
-    meanValuesTransformedB, varianceValuesTransformedB, pTB)
+% Plot the scatter plot
+produceScatterPlot(meanValuesTransformedR_focus, varianceValuesTransformedR_focus, pTR, ...
+    meanValuesTransformedG1_focus, varianceValuesTransformedG1_focus, pTG1, ...
+    meanValuesTransformedG2_focus, varianceValuesTransformedG2_focus, pTG2, ...
+    meanValuesTransformedB_focus, varianceValuesTransformedB_focus, pTB)
 %% 
 
 % 8. DCT
-filteredRT = DCTImageDenoising(transformedR, lambda);
-filteredG1T = DCTImageDenoising(transformedG1, lambda);
-filteredG2T = DCTImageDenoising(transformedG2, lambda);
-filteredBT = DCTImageDenoising(transformedB, lambda);
+
+% Non-transformed
+filteredR_nat = DCTImageDenoising(R_nat, lambda, dctBlockSize);
+filteredG1_nat = DCTImageDenoising(G1_nat, lambda, dctBlockSize);
+filteredG2_nat = DCTImageDenoising(G2_nat, lambda, dctBlockSize);
+filteredB_nat = DCTImageDenoising(B_nat, lambda, dctBlockSize);
+
+% Transformed
+filteredRT_nat = DCTImageDenoising(transformedR_nat, lambda, dctBlockSize);
+filteredG1T_nat = DCTImageDenoising(transformedG1_nat, lambda, dctBlockSize);
+filteredG2T_nat = DCTImageDenoising(transformedG2_nat, lambda, dctBlockSize);
+filteredBT_nat = DCTImageDenoising(transformedB_nat, lambda, dctBlockSize);
 
 % 9. Inverse transformation
 %Define a function for inverse transformation
@@ -104,16 +143,21 @@ filteredBT = DCTImageDenoising(transformedB, lambda);
 %     bc/(ac^2)))
 
 % Apply inverse transformation for each channel
-inverseR = blockproc(filteredRT, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pR(1), pR(2)));
-inverseG1 = blockproc(filteredG1T, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pG1(1), pG1(2)));
-inverseG2 = blockproc(filteredG2T, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pG2(1), pG2(2)));
-inverseB = blockproc(filteredBT, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pB(1), pB(2)));
 
+% Natural image
+inverseRT_nat = blockproc(filteredRT_nat, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pR_nat(1), pR_nat(2)));
+inverseG1T_nat = blockproc(filteredG1T_nat, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pG1_nat(1), pG1_nat(2)));
+inverseG2T_nat = blockproc(filteredG2T_nat, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pG2_nat(1), pG2_nat(2)));
+inverseBT_nat = blockproc(filteredBT_nat, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pB_nat(1), pB_nat(2)));
+
+% Plot
 figure;
-subplot(2,2,1); imshow(inverseR, []); title('Red');
-subplot(2,2,2); imshow(inverseG1, []); title('Green 1');
-subplot(2,2,3); imshow(inverseG2, []); title('Green 2');
-subplot(2,2,4); imshow(inverseB, []); title('Blue');
+subplot(2,2,1); imshow(inverseRT_nat, []); title('Red');
+subplot(2,2,2); imshow(inverseG1T_nat, []); title('Green 1');
+subplot(2,2,3); imshow(inverseG2T_nat, []); title('Green 2');
+subplot(2,2,4); imshow(inverseBT_nat, []); title('Blue');
+sgtitle("Transformed")
+
 
 % 10. TODO: Compare images
 %% 
@@ -121,17 +165,32 @@ subplot(2,2,4); imshow(inverseB, []); title('Blue');
 % 11. Demosaicking
 
 % Combine the channels into a color image
-demosaicRGB = simpleDemosaic(inverseR, inverseG1, inverseG2, inverseB);
+demosaicRGB = simpleDemosaic(filteredR_nat, filteredG1_nat, filteredG2_nat, filteredB_nat);
+demosaicRGBT = simpleDemosaic(inverseRT_nat, inverseG1T_nat, inverseG2T_nat, inverseBT_nat);
 
-%inverseG = (inverseG1 + inverseG2) ./ 2;
-%output = cat(3, inverseR, inverseG, inverseB);
-%img_w = whiteBalance(output);
+% Remove extreme peak values from the image for better white balancing
+%demosaicRGB = medianFilter(demosaicRGB, [32 32], 0.01);
 
-img_w = whiteBalance(demosaicRGB);
+% 12. White balancing
+img = whiteBalance(demosaicRGB);
+imgT = whiteBalance(demosaicRGBT);
+
+%img_w = lin2rgb(demosaicRGB);
 figure;
-imshow(img_w, []);
+subplot(1,2,1); imshow(img, []); title("Non-transformed");
+subplot(1,2,2); imshow(imgT, []); title("Transformed");
+sgtitle("Demosaicking and white balancing natural image");
 
-%% 
+
+% 13. Contrast and saturation correction
+imgCorrected = contrastAndSaturationCorrection(img, 0.7);
+imgCorrectedT = contrastAndSaturationCorrection(imgT, 0.7);
+figure;
+subplot(1,2,1); imshow(imgCorrected, []); title("Non-transformed");
+subplot(1,2,2); imshow(imgCorrectedT, []); title("Transformed");
+sgtitle("Contrast and saturation correction for natural image");
+
+%%
 % Function definitions
 % 6. Transformation
 function output = applyTransformation(block_struct, ac, bc)
