@@ -19,6 +19,7 @@ autocite=inline
 ]{biblatex}
 \usepackage{csquotes}
 \usepackage{matlab-prettifier}
+\usepackage{svg}
 
 \addbibresource{references.bib} %Imports bibliography file
 
@@ -138,6 +139,14 @@ In this report we describe our work done in the 'Digital Image Formation and Pro
 In this section we will present our implementation of the image processing pipeline, by going over the main parts of the Matlab code as well as explaining the the decisions we took when requirements we ambigious.
 
 \section{Overview of the pipeline}
+Figure~\ref{fig:pipeline} shows the complete image processing and formation pipeline that we are going to introduce in this report. The following sections will go over the different parts of the pipeline. The pipeline takes in raw sensor data of Bayer arrays in RGGB format and produces RGB images. In addition to image formation the pipeline also performs focusing, white balancing and contrast and saturation correction.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/image_pipeline.eps}
+  \caption{Our image processing and formation pipeline}
+  \label{fig:pipeline}
+\end{figure}
 
 \section{Reading images and converting to doubles}
 
