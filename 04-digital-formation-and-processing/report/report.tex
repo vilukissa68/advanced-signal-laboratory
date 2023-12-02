@@ -149,12 +149,91 @@ Figure~\ref{fig:pipeline} shows the complete image processing and formation pipe
 \end{figure}
 
 \section{Reading images and converting to doubles}
+The first part of the pipeline is loading the images (outoffocus.tiff and natural.tiff) using Matlab's $imread$ function, and then converting the pixel values to double precision by using $im2double$ function. The convertion ensure that pixel values are represented as floating-point numbers between 0 and 1. 
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+% 1. Load image and convert to double
+focus = imread('images/outoffocus.tiff');
+focus = im2double(focus);
+
+natural = imread('images/natural.tiff');
+natural = im2double(natural);
+\end{lstlisting}
 
 \section{Image visualization and Bayer mosaic}
+The second part starts with creating a figure with two subplots. The $imshow$ function is used with $[]$ to scale the pixel values automatically for better visualization. For illustrating the Bayer mosaic arrays the image is separated into its color channels (red, green 1, green 2 and blue). After separating the color channels, the next step is to create figures to illustrate the Bayer mosaic arrays for each color channel separately.
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+% 2. Visualize Images, Bayer mosaic array
+% Define the block size
+figure;
+subplot(1,2,1); imshow(focus, []); title('out of focus image');
+subplot(1,2,2); imshow(natural, []); title('natural');
 
+% 3. Separe image into subchannels
+R_focus = focus(1:2:end, 1:2:end);
+G1_focus = focus(1:2:end, 2:2:end);
+G2_focus = focus(2:2:end, 1:2:end);
+B_focus = focus(2:2:end, 2:2:end);
+
+R_nat = natural(1:2:end, 1:2:end);
+G1_nat = natural(1:2:end, 2:2:end);
+G2_nat = natural(2:2:end, 1:2:end);
+B_nat = natural(2:2:end, 2:2:end);
+
+% Illustrare the bayer array
+
+% Plot channels
+figure;
+subplot(2,2,1); imshow(R_focus, []); title('Red');
+subplot(2,2,2); imshow(G1_focus, []); title('Green 1');
+subplot(2,2,3); imshow(G2_focus, []); title('Green 2');
+subplot(2,2,4); imshow(B_focus, []); title('Blue');
+sgtitle("Out of focus image");
+
+figure;
+subplot(2,2,1); imshow(R_nat, []); title('Red');
+subplot(2,2,2); imshow(G1_nat, []); title('Green 1');
+subplot(2,2,3); imshow(G2_nat, []); title('Green 2');
+subplot(2,2,4); imshow(B_nat, []); title('Blue');
+sgtitle("Natural image");
+\end{lstlisting}
 \section{Sliding window}
+In this section we are analyzing each subchannel of the out-of-focus and natural images using a sliding window operator. For both natural image and out-of-focus image we are calling $calculateScatterPlot$ function for each color channel.
+
+The function defines a sliding window analysis using the $blockproc$ function in Matlab. The window size is set to $[2, 2]$, and $calculateMeanVar$ function is defined to calculate the mean and variance for each window. The results are then reshaped to create scatter plots.
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+
+% 4. Calculate scatter plots
+function [meanValues, varianceValues] = calculateScatterPlot(channel)
+    % Define the window size for sliding window analysis
+    windowSize = [2, 2];
+
+    % Define a function to calculate mean and variance for each window
+    calculateMeanVar = @(block_struct) [mean(block_struct.data(:)), var(block_struct.data(:))];
+
+    % Apply the sliding window operator using blockproc
+    meanVarResults = blockproc(channel, windowSize, calculateMeanVar);
+
+    % Extract mean and variance values
+    meanValues = meanVarResults(:, 1);
+    varianceValues = meanVarResults(:, 2);
+
+    % Reshape the results for scatterplot creation
+    meanValues = meanValues(:);
+    varianceValues = varianceValues(:);
+end
+\end{lstlisting}
+
 
 \section{Scatterplots and regression}
+In this part we calculate the regression lines for each subchannel using the $calculateRegression$ function. Then, by using $produceScatterPlot$ function we create scatter plots. [kesken]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+
+% 5. Calculate regression lines
+function [p] = calculateRegression(meanValues, varianceValues)
+    % Fit a straight line to the data
+    p = polyfit(meanValues, varianceValues, 1);
+end
+\end{lstlisting}
 
 \section{Transformation and reverse transformation}
 
