@@ -271,9 +271,23 @@ end
 \label{sec:results}
 In this section we will present the results from our image processing pipeline and also do some analysis on why we got the kinds of results that we did.
 
+\section{Purpose of the Anscombe transformation}
+In image processing Poisson distribution is used to model the signal dependant noise specific in images, due to it better model photons hitting the sensor array then Gaussian distribution. Gaussian distribution is signal independant and thus more suitable for general purpose denoising methods, so we want to transform our image specific Poisson noise to corresponding Gaussian distribution for processing. This is accomplished with the Anscombe transformation. After denoising we can use the inverse Anscombe transformation to bring the image back to Poisson noise distribution where the image should now appear denoised.
+
+Equation~\ref{eq:anscombe} shows the Anscombe transformation and equation~\ref{eq:anscombe-inv} shows the function used to inverse the Anscombe transformation. For the purposes of this exercise the inversing function is not exactly the same as inverse Anscombe tranformations. This is because TODO: miksi näin on?
+
+\begin{equation}
+\label{eq:anscombe}
+  2 \sqrt{\frac{I_{c}}{a_{c}} + \frac{3}{8} + \frac{b_{c}}{a_{c}^2}}
+\end{equation}
+
+\begin{equation}
+\label{eq:anscombe-inv}
+  a_{c} \Bigg( \frac{1}{4}D^2 + \frac{1}{4}\sqrt{\frac{3}{2}}D^{-1} - \frac{11}{8}D^{-2} + \frac{5}{8} \sqrt{\frac{3}{2}}D^{-3} - \frac{1}{8} - \frac{b_{c}}{a_{c}^2} \Bigg)
+  \end{equation}
+
 \chapter{Conclusions}
 \label{ch:conclusions}
-
 %
 % The bibliography, i.e the list of references
 %
