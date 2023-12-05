@@ -199,7 +199,8 @@ sgtitle("Natural image");
 \section{Sliding window}
 In this section we are analyzing each subchannel of the out-of-focus and natural images using a sliding window operator. For both natural image and out-of-focus image we are calling $calculateScatterPlot$ function for each color channel.
 
-The function defines a sliding window analysis using the $blockproc$ function in Matlab. The window size is set to $[2, 2]$, and $calculateMeanVar$ function is defined to calculate the mean and variance for each window. The results are then reshaped to create scatter plots.
+The function defines a sliding window analysis using the $blockproc$ function in Matlab. The window size is set to $[2, 2]$, and $calculateMeanVar$ function is defined to calculate the mean and variance for each window. The function $calculateScatterPlot$ returns mean values and variance values that we need in the next step when calculating regression lines.
+
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
 
 % 4. Calculate scatter plots
@@ -225,19 +226,119 @@ end
 
 
 \section{Scatterplots and regression}
-In this part we calculate the regression lines for each subchannel using the $calculateRegression$ function. Then, by using $produceScatterPlot$ function we create scatter plots. [kesken]
+In this part we calculate the regression lines for each subchannel using the $calculateRegression$ function. Regression is calculated by $polyfit$ function in Matlab, that returns a best-fitting polynomial to a set of data points, in this context it is used to fit a straight line to the data. The regression calculation will be done for both out-of-focus and natural subchannels.
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
-
 % 5. Calculate regression lines
 function [p] = calculateRegression(meanValues, varianceValues)
     % Fit a straight line to the data
     p = polyfit(meanValues, varianceValues, 1);
 end
 \end{lstlisting}
+Then,  $produceScatterPlot$ function is responsible for generating scatter plots for each color channel of the out-of-focus image. This function takes as input the mean values and variance values obtained from the $calculateScatterPlot$ function, as well as the regression lines calculated by the $calculateRegression$ function. After running this function, you should have scatter plots with regression lines for each subchannel.
 
-\section{Transformation and reverse transformation}
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+function produceScatterPlot(meanR, varR, pR, meanG1, varG1, pG1, meanG2, varG2, pG2, meanB, varB, pB)
+    % Create a new figure
+    figure;
+    
+    % Fit a straight line to the Red channel data and plot it
+    subplot(2,2,1);
+    scatter(meanR, varR);
+    xlabel('Local Sample Mean');
+    ylabel('Local Sample Variance');
+    title('Mean-Variance Scatterplot for Red');
+    hold on;
+    fR = polyval(pR, meanR);
+    plot(meanR, fR, 'r');
+    hold off;
+    
+    % Fit a straight line to the Green 1 channel data and plot it
+    subplot(2,2,2);
+    scatter(meanG1, varG1);
+    xlabel('Local Sample Mean');
+    ylabel('Local Sample Variance');
+    title('Mean-Variance Scatterplot for Green 1');
+    hold on;
+    fG1 = polyval(pG1, meanG1);
+    plot(meanG1, fG1, 'g');
+    hold off;
+
+    % Fit a straight line to the Green 2 channel data and plot it
+    subplot(2,2,3);
+    scatter(meanG2, varG2);
+    xlabel('Local Sample Mean');
+    ylabel('Local Sample Variance');
+    title('Mean-Variance Scatterplot for Green 2');
+    hold on;
+    fG2 = polyval(pG2, meanG2);
+    plot(meanG2, fG2, 'g');
+    hold off;
+    
+    % Fit a straight line to the Blue channel data and plot it
+    subplot(2,2,4);
+    scatter(meanB, varB);
+    xlabel('Local Sample Mean');
+    ylabel('Local Sample Variance');
+    title('Mean-Variance Scatterplot for Blue');
+    hold on;
+    fB = polyval(pB, meanB);
+    plot(meanB, fB, 'b');
+    hold off;
+end
+\end{lstlisting}
+
+\section{Transformation and inverse transformation}
+[kesken]
+
+Transformation is done by using this equation
+\[
+2 \sqrt{\frac{I_c}{a_c} + \frac{3}{8} + \frac{b_c}{a_c^2}}
+\],
+ where $a_c$ and $b_c$ are the parameters estimated from the out-of-focus image.
+
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+% 6. Transformation
+function output = applyTransformation(block_struct, ac, bc)
+    % Calculate the value inside the square root
+    sqrt_val = (block_struct.data / ac) + (3/8) + (bc / (ac^2));
+
+    % Check if the value inside the square root is negative
+    sqrt_val(sqrt_val < 0) = 1;
+
+    % Calculate the output
+    output = 2 * sqrt(sqrt_val);
+end
+\end{lstlisting}
+
+The inverse transformation is done by using the equation
+\[
+a_c \left( \frac{1}{4} D^2 + \frac{1}{4}\sqrt{\frac{3}{2}D^{-1}} - \frac{11}{8}D^{-2} + \frac{5}{8}\sqrt{\frac{3}{2}D^{-3}} - \frac{1}{8} - \frac{b_c}{a_c^2} \right)
+\]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+% % 9. Inverse transformation
+function output = inverseTransformation(block_struct, ac, bc)
+    % Calculate the values inside the square roots
+    sqrt_val1 = 0.25 * sqrt(3/2) * block_struct.data.^(-1);
+    sqrt_val2 = (5/8) * sqrt(3/2) * block_struct.data.^(-3);
+
+    % Check if the values inside the square roots are negative
+    sqrt_val1(block_struct.data.^(-1) < 0) = 0;
+    sqrt_val2(block_struct.data.^(-3) < 0) = 0;
+
+    % Calculate the output
+    output = ac * (0.25 * block_struct.data.^2 + ...
+        sqrt_val1 - ...
+        (11/8)*(block_struct.data.^(-2)) + ...
+        sqrt_val2 - ...
+        1/8 - ...
+        bc/(ac^2));
+end
+\end{lstlisting}
 
 \section{DCT denoising}
+[kesken]
+This part implements a denoising operation on an image using a sliding DCT (Discrete Cosine Transform) filter.
+
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
 function [denoised] = DCTImageDenoising(image, lambda, transformBlockSize)
 
