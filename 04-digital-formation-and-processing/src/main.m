@@ -2,7 +2,7 @@ clc;
 clear;
 
 % Constants
-lambda = 0.060; % Thresholding value used in DCT filtering NOTE: too small calue here will cause major clipping due to max value pixels not being normalized
+lambda = 0.060; % Thresholding value used in DCT filtering NOTE: too small value here will cause major clipping due to max value pixels not being normalized
 transformBlockSize = [32, 32];
 dctBlockSize = [8 8];
 %%
@@ -183,8 +183,8 @@ sgtitle("Demosaicking and white balancing natural image");
 
 
 % 13. Contrast and saturation correction
-imgCorrected = contrastAndSaturationCorrection(img, 0.7);
-imgCorrectedT = contrastAndSaturationCorrection(imgT, 0.7);
+imgCorrected = contrastAndSaturationCorrection(img, 0.9);
+imgCorrectedT = contrastAndSaturationCorrection(imgT, 0.9);
 figure;
 subplot(1,2,1); imshow(imgCorrected, []); title("Non-transformed");
 subplot(1,2,2); imshow(imgCorrectedT, []); title("Transformed");
@@ -198,7 +198,7 @@ function output = applyTransformation(block_struct, ac, bc)
     sqrt_val = (block_struct.data / ac) + (3/8) + (bc / (ac^2));
 
     % Check if the value inside the square root is negative
-    sqrt_val(sqrt_val < 0) = 1;
+    sqrt_val(sqrt_val < 0) = 0;
 
     % Calculate the output
     output = 2 * sqrt(sqrt_val);
