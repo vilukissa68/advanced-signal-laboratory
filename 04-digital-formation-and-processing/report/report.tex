@@ -9,6 +9,8 @@
 \title{Digital Image Formation And Processing - Report} % primary title (for front page)
 \thesistype{Laboratory Report} % or Bachelor of Science, Laboratory Report...
 
+\usepackage{graphicx}
+
 \usepackage{lastpage}
 \usepackage[english]{babel}
 \usepackage[
@@ -372,6 +374,7 @@ end
 \label{sec:results}
 In this section we will present the results from our image processing pipeline and also do some analysis on why we got the kinds of results that we did.
 
+
 \section{Purpose of the Anscombe transformation}
 In image processing Poisson distribution is used to model the signal dependant noise specific in images, due to it better model photons hitting the sensor array then Gaussian distribution. Gaussian distribution is signal independant and thus more suitable for general purpose denoising methods, so we want to transform our image specific Poisson noise to corresponding Gaussian distribution for processing. This is accomplished with the Anscombe transformation. After denoising we can use the inverse Anscombe transformation to bring the image back to Poisson noise distribution where the image should now appear denoised.
 
@@ -386,6 +389,62 @@ Equation~\ref{eq:anscombe} shows the Anscombe transformation and equation~\ref{e
 \label{eq:anscombe-inv}
   a_{c} \Bigg( \frac{1}{4}D^2 + \frac{1}{4}\sqrt{\frac{3}{2}}D^{-1} - \frac{11}{8}D^{-2} + \frac{5}{8} \sqrt{\frac{3}{2}}D^{-3} - \frac{1}{8} - \frac{b_{c}}{a_{c}^2} \Bigg)
   \end{equation}
+
+\section{Mean variance analysis}
+With a sliding window mean and variance operators we could extract local noise information from the out of focus image to visualize how the Anscombe transformation affects the image. Figure~\ref{fig:noisy-mean-variance} shows the local means and variances for each channel as datapoints and the affine variance as colored lines before the Anscombe transformation. From the lines we see that they are not flat like we would expect. Figure~\ref{fig:clean-mean-variance} shows the same image after the Anscombe transformation. We can now see that the regressions lines are flat. This is because the Anscombe transformation has made the signal dependant noise (Poisson noise) a constant troughout the image.
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{img/noisy-mean-variance.eps}
+  \caption{Mean-variance for each channels before denoising}
+  \label{fig:noisy-mean-variance}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{img/clean-mean-variance.eps}
+  \caption{Mean-variance for each channels after denoising}
+  \label{fig:clean-mean-variance}
+\end{figure}
+
+\section{Comparing non-transformed and transformed images}
+After combining the channels to a RGB image we can compare the images produced when Poisson noise was removed and when it was not. Figure~\ref{fig:comparison-dct} shows the images produced by the pipeline without and with the Anscombe transformation. From these images we can see that the transformed image is clearly more detailed. From this we can conclude that the transformation greatly benefits the image formation pipeline, when using Bayer array sensor data.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{img/non-transformed-dct.png}
+    \caption*{(a) Produced image withouth Anscombe transformation}
+    %\label{fig:nontransformed-dct}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{img/transformed-dct.png}
+    \caption*{(b) Produced image with Anscombe transformation}
+    %\label{fig:transformed-dct}
+  \end{minipage}
+  \caption{Comparision of images where (a) was not applied Anscombe transformation before reconstruction, and (b) as applied Anscombe transformation.}
+  \label{fig:comparison-dct}
+\end{figure}
+
+\section{Color correction}
+After producing RGB we applied white balancing, saturation correction and contrast correction. Figure~\ref{fig:comparison-white-balance} shows the difference between the images that have not and were applied Anscombe transformation before RGB composition after white balancing, saturation and contrast corrections. The non-transformed image is a lot brighter but it is still unclear. The transformed image still looks good, as it's somewhat brighter. By eye it also looks like with the chosen lambda value the green color has been reduced somewhat, which might not be wanted.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{img/non-transformed-white-balance.png}
+    \caption*{(a) Produced image withouth Anscombe transformation after color correction}
+    %\label{fig:nontransformed-dct}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{img/transformed-white-balance.png}
+    \caption*{(b) Produced image with Anscombe transformation after color connection}
+    %\label{fig:transformed-dct}
+  \end{minipage}
+  \caption{Comparision of images where (a) was not applied Anscombe transformation before reconstruction, and (b) as applied Anscombe transformation.}
+  \label{fig:comparison-white-balance}
+\end{figure}
+
 
 \chapter{Conclusions}
 \label{ch:conclusions}
