@@ -36,6 +36,7 @@ class Options():
         self.parser.add_argument('--key_classes', default='label', help='key for class')
         self.parser.add_argument('--key_features', default='features', help='key for features')
         self.parser.add_argument('--load_into_memory', type=bool, default=True, action=argparse.BooleanOptionalAction, help='load inputs in to memory')
+        self.parser.add_argument('--test', type=bool, default=False, action=argparse.BooleanOptionalAction, help='test model')
         self.parser.add_argument('--num_workers', type=int, default=1, help='number of of dataloading workers')
         self.parser.add_argument('--train', type=bool, default=False, action=argparse.BooleanOptionalAction, help='train model')
         self.parser.add_argument('--load_model', type=bool, default=False, action=argparse.BooleanOptionalAction, help='load existing model')

@@ -28,6 +28,18 @@ def main():
             show_batch(batch[0], batch[1])
         print("Finished viewing data")
 
+    if opt.test and opt.load_model:
+        print("Testing model")
+        # Do dry test and plot images
+        train, test = get_dataloaders(opt)
+
+        model = load_model(opt.weights)
+        model.to(opt.device)
+        tp, tn, fp, fn = model.dry_test(test)
+        draw_matrix(tp, tn, fp, fn)
+        return
+
+
     if opt.load_model:
         # Load model for smile detection
         model = load_model(opt.weights)

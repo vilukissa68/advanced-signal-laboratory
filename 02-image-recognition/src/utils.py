@@ -17,9 +17,11 @@ def show_image(image, label):
     plt.title(label)
     plt.show()
 
-def show_batch(images, labels, predictions=None):
+def show_batch(images, labels, predictions=None, title=None, save=False, filename=None):
     '''Show a batch of images with plt show'''
     print(images.shape[0])
+    print("labels: ", labels)
+    print("predictions: ", predictions)
     s = int(np.sqrt(images.shape[0]))
     fig, axs = plt.subplots(s, s, figsize=(s, s))
 
@@ -28,14 +30,31 @@ def show_batch(images, labels, predictions=None):
         if predictions is None:
             title = "GT:{0}".format(labels[index])
         else:
-            title = "GT:{0} | Predicted:{0}".format(labels[index], predictions[index])
+            # Check tp tn fp fn
+            if predictions[index] == labels[index]:
+                if predictions[index] == 1:
+                    title = "True Positive"
+                else:
+                    title = "True Negative"
+            else:
+                if predictions[index] == 1:
+                    title = "False Positive"
+                else:
+                    title = "False Negative"
         ax.set_title(title, fontsize=8)
         ax.set_xticks([])
         ax.set_yticks([])
 
+    if save:
+        if filename is None:
+            filename = "batch.png"
+        else:
+            # Set figure size half of the default
+            fig.set_size_inches(plt.rcParams["figure.figsize"][0] / 1.5, plt.rcParams["figure.figsize"][1] / 1.5)
+            plt.savefig(filename, format='png', dpi=200)
+
     plt.tight_layout()
     plt.show()
-
 
 def get_metrics(predictions, labels):
     # Capture the total number of true positives, true negatives, false positives, and false negatives

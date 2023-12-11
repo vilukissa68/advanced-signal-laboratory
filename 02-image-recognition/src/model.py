@@ -13,6 +13,7 @@ from torchmetrics.classification import AUROC
 from torchsummary import summary
 from sklearn.metrics import roc_curve, auc, average_precision_score, f1_score
 from utils import show_image, show_batch, get_metrics, precision, accuracy, recall, f1_score
+import random
 
 
 # Flags
@@ -221,7 +222,6 @@ class BaseNetwork(nn.Module):
                 predicted = (outputs > 0.5)
                 predictions.extend(predicted.tolist())
                 gts.extend(self.gt.tolist())
-                #show_batch(self.input_tensor.to('cpu'), self.gt.to('cpu'), prediction_labels)
             tp, tn, fp, fn = get_metrics(predictions, gts)
             self.accuracy = (tp + tn) / (tp + tn + fp + fn)
             self.precision = tp / (tp + fp) if tp + fp > 0 else 0
@@ -268,6 +268,55 @@ class BaseNetwork(nn.Module):
         }, filename)
         if self.opt.verbose:
             print(f'Saved model {filename} with accuracy {self.best_accuracy}')
+
+
+    def dry_test(self, val_loader):
+        self.eval()
+        with torch.no_grad():
+            predictions = []
+            gts = []
+            images = [] # Hold images for plotting in the end
+            for i, data in enumerate(val_loader, 0):
+                self.set_input(data)
+                outputs = self.forward(self.input_tensor).squeeze(1)
+                images.extend(self.input_tensor.tolist())
+                outputs = torch.sigmoid(outputs)
+                predicted = (outputs > 0.5)
+                predictions.extend(predicted.tolist())
+                gts.extend(self.gt.tolist())
+            tp, tn, fp, fn = get_metrics(predictions, gts)
+            self.accuracy = (tp + tn) / (tp + tn + fp + fn)
+            self.precision = tp / (tp + fp) if tp + fp > 0 else 0
+            self.recall = tp / (tp + fn) if tp + fn > 0 else 0
+            self.f1 = 2 * self.precision * self.recall / (self.precision + self.recall) if self.precision + self.recall > 0 else 0
+
+            # Convert lists to torch tensors
+            predictions = torch.tensor(predictions)
+            gts = torch.tensor(gts)
+            images = torch.tensor(images)
+
+            # Gather tps tns fps fns with images
+            tps = images[(predictions == 1) & (predictions == gts)]
+            tns = images[(predictions == 0) & (predictions == gts)]
+            fps = images[(predictions == 1) & (predictions != gts)]
+            fns = images[(predictions == 0) & (predictions != gts)]
+
+            # Take 4 random images from each, if available
+            tps = tps[torch.randperm(tps.size(0))][:min(4, len(tps))]
+            tns = tns[torch.randperm(tns.size(0))][:min(4, len(tns))]
+            fps = fps[torch.randperm(fps.size(0))][:min(4, len(fps))]
+            fns = fns[torch.randperm(fns.size(0))][:min(4, len(fns))]
+
+            # Plot images
+            show_batch(tps, [1,1,1,1], [1,1,1,1], "True positives", True, "tps.png")
+            show_batch(tns, [0,0,0,0], [0,0,0,0], "True negatives", True, "tns.png")
+            show_batch(fps, [0,0,0,0], [1,1,1,1], "False positives", True, "fps.png")
+            show_batch(fns, [1,1,1,1], [0,0,0,0], "False negatives", True, "fns.png")
+
+            print(f'Accuracy: {self.accuracy} | TP: {tp}, TN: {tn}, fp: {fp}, FN: {fn}')
+
+            return tp, tn, fp, fn
+
 
 def load_model(path):
     '''Load model'''
