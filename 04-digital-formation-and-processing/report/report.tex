@@ -204,7 +204,6 @@ In this section we are analyzing each subchannel of the out-of-focus and natural
 The function defines a sliding window analysis using the \texttt{blockproc} function in Matlab. The window size is set to $[2, 2]$, and $calculateMeanVar$ function is defined to calculate the mean and variance for each window. The function $calculateScatterPlot$ returns mean values and variance values that we need in the next step when calculating regression lines.
 
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
-
 % 4. Calculate scatter plots
 function [meanValues, varianceValues] = calculateScatterPlot(channel)
     % Define the window size for sliding window analysis
@@ -418,7 +417,6 @@ hsvImg = rgb2hsv(image);
 % Find location of maximum intensity from the hsv representation
 maxPixelValue = max(hsvImg(:,:,3), [], 'all');
 [x,y] = find(hsvImg(:,:,3)==maxPixelValue, 1, 'first');
-
 
 % Divide all the pixel by the found pixel in rgb space
 balancedImage(:,:,1) = image(:,:,1) ./ image(x,y,1);
