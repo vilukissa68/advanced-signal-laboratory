@@ -288,13 +288,18 @@ end
 \end{lstlisting}
 
 \section{Transformation and inverse transformation}
-[kesken]
-
-Transformation is done by using this equation
-\[
-2 \sqrt{\frac{I_c}{a_c} + \frac{3}{8} + \frac{b_c}{a_c^2}}
-\],
- where $a_c$ and $b_c$ are the parameters estimated from the out-of-focus image.
+\subsection{Tranformation}
+Transformation is applied to each subchannel of the natural and out-of-focus images. 
+ Here is an example how the out-of-focus image's R-subchannel transformation is called in the code:
+ \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+ transformedR_focus = blockproc(R_focus, transformBlockSize, @(block_struct) applyTransformation(block_struct, pR_focus(1), pR_focus(2)));
+\end{lstlisting}
+The transformation uses Matlab's \texttt{blockproc} function for block processing and calls \texttt{applyTransformation} function inside the blockproc. The \texttt{applyTransformation} function calculates the transformed value for each block using the equation
+\begin{equation}
+\label{eq:anscombe}
+  2 \sqrt{\frac{I_{c}}{a_{c}} + \frac{3}{8} + \frac{b_{c}}{a_{c}^2}}
+\end{equation}
+ where $a_c$ and $b_c$ are the parameters estimated in calculating regression. The function handles cases where the value inside the square root becomes negative, ensuring a non-negative result. The transformed blocks are then concatenated to produce the final transformed images back in \texttt{blockproc} function.
 
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
 % 6. Transformation
@@ -303,17 +308,24 @@ function output = applyTransformation(block_struct, ac, bc)
     sqrt_val = (block_struct.data / ac) + (3/8) + (bc / (ac^2));
 
     % Check if the value inside the square root is negative
-    sqrt_val(sqrt_val < 0) = 1;
+    sqrt_val(sqrt_val < 0) = 0;
 
     % Calculate the output
     output = 2 * sqrt(sqrt_val);
 end
 \end{lstlisting}
-
-The inverse transformation is done by using the equation
-\[
+\subsection{Inverse tranformation}
+Similar to the transformation, the inverse transformation is executed using the \texttt{blockproc} function:
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+inverseRT_nat = blockproc(filteredRT_nat, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pR_nat(1), pR_nat(2)));
+\end{lstlisting}
+The inverse transformation is expressed by the equation:
+\begin{equation}
+\label{eq:inv-anscombe}
 a_c \left( \frac{1}{4} D^2 + \frac{1}{4}\sqrt{\frac{3}{2}D^{-1}} - \frac{11}{8}D^{-2} + \frac{5}{8}\sqrt{\frac{3}{2}D^{-3}} - \frac{1}{8} - \frac{b_c}{a_c^2} \right)
-\]
+\end{equation}
+where D denotes the filtered transformed image. The  \texttt{inverseTransformation} function calculates the inverse transformation value for each block using equation~\ref{eq:inv-anscombe}
+
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
 % % 9. Inverse transformation
 function output = inverseTransformation(block_struct, ac, bc)
