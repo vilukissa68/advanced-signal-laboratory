@@ -104,9 +104,6 @@ This report documents the work done in the Digital Image Formation And Processin
 
 \noindent\textbf{Keywords:} Image processing, Image formation.
 
-~
-
-\noindent The originality of this thesis has been checked using the Turnitin Originality Check service.
 
 
 % Add the table of contents
@@ -465,6 +462,32 @@ end
 \label{sec:results}
 In this section we will present the results from our image processing pipeline and also do some analysis on why we got the kinds of results that we did.
 
+\section{Bayer array}
+The image formation pipeline start by reading the sensor data. Since the sensor data is in interlaced RGGB format we cannot simply display it as RGB color image like we would usually do, but we can still display it as grayscale image, from which we can observe the bayer array. Figure~\ref{fig:start-images} shows the starting images used in this assignment. Figure~\ref{fig:bayer-array-illustrated} illustrated the bayer array which was obtained by zooming closely in to the Natural image.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{img/out_of_focus_start.png}
+    \caption*{(a) Out of focues image}
+    %\label{fig:nontransformed-dct}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{img/natural_start.png}
+    \caption*{(b) Natural image}
+    %\label{fig:transformed-dct}
+  \end{minipage}
+  \caption{Source images probided by the assignment instructors as grayscale RGGB images}
+  \label{fig:start-images}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/bayer_array.png}
+  \caption{Sample of bayer array from the Natural image}
+  \label{fig:bayer-array-illustrated}
+\end{figure}
 
 \section{Purpose of the Anscombe transformation}
 In image processing Poisson distribution is used to model the signal dependant noise specific in images, due to it better model photons hitting the sensor array then Gaussian distribution. Gaussian distribution is signal independant and thus more suitable for general purpose denoising methods, so we want to transform our image specific Poisson noise to corresponding Gaussian distribution for processing. This is accomplished with the Anscombe transformation. After denoising we can use the inverse Anscombe transformation to bring the image back to Poisson noise distribution where the image should now appear denoised.
