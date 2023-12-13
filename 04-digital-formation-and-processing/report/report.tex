@@ -140,7 +140,7 @@ In this section we will present our implementation of the image processing pipel
 \section{Overview of the pipeline}
 Figure~\ref{fig:pipeline} shows the complete image processing and formation pipeline that we are going to introduce in this report. The following sections will go over the different parts of the pipeline. The pipeline takes in raw sensor data of Bayer arrays in RGGB format and produces RGB images. In addition to image formation the pipeline also performs focusing, white balancing and contrast and saturation correction.
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.8\textwidth]{img/image_pipeline.eps}
   \caption{Our image processing and formation pipeline}
@@ -148,7 +148,7 @@ Figure~\ref{fig:pipeline} shows the complete image processing and formation pipe
 \end{figure}
 
 \section{Reading images and converting to doubles}
-The first part of the pipeline is loading the images (outoffocus.tiff and natural.tiff) using Matlab's $imread$ function, and then converting the pixel values to double precision by using $im2double$ function. The convertion ensure that pixel values are represented as floating-point numbers between 0 and 1. 
+The first part of the pipeline is loading the images (outoffocus.tiff and natural.tiff) using Matlab's $imread$ function, and then converting the pixel values to double precision by using $im2double$ function. The convertion ensure that pixel values are represented as floating-point numbers between 0 and 1. This is necessary to minimize rounding errors during processing as opposed to using integers.
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
 % 1. Load image and convert to double
 focus = imread('images/outoffocus.tiff');
@@ -159,7 +159,7 @@ natural = im2double(natural);
 \end{lstlisting}
 
 \section{Image visualization and Bayer mosaic}
-The second part starts with creating a figure with two subplots. The $imshow$ function is used with $[]$ to scale the pixel values automatically for better visualization. For illustrating the Bayer mosaic arrays the image is separated into its color channels (red, green 1, green 2 and blue). After separating the color channels, the next step is to create figures to illustrate the Bayer mosaic arrays for each color channel separately.
+The second part starts with creating a figure with two subplots. The $imshow$ function is used with $[]$ to scale the pixel values automatically for better visualization. For illustrating the Bayer mosaic arrays the image is separated into its color channels (red, green 1, green 2 and blue). After separating the color channels, the next step is to create figures to illustrate the Bayer mosaic arrays for each color channel separately. This produces a kind of a intensity map for each color channel, which might be useful for visually analyzing how each color should appear in the final image.
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
 % 2. Visualize Images, Bayer mosaic array
 % Define the block size
@@ -196,9 +196,11 @@ subplot(2,2,4); imshow(B_nat, []); title('Blue');
 sgtitle("Natural image");
 \end{lstlisting}
 \section{Sliding window}
-In this section we are analyzing each subchannel of the out-of-focus and natural images using a sliding window operator. For both natural image and out-of-focus image we are calling \texttt{calculateScatterPlot} function for each color channel.
+In this step we analyze each subchannel of the out-of-focus and natural images using a sliding window operator. For both natural image and out-of-focus image we are calling \texttt{calculateScatterPlot} function for each color channel.
 
 The function defines a sliding window analysis using the \texttt{blockproc} function in Matlab. The window size is set to $[2, 2]$, and $calculateMeanVar$ function is defined to calculate the mean and variance for each window. The function $calculateScatterPlot$ returns mean values and variance values that we need in the next step when calculating regression lines.
+
+The purpose of this step is to approximate the Poisson noise present in the sensor data, which needs to be minimized before Gaussian denoising.
 
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
 % 4. Calculate scatter plots
@@ -285,6 +287,10 @@ end
 \end{lstlisting}
 
 \section{Transformation and inverse transformation}
+To be able to perform Gaussian denoising we first need to remove the noise caused by the sensor. This noise is inherent to each sensor and thus is different for each image~\cite{poissonnoise2011}. The most common approximation of this sensor noise is with Poisson noise which can be obtained from local mean-variance information which we did in the previous step. After obtaining the information about the Poisson noise, we can use the Anscombe transformation~\ref{eq:anscombe} to remove the percieved noise.
+
+After denoising the image needs to be applied inverse transformation to reintroduce the sensor noise. Section~\ref{sec:anscombe} explores why the inverse function is really not the exact inverse function of the forward function.
+
 \subsection{Tranformation}
 Transformation is applied to each subchannel of the natural and out-of-focus images. 
  Here is an example how the out-of-focus image's R-subchannel transformation is called in the code:
@@ -489,7 +495,7 @@ The image formation pipeline start by reading the sensor data. Since the sensor 
   \label{fig:bayer-array-illustrated}
 \end{figure}
 
-\section{Purpose of the Anscombe transformation}
+\section{Purpose of the Anscombe transformation}\label{sec:anscombe}
 In image processing Poisson distribution is used to model the signal dependant noise specific in images, due to it better model photons hitting the sensor array then Gaussian distribution. Gaussian distribution is signal independant and thus more suitable for general purpose denoising methods, so we want to transform our image specific Poisson noise to corresponding Gaussian distribution for processing. This is accomplished with the Anscombe transformation. After denoising we can use the inverse Anscombe transformation to bring the image back to Poisson noise distribution where the image should now appear denoised.
 
 Equation~\ref{eq:anscombe} shows the Anscombe transformation and equation~\ref{eq:anscombe-inv} shows the function used to inverse the Anscombe transformation. Where $a_{c}$ and $b_{c}$ describe the variance of noise in the image and $D$ denotes the denoised image. For the purposes of this exercise the inversing function is not exactly the same as inverse Anscombe tranformations. According to~\cite{poissonnoise2011} and~\cite{poissonnoise2011-2} this is because for images with low intensity (lesser frequency) the precise inverse function performs poorly due to bias caused by the non-linear forward function.
