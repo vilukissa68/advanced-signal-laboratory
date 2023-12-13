@@ -128,7 +128,7 @@ This report documents the work done in the Digital Image Formation And Processin
 
 \chapter{Introduction}
 \label{ch:intro} 
-In this report we describe our work done in the 'Digital Image Formation and Processing' laboratory assignment for the Advanced Signal Processing Laboratory course. In this assignment we implemented a basic raw image formation and processing pipeline in Matlab to construcut RGB images from raw sensor data.
+In this report we describe our work done in the 'Digital Image Formation and Processing' laboratory assignment for the Advanced Signal Processing Laboratory course. In this assignment we implemented a basic raw image formation and processing pipeline in Matlab to construct RGB images from raw sensor data.
 
 \pagenumbering{arabic}
 \setcounter{page}{1} 
@@ -325,7 +325,7 @@ inverseRT_nat = blockproc(filteredRT_nat, transformBlockSize, @(block_struct) in
 The inverse transformation is expressed by the equation:
 \begin{equation}
 \label{eq:inv-anscombe}
-a_c \left( \frac{1}{4} D^2 + \frac{1}{4}\sqrt{\frac{3}{2}D^{-1}} - \frac{11}{8}D^{-2} + \frac{5}{8}\sqrt{\frac{3}{2}D^{-3}} - \frac{1}{8} - \frac{b_c}{a_c^2} \right)
+a_c \left( \frac{1}{4} D^2 + \frac{1}{4}\sqrt{\frac{3}{2}}D^{-1} - \frac{11}{8}D^{-2} + \frac{5}{8}\sqrt{\frac{3}{2}}D^{-3} - \frac{1}{8} - \frac{b_c}{a_c^2} \right)
 \end{equation}
 where D denotes the filtered transformed image. The  \texttt{inverseTransformation} function calculates the inverse transformation value for each block using equation~\ref{eq:inv-anscombe}
 
@@ -568,6 +568,10 @@ After producing RGB we applied white balancing, saturation correction and contra
 
 \chapter{Conclusions}
 \label{ch:conclusions}
+In this laboratory work we familiarized ourselves with basics of digital image acquisition, formation and processing. The goal of this laboratory work was to analyze and process raw sensor data in Matlab, constructing an RGB image.
+
+For the process we utilized some of Matlab build-in functions and also implemented our owns.  After implementing all the steps from pipeline we were able to get realistic-looking RGB image as an output.
+
 %
 % The bibliography, i.e the list of references
 %
