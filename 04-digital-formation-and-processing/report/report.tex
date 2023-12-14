@@ -138,18 +138,19 @@ In this report we describe our work done in the 'Digital Image Formation and Pro
 In this section we will present our implementation of the image processing pipeline, by going over the main parts of the Matlab code as well as explaining the the decisions we took when requirements we ambigious.
 
 \section{Overview of the pipeline}
-Figure~\ref{fig:pipeline} shows the complete image processing and formation pipeline that we are going to introduce in this report. The following sections will go over the different parts of the pipeline. The pipeline takes in raw sensor data of Bayer arrays in RGGB format and produces RGB images. In addition to image formation the pipeline also performs focusing, white balancing and contrast and saturation correction.
+Figure~\ref{fig:pipeline} shows the complete image processing and formation pipeline that we are going to introduce in this report. The pipeline design is based on~\cite{ramanath2005color}. The pipeline takes in raw sensor data of Bayer arrays in RGGB format and produces RGB images as it's output. In addition to image formation the pipeline also performs denoising, white balancing and contrast and saturation correction.
+The following sections will go over each part of the pipeline implementation in fine detail.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.8\textwidth]{img/image_pipeline.eps}
-  \caption{Our image processing and formation pipeline}
+  \caption{Our image formation and processing pipeline}
   \label{fig:pipeline}
 \end{figure}
 
 \section{Reading images and converting to doubles}
 The first part of the pipeline is loading the images (outoffocus.tiff and natural.tiff) using Matlab's $imread$ function, and then converting the pixel values to double precision by using $im2double$ function. The convertion ensure that pixel values are represented as floating-point numbers between 0 and 1. This is necessary to minimize rounding errors during processing as opposed to using integers.
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 % 1. Load image and convert to double
 focus = imread('images/outoffocus.tiff');
 focus = im2double(focus);
@@ -160,9 +161,8 @@ natural = im2double(natural);
 
 \section{Image visualization and Bayer mosaic}
 The second part starts with creating a figure with two subplots. The $imshow$ function is used with $[]$ to scale the pixel values automatically for better visualization. For illustrating the Bayer mosaic arrays the image is separated into its color channels (red, green 1, green 2 and blue). After separating the color channels, the next step is to create figures to illustrate the Bayer mosaic arrays for each color channel separately. This produces a kind of a intensity map for each color channel, which might be useful for visually analyzing how each color should appear in the final image.
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 % 2. Visualize Images, Bayer mosaic array
-% Define the block size
 figure;
 subplot(1,2,1); imshow(focus, []); title('out of focus image');
 subplot(1,2,2); imshow(natural, []); title('natural');
@@ -177,8 +177,6 @@ R_nat = natural(1:2:end, 1:2:end);
 G1_nat = natural(1:2:end, 2:2:end);
 G2_nat = natural(2:2:end, 1:2:end);
 B_nat = natural(2:2:end, 2:2:end);
-
-% Illustrare the bayer array
 
 % Plot channels
 figure;
@@ -202,7 +200,7 @@ The function defines a sliding window analysis using the \texttt{blockproc} func
 
 The purpose of this step is to approximate the Poisson noise present in the sensor data, which needs to be minimized before Gaussian denoising.
 
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 % 4. Calculate scatter plots
 function [meanValues, varianceValues] = calculateScatterPlot(channel)
     % Define the window size for sliding window analysis
@@ -226,7 +224,7 @@ end
 
 \section{Scatterplots and regression}
 In this part we calculate the regression lines for each subchannel using the \texttt{calculateRegression} function. Regression is calculated by $polyfit$ function in Matlab, that returns a best-fitting polynomial to a set of data points, in this context it is used to fit a straight line to the data. The regression calculation will be done for both out-of-focus and natural subchannels.
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 % 5. Calculate regression lines
 function [p] = calculateRegression(meanValues, varianceValues)
     % Fit a straight line to the data
@@ -235,7 +233,7 @@ end
 \end{lstlisting}
 Then,  \texttt{produceScatterPlot} function is responsible for generating scatter plots for each color channel of the out-of-focus image. This function takes as input the mean values and variance values obtained from the \texttt{calculateScatterPlot} function, as well as the regression lines calculated by the \texttt{calculateRegression} function. After running this function, you should have scatter plots with regression lines for each subchannel.
 
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 function produceScatterPlot(meanR, varR, pR, meanG1, varG1, pG1, meanG2, varG2, pG2, meanB, varB, pB)
     % Create a new figure
     figure;
@@ -294,7 +292,7 @@ After denoising the image needs to be applied inverse transformation to reintrod
 \subsection{Tranformation}
 Transformation is applied to each subchannel of the natural and out-of-focus images. 
  Here is an example how the out-of-focus image's R-subchannel transformation is called in the code:
- \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+ \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
  transformedR_focus = blockproc(R_focus, transformBlockSize, @(block_struct) applyTransformation(block_struct, pR_focus(1), pR_focus(2)));
 \end{lstlisting}
 The transformation uses Matlab's \texttt{blockproc} function for block processing and calls \texttt{applyTransformation} function inside the blockproc. The \texttt{applyTransformation} function calculates the transformed value for each block using the equation
@@ -304,7 +302,7 @@ The transformation uses Matlab's \texttt{blockproc} function for block processin
 \end{equation}
  where $a_c$ and $b_c$ are the parameters estimated in calculating regression. The function handles cases where the value inside the square root becomes negative, ensuring a non-negative result. The transformed blocks are then concatenated to produce the final transformed images back in \texttt{blockproc} function.
 
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 % 6. Transformation
 function output = applyTransformation(block_struct, ac, bc)
     % Calculate the value inside the square root
@@ -319,7 +317,7 @@ end
 \end{lstlisting}
 \subsection{Inverse tranformation}
 Similar to the transformation, the inverse transformation is executed using the \texttt{blockproc} function:
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 inverseRT_nat = blockproc(filteredRT_nat, transformBlockSize, @(block_struct) inverseTransformation(block_struct, pR_nat(1), pR_nat(2)));
 \end{lstlisting}
 The inverse transformation is expressed by the equation:
@@ -329,7 +327,7 @@ a_c \left( \frac{1}{4} D^2 + \frac{1}{4}\sqrt{\frac{3}{2}}D^{-1} - \frac{11}{8}D
 \end{equation}
 where D denotes the filtered transformed image. The  \texttt{inverseTransformation} function calculates the inverse transformation value for each block using equation~\ref{eq:inv-anscombe}
 
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 % % 9. Inverse transformation
 function output = inverseTransformation(block_struct, ac, bc)
     % Calculate the values inside the square roots
@@ -351,9 +349,9 @@ end
 \end{lstlisting}
 
 \section{DCT denoising}
-This part implements a denoising operation on an image using a sliding DCT (Discrete Cosine Transform) filter. The DCT image denoising applies to each subchannel of both the original and transformed versions of the natural image. The \texttt{DCTImageDenoising} function takes an image, a threshold parameter $\lambda$ and the block size for the DCT operation. For the threshold parameter $\lambda$ we selected 0.060 for getting the most visually convincing result. The block size used is [8 8]. The \texttt{thresholdDCT} function applies the DCT to a given block of the image, thresholds the DCT coefficients by setting values below a threshold $\lambda$ to zero, and then returns the denoised block.
+This part implements a denoising operation on an image using a sliding DCT (Discrete Cosine Transform) filter as described by~\ref{yu2011dct}. The DCT image denoising applies to each subchannel of both the original and transformed versions of the natural image. The \texttt{DCTImageDenoising} function takes an image, a threshold parameter $\lambda$ and the block size for the DCT operation. For the threshold parameter $\lambda$ we selected 0.060 for getting the most visually convincing result. The block size used is [8 8]. The \texttt{thresholdDCT} function applies the DCT to a given block of the image, thresholds the DCT coefficients by setting values below a threshold $\lambda$ to zero, and then returns the denoised block.
 
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 function [denoised] = DCTImageDenoising(image, lambda, transformBlockSize)
 
     % Create a custom function to be applied to each block
@@ -375,9 +373,9 @@ end
 \end{lstlisting}
 
 \section{Demosaicking}
-This section performs a simple demosaicking operation using linear interpolation. After running the function \texttt{simpleDemosaic}, it creates a full-color RGB image from the color channels by interpolating the missing color information between pixels in the Bayer mosaic pattern. For interpolation we use $interp2$ function in Matlab and nearest-neighbour method.
+This section performs a simple demosaicking operation using linear interpolation. After running the function \texttt{simpleDemosaic}, it creates a full-color RGB image from the color channels by interpolating the missing color information between pixels in the Bayer mosaic pattern. For interpolation we use $interp2$ function in Matlab and nearest-neighbour method. This is also the step where we combine the green channels, using an averaging method. If we did't average the green channels the resulting image would be too green.
 
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 function [output] = simpleDemosaic(R, G1, G2, B)
 
     % Define output array;
@@ -413,7 +411,7 @@ end
 
 \section{White balancing}
 The purpose of white balancing is to correct the color cast in an image so that the white color appears neutral. The \texttt{whiteBalance} function implements basic white balancing method by identifying the pixel with maximum intensity in the image and and then normalizes the entire image by dividing each RGB pixel by the RGB values of the maximum intensity pixel. 
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 function balancedImage = whiteBalance(image)
 
 % Check the range of the image data
@@ -447,7 +445,7 @@ end
 \section{Contrast and saturation correction}
 The last part of our pipeline involves contrast and saturation correction. The correction is applied using the \texttt{contrastAndSaturationCorrection} function and takes the image and a gamma value as inputs. The gamma value influences the degree of saturation correction, allowing a visual enhancement. For the correlation, the image is converted to the HSV color space, because then the function can focus on contrast adjustment in the V channel and saturation correction in the S channel.
 
-\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\small]
+\begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 function img_corrected = contrastAndSaturationCorrection(img, gamma_value)
     % Convert the image to the HSV color space
     img_hsv = rgb2hsv(img);
@@ -565,13 +563,18 @@ After producing RGB we applied white balancing, saturation correction and contra
   \label{fig:comparison-white-balance}
 \end{figure}
 
+\section{Problems}
+As shown in figure~\ref{fig:comparison-white-balance} we were able to get fairly good quality RGB image from the natural image with our pipeline. However, no matter what values we used we were not able to produce a good image from the out-of-focus image. This is probably due to a bug in the code either in the transformation or the white balancing but after a long time debugging we were not able to find a solution. As mentioned in section~\ref{sec:anscombe} the inverse anscombe transformation behaves badly for images with low frequency, such as the out of focus image. But even though we used the non-asymptotic inverse function as described in the assignment instructions and in~\cite{poissonnoise2011-2} we did not see good results.
+
+When we compare the processed natural image to the one shown in the assignment instructions, we can see that the colors are a bit different. This is likely do to our method of white balancing and color correction which a both basic and might not be the same a used in the instructions. This might also be due to used parameters for the processing or a bug in the pipeline. However we consider our image to be good in terms of clarity.
 
 \chapter{Conclusions}
 \label{ch:conclusions}
-In this laboratory work we familiarized ourselves with basics of digital image acquisition, formation and processing. The goal of this laboratory work was to analyze and process raw sensor data in Matlab, constructing an RGB image.
+In this laboratory work we familiarized ourselves with basics of digital image acquisition, formation and processing. The objective of this laboratory work was to build a image formation and processing pipeline, that could take sensor data in RGGB format and produce a good quality RGB image as it's output. For the pipeline we utilized some of Matlab's build-in functions and also implemented some of our own. After implementing all the steps from pipeline we were able to get realistic-looking RGB image as an output.
 
-For the process we utilized some of Matlab build-in functions and also implemented our owns.  After implementing all the steps from pipeline we were able to get realistic-looking RGB image as an output.
+With the complete pipeline we were able to experiment with different values for white balancing, sliding window block size and DCT coefficient thresholding to try to extract the best quality images. We also observed how to Anscombe transformations removal of the Poisson noise affected the resulting images, and deemed it to greatly improve the quality of the resulting images.
 
+In conclusion we somewhat succesfully implemented the required image formation and processing pipeline, which was able to produce good looking images from natural high frequency images, when proper parameters were set. Additionally we were able to observe the quality benefits when applying Anscombe transformation before denoising as opposed to not applying the transformation. Due to unknown reason we were not able to obtain good images from low frequency inputs.
 %
 % The bibliography, i.e the list of references
 %
@@ -579,6 +582,21 @@ For the process we utilized some of Matlab build-in functions and also implement
 
 \printbibliography[title=References]
 \addcontentsline{toc}{chapter}{References}
+
+\def\appA{APPENDIX Natural image output} % Define the name and numbering manually
+\chapter*{\appA}                       % Create chapter heading
+\markboth{\appA}{\appA}                % Set page header
+\addcontentsline{toc}{chapter}{\appA}  % Include this in TOC
+% Note that \label does not work with unnumbered chapter
+%\section{Live feed predictions}\label{sec:app_live}
+%
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=\columnwidth]{img/transformed-white-balance.png}
+  \caption{The final output of the natural image as produced by the pipeline}
+  \label{fig:final-image}
+\end{figure}
+
 
 \end{document}
 
