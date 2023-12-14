@@ -128,14 +128,16 @@ This report documents the work done in the Digital Image Formation And Processin
 
 \chapter{Introduction}
 \label{ch:intro} 
-In this report we describe our work done in the 'Digital Image Formation and Processing' laboratory assignment for the Advanced Signal Processing Laboratory course. In this assignment we implemented a basic raw image formation and processing pipeline in Matlab to construct RGB images from raw sensor data.
+In this report we describe our work done in the 'Digital Image Formation and Processing' laboratory assignment for the Advanced Signal Processing Laboratory course. In this assignment we implemented a basic raw image formation and processing pipeline in Matlab to construct RGB images from raw sensor data. 
+
+The report is organized as follows: the methodology chapter begins with an overview of our image processing pipeline, followed by a detailed explanation of each implementation step. Chapter 3 presents the results obtained from the pipeline, including visualizations, analyses and possible problems we faced. Finally, in Chapter 4, we have conclusions, summarizing the achievements, challenges, and the overall success of the implemented image formation process.
 
 \pagenumbering{arabic}
 \setcounter{page}{1} 
 
 \chapter{Methodology}
 \label{sec:methodology}
-In this section we will present our implementation of the image processing pipeline, by going over the main parts of the Matlab code as well as explaining the the decisions we took when requirements we ambigious.
+In this section we will present our implementation of the image processing pipeline, by going over the main parts of the Matlab code as well as explaining the decisions we took when requirements were ambiguous.
 
 \section{Overview of the pipeline}
 Figure~\ref{fig:pipeline} shows the complete image processing and formation pipeline that we are going to introduce in this report. The pipeline design is based on~\cite{ramanath2005color}. The pipeline takes in raw sensor data of Bayer arrays in RGGB format and produces RGB images as it's output. In addition to image formation the pipeline also performs denoising, white balancing and contrast and saturation correction.
@@ -196,7 +198,7 @@ sgtitle("Natural image");
 \section{Sliding window}
 In this step we analyze each subchannel of the out-of-focus and natural images using a sliding window operator. For both natural image and out-of-focus image we are calling \texttt{calculateScatterPlot} function for each color channel.
 
-The function defines a sliding window analysis using the \texttt{blockproc} function in Matlab. The window size is set to $[2, 2]$, and $calculateMeanVar$ function is defined to calculate the mean and variance for each window. The function $calculateScatterPlot$ returns mean values and variance values that we need in the next step when calculating regression lines.
+The function defines a sliding window analysis using the \texttt{blockproc} function in Matlab. The window size is set to $[2, 2]$, and $calculateMeanVar$ function is defined to calculate the mean and variance for each window. The function \texttt{calculateScatterPlot} returns mean values and variance values that we need in the next step when calculating regression lines.
 
 The purpose of this step is to approximate the Poisson noise present in the sensor data, which needs to be minimized before Gaussian denoising.
 
@@ -410,7 +412,7 @@ end
 
 
 \section{White balancing}
-The purpose of white balancing is to correct the color cast in an image so that the white color appears neutral. The \texttt{whiteBalance} function implements basic white balancing method by identifying the pixel with maximum intensity in the image and and then normalizes the entire image by dividing each RGB pixel by the RGB values of the maximum intensity pixel. 
+The purpose of white balancing is to correct the color cast in an image so that the white color appears neutral. The \texttt{whiteBalance} function implements basic white balancing method by identifying the pixel with maximum intensity in the image and then normalizes the entire image by dividing each RGB pixel by the RGB values of the maximum intensity pixel. 
 \begin{lstlisting}[style=Matlab-editor, numbers=left, basicstyle=\footnotesize]
 function balancedImage = whiteBalance(image)
 
